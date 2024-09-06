@@ -1,0 +1,13 @@
+import { of, map } from 'rxjs';
+import { type Database } from '@repo/database/src';
+
+export const observeAccountsOfVault = (database: Database | undefined, vaultValue: string | null) => {
+  if (!database || !vaultValue) return of(undefined);
+  return database.accounts
+    .find({
+      selector: {
+        vault: vaultValue,
+      },
+    })
+    .$.pipe(map((accounts) => (!accounts || !accounts.length ? null : accounts.map((account) => account.toJSON()))));
+};

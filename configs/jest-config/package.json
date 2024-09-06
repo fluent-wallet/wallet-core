@@ -1,0 +1,12 @@
+{
+  "name": "@repo/jest-config",
+  "version": "0.0.0",
+  "private": true,
+  "files": [
+    "library.js"
+  ],
+  "devDependencies": {
+    "@types/jest": "^29",
+    "jest": "^29"
+  }
+}

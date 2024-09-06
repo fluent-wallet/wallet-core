@@ -1,0 +1,14 @@
+{
+  "name": "@cfx-kit/wallet-core-database",
+  "private": true,
+  "dependencies": {
+    "rxdb": "^15.31.1",
+    "rxjs": "^7.8.1"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "eslint": "^8",
+    "typescript": "^5"
+  }
+}
