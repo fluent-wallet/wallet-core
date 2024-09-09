@@ -2,12 +2,12 @@
   "name": "wallet-core",
   "private": true,
   "scripts": {
-    "build": "turbo build",
+    "build:core": "turbo build --filter=@cfx-kit/wallet-core-methods",
     "dev": "turbo dev",
     "dev:extensions": "pnpm run dev --filter=extensions-example",
     "dev:react": "turbo run dev --filter=react-example",
     "dev:vue": "turbo run dev --filter=vue-example",
-    "test": "turbo run test",
+    "test": "turbo test",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },

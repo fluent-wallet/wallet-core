@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "tsup --dts"
+    "build": "tsup --dts",
+    "test": "jest"
   },
   "dependencies": {
     "@cfx-kit/wallet-core-database": "workspace:*",
