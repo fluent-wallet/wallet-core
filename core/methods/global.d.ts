@@ -1,4 +1,4 @@
-import type { Database } from "@repo/database/src";
+import type { Database } from "@cfx-kit/wallet-core-database/src";
 
 declare global {
   var database: Database;

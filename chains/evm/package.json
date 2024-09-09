@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@cfx-kit/wallet-core-chain": "workspace:*",
-    "viems": "^2.21.3"
+    "viem": "^2.21.3"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",

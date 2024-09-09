@@ -4,7 +4,7 @@ import { wordlist as englishWordList } from '@scure/bip39/wordlists/english';
 export { generateMnemonic } from '@scure/bip39';
 export { wordlist as englishWordList } from '@scure/bip39/wordlists/english';
 export { validateMnemonic } from '@scure/bip39';
-import { VaultType, VaultSource, type Database } from '@repo/database/src';
+import { VaultType, VaultSource, type Database } from '@cfx-kit/wallet-core-database/src';
 import { handleUniquePrimaryKeyError } from '../../utils';
 
 const _addMnemonicVault = (database: Database, importedMnemonic?: string) =>

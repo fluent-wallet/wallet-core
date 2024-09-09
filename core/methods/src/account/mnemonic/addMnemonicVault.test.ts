@@ -1,5 +1,5 @@
 import { addMnemonicVault } from './addMnemonicVault';
-import { VaultType, VaultSource } from '@repo/database/src';
+import { VaultType, VaultSource } from '@cfx-kit/wallet-core-database/src';
 import { UniquePrimaryKeyError } from '../../utils/MethodError';
 beforeAll(global.waitForDatabaseInit);
 

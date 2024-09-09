@@ -1,6 +1,6 @@
 import { atom, createStore } from 'jotai';
 import { unwrap } from 'jotai/utils';
-import { type Database } from '@repo/database/src';
+import { type Database } from '@cfx-kit/wallet-core-database/src';
 import { type INTERNAL_PrdStore } from 'jotai/vanilla/store';
 
 export const store = createStore() as INTERNAL_PrdStore;

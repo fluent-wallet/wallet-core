@@ -4,6 +4,10 @@
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
+    "dev:extensions": "pnpm run dev --filter=extensions-example",
+    "dev:react": "turbo run dev --filter=react-example",
+    "dev:vue": "turbo run dev --filter=vue-example",
+    "test": "turbo run test",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },

@@ -1,15 +1,18 @@
 import { getRxStorageMemory } from 'rxdb/plugins/storage-memory';
-import WalletClass from '@repo/wallet/src';
+import WalletClass from '@cfx-kit/wallet-core-wallet/src';
 import methods from './src/allMethods';
-import { inject } from '@repo/react-inject/src';
+import { inject } from '@cfx-kit/wallet-core-react-inject/src';
 
-const database = new WalletClass<typeof methods>();
-database.init({
+const wallet = new WalletClass<typeof methods>();
+wallet.init({
   databaseOptions: {
     storage: getRxStorageMemory(),
   },
   methods,
   injectDatabasePromise: [inject],
-}).then((db) => global.database = db);
+  injectDatabase: [(db) => {
+    global.database = db;
+  }],
+});
 
-global.waitForDatabaseInit = async () => await database.initPromise;
+global.waitForDatabaseInit = async () => await wallet.initPromise;

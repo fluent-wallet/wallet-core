@@ -1,5 +1,5 @@
-import ChainMethod from '@repo/base-chain-methods/src';
+import ChainMethod from '@cfx-kit/wallet-core-chain/src';
 
-export default class EVMChainMethods extends ChainMethod {
+export default class TonChainMethods extends ChainMethod {
   
 }

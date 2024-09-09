@@ -1,5 +1,5 @@
 import { of, map } from 'rxjs';
-import { type Database } from '@repo/database/src';
+import { type Database } from '@cfx-kit/wallet-core-database/src';
 
 export const observeAccountsOfVault = (database: Database | undefined, vaultValue: string | null) => {
   if (!database || !vaultValue) return of(undefined);

@@ -1,0 +1,27 @@
+{
+  "name": "vue-example",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build"
+  },
+  "dependencies": {
+    "@cfx-kit/wallet-core-database": "workspace:*",
+    "@cfx-kit/wallet-core-vue-inject": "workspace:*",
+    "@cfx-kit/wallet-core-wallet": "workspace:*",
+    "@cfx-kit/wallet-core-methods": "workspace:*",
+    "rxdb": "^15.31.1",
+    "rxjs": "^7.8.1",
+    "dexie": "^4.0.8",
+    "pinia": "^2.2.2",
+    "vue": "^3.4.37"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.1.2",
+    "typescript": "^5",
+    "vite": "^5.4.1",
+    "vue-tsc": "^2.0.29"
+  }
+}

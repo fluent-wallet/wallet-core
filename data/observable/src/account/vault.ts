@@ -1,5 +1,5 @@
 import { map, of } from 'rxjs';
-import { type Database } from '@repo/database/src';
+import { type Database } from '@cfx-kit/wallet-core-database/src';
 
 export const observeVaults = (database: Database | undefined) =>
   !database

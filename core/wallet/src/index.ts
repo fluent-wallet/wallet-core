@@ -1,5 +1,5 @@
 import * as R from 'ramda';
-import { createDatabase, type Database } from '@repo/database/src';
+import { createDatabase, type Database } from '@cfx-kit/wallet-core-database/src';
 
 type MethodWithDatabase<T> = (db: Database, ...args: any[]) => T;
 type MethodWithDBConstraint = MethodWithDatabase<any>;

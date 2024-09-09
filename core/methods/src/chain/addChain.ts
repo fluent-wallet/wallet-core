@@ -1,6 +1,6 @@
 import * as R from 'ramda';
-import type { Database } from '@repo/database/src';
-import type { ChainDocType } from '@repo/database/src/models/Chain';
+import type { Database } from '@cfx-kit/wallet-core-database/src';
+import type { ChainDocType } from '@cfx-kit/wallet-core-database/src/models/Chain';
 
 type SetOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 /** The id of the chain is automatically composed of type and chainId. */
