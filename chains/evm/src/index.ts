@@ -1,21 +1,21 @@
-import ChainMethod from '@cfx-kit/wallet-core-chain/src';
-import { generatePrivateKey, privateKeyToAddress, mnemonicToAccount } from 'viem/accounts';
-import { isAddress, isAddressEqual, type Address } from 'viem';
+import { ChainMethods } from '@cfx-kit/wallet-core-chain/src';
+import { generatePrivateKey, privateKeyToAddress, mnemonicToAccount, signTransaction as _signTransaction, signMessage as _signMessage, signTypedData } from 'viem/accounts';
+import { isAddress } from 'viem';
 
-export default class EVMChainMethods extends ChainMethod {
+export enum EvmMessageTypes {
+    PERSONAL_SIGN = 'PERSONAL_SIGN',
+    TYPE_DATA_V1 = 'TYPE_DATA_V1',
+    TYPE_DATA_V3 = 'TYPE_DATA_V3',
+    TYPE_DATA_V4 = 'TYPE_DATA_V4',
+}
+
+export default class EVMChainMethods extends ChainMethods {
     isValidPrivateKey(privateKey: string) {
         return typeof privateKey === 'string' && privateKey.startsWith('0x') && privateKey.length === 64;
     }
 
     isValidAddress(address: string) {
         return isAddress(address);
-    }
-
-    isAddressEqual(address1: any, address2: any) {
-        if (typeof address1 !== 'string' || typeof address2 !== 'string' || !address1 || !address2) {
-            return false;
-        }
-        return isAddressEqual(address1 as Address, address2 as Address);
     }
 
     getDerivedPrivateKey({ mnemonic, hdPath = "m/44'/60'/0'/0/0", index }: { mnemonic: string; hdPath: string; index: number }) {
@@ -29,11 +29,34 @@ export default class EVMChainMethods extends ChainMethod {
         return privateKey.toString();
     }
 
-    getAddressFromPrivateKey(privateKey: string) {
+    getAddressFromPrivateKey({ privateKey }: { privateKey: string; }) {
         return privateKeyToAddress(privateKey as `0x${string}`);
     }
 
     getRandomPrivateKey() {
         return generatePrivateKey();
+    }
+
+    signTransaction({ privateKey, data }: { privateKey: string; data: Parameters<typeof _signTransaction>[0]['transaction']; }) {
+        return _signTransaction({
+            privateKey: privateKey as `0x${string}`,
+            transaction: data
+        });
+    }
+
+    signMessage(params: { privateKey: string; type: EvmMessageTypes.PERSONAL_SIGN; data: Parameters<typeof _signMessage>[0]['message'] }): ReturnType<typeof _signMessage>;
+    signMessage(params: { privateKey: string; type: Omit<EvmMessageTypes, EvmMessageTypes.PERSONAL_SIGN>; } & Parameters<typeof signTypedData>[0]): ReturnType<typeof signTypedData>;
+    signMessage({ privateKey, type, ...data }: { privateKey: string; type: EvmMessageTypes; } & any) {
+        if (type === EvmMessageTypes.PERSONAL_SIGN) {
+            return _signMessage({
+                privateKey: privateKey as `0x${string}`,
+                message: data
+            });
+        }
+
+        return signTypedData({
+            privateKey: privateKey as `0x${string}`,
+            ...data
+        })
     }
 }

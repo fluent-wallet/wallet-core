@@ -32,5 +32,4 @@ describe('addMnemonicVault', () => {
   test('import a exist mnemonic', async () => {
     await expect(addMnemonicVault(global.database, aMnemonic)).rejects.toThrow(UniquePrimaryKeyError);
   });
-  
 });

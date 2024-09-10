@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "@cfx-kit/wallet-core-chain": "workspace:*"
+    "@cfx-kit/wallet-core-chain": "workspace:*",
+    "cive": "^0.3.1"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
