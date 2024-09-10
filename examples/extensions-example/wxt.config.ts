@@ -6,4 +6,5 @@ export default defineConfig({
   manifest: {
     permissions: ['storage'],
   },
+  imports: false,
 });

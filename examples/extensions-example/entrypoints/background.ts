@@ -1,3 +1,4 @@
+import { defineBackground } from 'wxt/sandbox';
 import { onMessage } from './messaging';
 import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
 import WalletClass from '@cfx-kit/wallet-core-wallet/src';
