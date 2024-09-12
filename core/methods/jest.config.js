@@ -1,5 +1,8 @@
+/** @type {import('ts-jest').JestConfigWithTsJest} **/
 module.exports = {
-  root: true,
-  extends: ['@repo/jest-config/library.js'],
+  testEnvironment: "node",
+  transform: {
+    "^.+.tsx?$": ["ts-jest",{}],
+  },
   setupFiles: ['./jest.setup.ts'],
 };

@@ -4,7 +4,7 @@ const chainSchemaLiteral = {
   version: 0,
   primaryKey: {
     key: 'id',
-    fields: ['type', 'chainId', 'name'],
+    fields: ['type', 'chainId'],
     separator: '|',
   },
   type: 'object',
@@ -31,8 +31,17 @@ const chainSchemaLiteral = {
         type: 'string',
       },
     },
+    icon: {
+      type: 'string',
+    },
+    scanUrl: {
+      type: 'string',
+    },
+    chainType: {
+      type: 'string',
+    },
   },
-  required: ['id', 'name', 'type', 'chainId', 'endpoints'],
+  required: ['id', 'name', 'type', 'chainId', 'endpoints', 'icon', 'scanUrl', 'chainType'],
   indexes: ['type'],
 } as const;
 

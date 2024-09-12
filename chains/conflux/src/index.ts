@@ -1,6 +1,7 @@
 import { ChainMethods } from '@cfx-kit/wallet-core-chain/src';
 import { generatePrivateKey, privateKeyToAddress, mnemonicToAccount, signTransaction as _signTransaction, signMessage as _signMessage, signTypedData } from 'cive/accounts';
 import { isAddress } from "cive/utils";
+export * from './chains';
 
 export enum ConfluxMessageTypes {
     PERSONAL_SIGN = 'PERSONAL_SIGN',

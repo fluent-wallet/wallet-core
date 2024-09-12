@@ -1,7 +1,6 @@
 {
   "name": "@cfx-kit/wallet-core-solana",
   "version": "0.0.0",
-  "type": "module",
   "dependencies": {
     "@cfx-kit/wallet-core-chain": "workspace:*",
     "@scure/bip32": "^1.5.0",
