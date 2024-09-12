@@ -3,8 +3,9 @@ import { Keypair, PublicKey, SystemProgram, Transaction } from '@solana/web3.js'
 import bs58 from 'bs58';
 import { mnemonicToSeedSync } from '@scure/bip39';
 import { HDKey } from '@scure/bip32';
+export * from './chains';
 
-export default class SolanaChainMethods extends ChainMethods {
+class SolanaChainMethods extends ChainMethods {
     isValidPrivateKey(privateKey: string) {
         try {
             bs58.decode(privateKey);
@@ -56,3 +57,5 @@ export default class SolanaChainMethods extends ChainMethods {
         return transaction.serialize().toString();
     }
 }
+
+export default new SolanaChainMethods();

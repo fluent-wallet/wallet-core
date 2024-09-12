@@ -10,7 +10,7 @@ export enum EvmMessageTypes {
   TYPE_DATA_V4 = 'TYPE_DATA_V4',
 }
 
-export default class EVMChainMethods extends ChainMethods {
+class EVMChainMethods extends ChainMethods {
   isValidPrivateKey(privateKey: string) {
     return typeof privateKey === 'string' && privateKey.startsWith('0x') && privateKey.length === 64;
   }
@@ -61,3 +61,5 @@ export default class EVMChainMethods extends ChainMethods {
     })
   }
 }
+
+export default new EVMChainMethods();

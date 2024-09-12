@@ -1,5 +1,7 @@
 import * as R from 'ramda';
 import { createDatabase, type Database } from '@cfx-kit/wallet-core-database/src';
+import { ChainMethods } from '@cfx-kit/wallet-core-chain/src';
+import { protectAddChain } from './mechanism/protectAddChain';
 
 type MethodWithDatabase<T> = (db: Database, ...args: any[]) => T;
 type MethodWithDBConstraint = MethodWithDatabase<any>;
@@ -10,11 +12,14 @@ type MethodsWithDatabase<T extends MethodsMap> = {
   [K in keyof T]: MethodWithDBConstraint;
 };
 
-type RemoveFirstArg<T> = T extends (db: Database, ...args: infer P) => infer R ? (...args: P) => R : never;
+export type RemoveFirstArg<T> = T extends (db: Database, ...args: infer P) => infer R ? (...args: P) => R : never;
 
-class WalletClass<T extends MethodsMap> {
+export type ChainsMap = Record<string, ChainMethods>;
+
+class WalletClass<T extends MethodsMap = any, J extends ChainsMap = any> {
   database: Awaited<ReturnType<typeof createDatabase>> = null!;
   methods: { [K in keyof T]: RemoveFirstArg<T[K]> } = null!;
+  chains: J = null!;
 
   initPromise: ReturnType<typeof createDatabase> = null!;
   private resolve: (value: Awaited<ReturnType<typeof createDatabase>>) => void = null!;
@@ -37,11 +42,13 @@ class WalletClass<T extends MethodsMap> {
   public init = async ({
     databaseOptions,
     methods,
+    chains,
     injectDatabase,
     injectDatabasePromise,
   }: {
     databaseOptions: Parameters<typeof createDatabase>[0];
     methods?: MethodsWithDatabase<T>;
+    chains?: J;
     injectDatabase?: Array<(db: Database) => any>;
     injectDatabasePromise?: Array<(dbPromise: Promise<Database>) => any>;
   }) => {
@@ -57,6 +64,12 @@ class WalletClass<T extends MethodsMap> {
         this.resolve(db);
         if (methods) {
           this.methods = R.mapObjIndexed((fn) => R.partial(fn, [db]), methods) as any;
+        }
+        if (chains) {
+          this.chains = chains;
+          if (typeof this.methods.addChain === 'function') {
+            (this.methods as any).addChain = protectAddChain({ chains: this.chains, addChain: this.methods.addChain });
+          }
         }
         if (Array.isArray(injectDatabase)) {
           injectDatabase.forEach((fn) => fn?.(db));

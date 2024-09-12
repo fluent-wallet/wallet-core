@@ -246,12 +246,12 @@ importers:
 
   core/methods:
     dependencies:
+      '@cfx-kit/wallet-core-chain':
+        specifier: workspace:*
+        version: link:../../chains/base
       '@cfx-kit/wallet-core-database':
         specifier: workspace:*
         version: link:../database
-      '@cfx-kit/wallet-core-react-inject':
-        specifier: workspace:*
-        version: link:../../data/react-inject
       '@cfx-kit/wallet-core-wallet':
         specifier: workspace:*
         version: link:../wallet
@@ -304,6 +304,9 @@ importers:
 
   core/wallet:
     dependencies:
+      '@cfx-kit/wallet-core-chain':
+        specifier: workspace:*
+        version: link:../../chains/base
       '@cfx-kit/wallet-core-database':
         specifier: workspace:*
         version: link:../database
@@ -314,6 +317,9 @@ importers:
         specifier: ^15.31.1
         version: 15.32.0(bufferutil@4.0.8)(rxjs@7.8.1)(utf-8-validate@5.0.10)
     devDependencies:
+      '@jest/globals':
+        specifier: ^29.7.0
+        version: 29.7.0
       '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../configs/eslint-config
@@ -323,6 +329,9 @@ importers:
       '@types/jest':
         specifier: ^29.5.12
         version: 29.5.12
+      '@types/node':
+        specifier: ^22.5.4
+        version: 22.5.4
       '@types/ramda':
         specifier: ^0.30.1
         version: 0.30.2
@@ -8556,7 +8565,7 @@ snapshots:
     dependencies:
       ws: 8.16.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
 
-  isows@1.0.4(ws@8.17.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)):
+  isows@1.0.4(ws@8.17.1):
     dependencies:
       ws: 8.17.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
 
@@ -10331,7 +10340,7 @@ snapshots:
       '@scure/bip32': 1.4.0
       '@scure/bip39': 1.4.0
       abitype: 1.0.5(typescript@5.5.4)(zod@3.23.8)
-      isows: 1.0.4(ws@8.17.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+      isows: 1.0.4(ws@8.17.1)
       webauthn-p256: 0.0.5
       ws: 8.17.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
     optionalDependencies:

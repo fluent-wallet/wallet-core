@@ -1,7 +1,7 @@
 import * as R from 'ramda';
 import { addChain } from './addChain';
 import { UniquePrimaryKeyError } from '../utils/MethodError';
-import { ConfluxMainnet, ConfluxTestnet, Conflux8888 } from './../../../../chains/conflux/src/chains';
+import { ConfluxMainnet, ConfluxTestnet } from './../../../../chains/conflux/src/chains';
 import { SolanaMainnet } from './../../../../chains/solana/src/chains';
 
 beforeAll(global.waitForDatabaseInit);
@@ -16,8 +16,8 @@ describe('addChain', () => {
     expect(chainData.id).toBe(`${ConfluxMainnet.type}|${ConfluxMainnet.chainId}`);
   });
 
-  test('add a exist chain', async () => {
-    await expect(addChain(global.database, ConfluxMainnet)).rejects.toThrow(UniquePrimaryKeyError);
+  test('add a exist chain should throw UniquePrimaryKeyError', async () => {
+    expect(addChain(global.database, ConfluxMainnet)).rejects.toThrow(UniquePrimaryKeyError);
   });
 
   test('add a chain with a single endpoint', async () => {
