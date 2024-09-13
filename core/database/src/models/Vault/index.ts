@@ -38,9 +38,9 @@ const vaultSchemaLiteral = {
 } as const;
 
 export enum VaultTypeEnum {
-  public = 'public',
   privateKey = 'privateKey',
   mnemonic = 'mnemonic',
+  public = 'public',
   hardware = 'hardware',
   BSIM = 'BSIM',
 }

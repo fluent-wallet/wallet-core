@@ -1,6 +1,6 @@
 import { addMnemonicVault } from './addMnemonicVault';
 import { VaultType, VaultSource } from '@cfx-kit/wallet-core-database/src';
-import { UniquePrimaryKeyError } from '../../utils/MethodError';
+import { UniquePrimaryKeyError } from '../utils/MethodError';
 beforeAll(global.waitForDatabaseInit);
 
 describe('addMnemonicVault', () => {

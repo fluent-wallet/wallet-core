@@ -1,4 +1,4 @@
 {
   "extends": "@repo/typescript-config/library.json",
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "./jest.setup.ts", "jest.config.js", "tsup.config.ts", "global.d.ts"]
 }

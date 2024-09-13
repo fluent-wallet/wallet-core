@@ -2,7 +2,11 @@ import { toTypedRxJsonSchema, type RxCollection, type ExtractDocumentTypeFromTyp
 
 const accountSchemaLiteral = {
   version: 0,
-  primaryKey: 'id',
+  primaryKey: {
+    key: 'id',
+    fields: ['vault', 'hdIndex'],
+    separator: '|',
+  },
   type: 'object',
   properties: {
     id: {
@@ -23,7 +27,7 @@ const accountSchemaLiteral = {
       type: 'string',
     },
   },
-  required: ['id', 'name', 'vault'],
+  required: ['id', 'hdIndex', 'vault', 'name'],
 } as const;
 
 const schemaTyped = toTypedRxJsonSchema(accountSchemaLiteral);

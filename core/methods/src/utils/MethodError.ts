@@ -32,3 +32,15 @@ export class ParamsError extends Error implements MethodError {
     }
   }
 }
+
+export class NoDocumentError extends Error implements MethodError {
+  message = 'No document found in the database.';
+  code = -2010293;
+
+  constructor(message?: string) {
+    super(message);
+    if (typeof message === 'string') {
+      this.message = message;
+    }
+  }
+}

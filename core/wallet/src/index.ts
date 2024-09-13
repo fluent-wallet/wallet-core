@@ -2,6 +2,11 @@ import * as R from 'ramda';
 import { createDatabase, type Database } from '@cfx-kit/wallet-core-database/src';
 import { ChainMethods } from '@cfx-kit/wallet-core-chain/src';
 import { protectAddChain } from './mechanism/protectAddChain';
+import Encryptor from './mechanism/VaultEncryptor/Encryptor';
+import type InteractivePassword from './mechanism/VaultEncryptor/Password/InteractivePassword';
+import type SecureMemoryPassword from './mechanism/VaultEncryptor/Password/SecureMemoryPassword';
+export { default as InteractivePassword } from './mechanism/VaultEncryptor/Password/InteractivePassword';
+export { default as SecureMemoryPassword } from './mechanism/VaultEncryptor/Password/SecureMemoryPassword';
 
 type MethodWithDatabase<T> = (db: Database, ...args: any[]) => T;
 type MethodWithDBConstraint = MethodWithDatabase<any>;
@@ -26,20 +31,7 @@ class WalletClass<T extends MethodsMap = any, J extends ChainsMap = any> {
   private reject: (reason: any) => void = null!;
   private hasInit = false;
 
-  constructor() {
-    this.initPromise = new Promise<Awaited<ReturnType<typeof createDatabase>>>((resolve, reject) => {
-      this.resolve = R.pipe(
-        R.tap(() => (this.hasInit = true)),
-        resolve,
-      );
-      this.reject = R.pipe(
-        R.tap(() => (this.hasInit = false)),
-        reject,
-      );
-    });
-  }
-
-  public init = async ({
+  constructor({
     databaseOptions,
     methods,
     chains,
@@ -51,10 +43,19 @@ class WalletClass<T extends MethodsMap = any, J extends ChainsMap = any> {
     chains?: J;
     injectDatabase?: Array<(db: Database) => any>;
     injectDatabasePromise?: Array<(dbPromise: Promise<Database>) => any>;
-  }) => {
-    if (this.hasInit) {
-      return this.initPromise;
-    }
+    Password: InteractivePassword | SecureMemoryPassword;
+  }) {
+    this.initPromise = new Promise<Awaited<ReturnType<typeof createDatabase>>>((resolve, reject) => {
+      this.resolve = R.pipe(
+        R.tap(() => (this.hasInit = true)),
+        resolve,
+      );
+      this.reject = R.pipe(
+        R.tap(() => (this.hasInit = false)),
+        reject,
+      );
+    });
+
     if (Array.isArray(injectDatabasePromise)) {
       injectDatabasePromise.forEach((fn) => fn?.(this.initPromise));
     }
@@ -70,6 +71,8 @@ class WalletClass<T extends MethodsMap = any, J extends ChainsMap = any> {
           if (typeof this.methods.addChain === 'function') {
             (this.methods as any).addChain = protectAddChain({ chains: this.chains, addChain: this.methods.addChain });
           }
+          if (typeof this.methods.getPrivateKeyOfAccount) {
+          }
         }
         if (Array.isArray(injectDatabase)) {
           injectDatabase.forEach((fn) => fn?.(db));
@@ -79,8 +82,7 @@ class WalletClass<T extends MethodsMap = any, J extends ChainsMap = any> {
         this.reject(reason);
         console.error('Failed to initialize database: ', reason);
       });
-    return this.initPromise;
-  };
+  }
 }
 
 export default WalletClass;

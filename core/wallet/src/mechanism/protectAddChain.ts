@@ -5,7 +5,7 @@ import type { ChainsMap, RemoveFirstArg } from '../';
 
 /**
  * @description
- * Wallet can only add chain that has been registered in init's chains.
+ * Wallet can only add chains whose types have been registered in the Wallet's chains.
  */
 export const protectAddChain = ({ chains, addChain }: { chains: ChainsMap; addChain: RemoveFirstArg<typeof _addChain> }) => R.pipe(
   R.when(
