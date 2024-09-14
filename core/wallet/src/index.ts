@@ -43,7 +43,7 @@ class WalletClass<T extends MethodsMap = any, J extends ChainsMap = any> {
     chains?: J;
     injectDatabase?: Array<(db: Database) => any>;
     injectDatabasePromise?: Array<(dbPromise: Promise<Database>) => any>;
-    Password: InteractivePassword | SecureMemoryPassword;
+    Password?: InteractivePassword | SecureMemoryPassword;
   }) {
     this.initPromise = new Promise<Awaited<ReturnType<typeof createDatabase>>>((resolve, reject) => {
       this.resolve = R.pipe(

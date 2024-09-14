@@ -42,3 +42,7 @@ yarn-error.log*
 .DS_Store
 *.pem
 coverage
+
+.lsp
+
+.clj-kondo

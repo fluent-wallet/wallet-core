@@ -1,8 +1,7 @@
 import { getRxStorageMemory } from 'rxdb/plugins/storage-memory';
 import WalletClass from '@cfx-kit/wallet-core-wallet/src';
 
-const wallet = new WalletClass();
-wallet.init({
+const wallet = new WalletClass({
   databaseOptions: {
     storage: getRxStorageMemory(),
   },

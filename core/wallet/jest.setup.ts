@@ -5,19 +5,19 @@ import ConfluxChainMethods, { ConfluxNetworkType } from '../../chains/conflux/sr
 
 const chains = {
   [ConfluxNetworkType]: ConfluxChainMethods,
-}
+};
 
-const wallet = new WalletClass<typeof methods, typeof chains>();
-
-wallet.init({
+const wallet = new WalletClass<typeof methods, typeof chains>({
   databaseOptions: {
     storage: getRxStorageMemory(),
   },
   methods,
   chains,
-  injectDatabase: [(db) => {
-    global.database = db;
-  }],
+  injectDatabase: [
+    (db) => {
+      global.database = db;
+    },
+  ],
 });
 
 export type Wallet = typeof wallet;
