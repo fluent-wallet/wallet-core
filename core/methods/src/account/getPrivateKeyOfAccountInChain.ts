@@ -2,7 +2,7 @@ import { type AccountDocType } from '@cfx-kit/wallet-core-database/src/models/Ac
 import { type VaultDocType } from '@cfx-kit/wallet-core-database/src/models/Vault';
 import { type Database } from '@cfx-kit/wallet-core-database/src';
 import { ChainMethods } from '../../../../chains/base/src';
-import { VaultType } from '@cfx-kit/wallet-core-database/src';
+import { VaultTypeEnum } from '@cfx-kit/wallet-core-database/src';
 import { NoDocumentError } from '../utils/MethodError';
 
 export const getPrivateKeyOfAccountInChain = (
@@ -20,12 +20,12 @@ export const getPrivateKeyOfAccountInChain = (
       return { vault, account: accountDoc };
     })
     .then(({ vault, account }) => {
-      if (vault.type === VaultType.mnemonic) {
+      if (vault.type === VaultTypeEnum.mnemonic) {
         return getDerivedPrivateKey({
           mnemonic: vault.value,
           index: account.hdIndex,
         });
-      } else if (vault.type === VaultType.privateKey) {
+      } else if (vault.type === VaultTypeEnum.privateKey) {
         return vault.value;
       } else {
         throw new Error('Unsupported vault type');

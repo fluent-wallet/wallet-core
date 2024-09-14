@@ -2,11 +2,8 @@ import * as R from 'ramda';
 import { createDatabase, type Database } from '@cfx-kit/wallet-core-database/src';
 import { ChainMethods } from '@cfx-kit/wallet-core-chain/src';
 import { protectAddChain } from './mechanism/protectAddChain';
-import Encryptor from './mechanism/VaultEncryptor/Encryptor';
-import type InteractivePassword from './mechanism/VaultEncryptor/Password/InteractivePassword';
-import type SecureMemoryPassword from './mechanism/VaultEncryptor/Password/SecureMemoryPassword';
-export { default as InteractivePassword } from './mechanism/VaultEncryptor/Password/InteractivePassword';
-export { default as SecureMemoryPassword } from './mechanism/VaultEncryptor/Password/SecureMemoryPassword';
+export { default as InteractivePassword } from './mechanism/Encryptor/Password/InteractivePassword';
+export { default as SecureMemoryPassword } from './mechanism/Encryptor/Password/SecureMemoryPassword';
 
 type MethodWithDatabase<T> = (db: Database, ...args: any[]) => T;
 type MethodWithDBConstraint = MethodWithDatabase<any>;
@@ -43,7 +40,6 @@ class WalletClass<T extends MethodsMap = any, J extends ChainsMap = any> {
     chains?: J;
     injectDatabase?: Array<(db: Database) => any>;
     injectDatabasePromise?: Array<(dbPromise: Promise<Database>) => any>;
-    Password?: InteractivePassword | SecureMemoryPassword;
   }) {
     this.initPromise = new Promise<Awaited<ReturnType<typeof createDatabase>>>((resolve, reject) => {
       this.resolve = R.pipe(
@@ -70,8 +66,6 @@ class WalletClass<T extends MethodsMap = any, J extends ChainsMap = any> {
           this.chains = chains;
           if (typeof this.methods.addChain === 'function') {
             (this.methods as any).addChain = protectAddChain({ chains: this.chains, addChain: this.methods.addChain });
-          }
-          if (typeof this.methods.getPrivateKeyOfAccount) {
           }
         }
         if (Array.isArray(injectDatabase)) {

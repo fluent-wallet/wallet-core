@@ -22,7 +22,8 @@ function IndexPopup() {
       </button>
       <button
         onClick={async () => {
-          wallet.methods.addMnemonicVault('tag refuse output old identify oval major middle duck staff tube develop');
+          wallet.methods.addMnemonicVault({ mnemonic: 'tag refuse output old identify oval major middle duck staff tube develop', source: 'import' });
+
         }}
       >
         addMnemonicVaultImported

@@ -1,12 +1,12 @@
 import { addRxPlugin, createRxDatabase, type RxDatabase } from 'rxdb';
-import { vaultSchema, type VaultCollection } from './models/Vault';
+import { vaultSchema, type VaultCollection, type Encryptor } from './models/Vault';
 import { accountSchema, type AccountCollection } from './models/Account';
 import { addressSchema, type AddressCollection } from './models/Address';
 import { chainSchema, type ChainCollection } from './models/Chain';
 import { hdPathSchema, type HdPathCollection } from './models/HdPath';
 import TimestampPlugin from './plugins/timestamp';
 import IndexPlugin from './plugins/autoIndex';
-export { VaultTypeEnum as VaultType, VaultSourceEnum as VaultSource, PrivateKeyTypeEnum as PrivateKeyType } from './models/Vault';
+export { VaultTypeEnum, type VaultType, VaultSourceEnum, type VaultSource } from './models/Vault';
 addRxPlugin(TimestampPlugin);
 addRxPlugin(IndexPlugin);
 
@@ -22,7 +22,7 @@ export type Database = RxDatabase<DatabaseCollections>;
 
 type Storage = Parameters<typeof createRxDatabase>[0]['storage'];
 
-export const createDatabase = async ({ storage }: { storage: Storage }) => {
+export const createDatabase = async ({ storage, encryptor }: { storage: Storage; encryptor?: Encryptor }) => {
   const database: Database = await createRxDatabase<DatabaseCollections>({
     name: 'wallet-core',
     storage,
@@ -33,6 +33,14 @@ export const createDatabase = async ({ storage }: { storage: Storage }) => {
     vaults: {
       schema: vaultSchema,
       options: vaultSchema.options,
+      ...(encryptor
+        ? {
+            statics: {
+              encrypt: encryptor.encrypt.bind(encryptor),
+              decrypt: encryptor.decrypt.bind(encryptor),
+            },
+          }
+        : null),
     },
     accounts: {
       schema: accountSchema,

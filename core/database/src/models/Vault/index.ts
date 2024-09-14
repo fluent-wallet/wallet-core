@@ -12,9 +12,6 @@ const vaultSchemaLiteral = {
     type: {
       type: 'string',
     },
-    privateKeyType: {
-      type: 'string',
-    },
     source: {
       type: 'string',
     },
@@ -31,9 +28,7 @@ const vaultSchemaLiteral = {
   },
   required: ['value', 'type', 'source', 'isBackup'],
   options: {
-    autoIndex: true,
     createAt: true,
-    updatedAt: true,
   },
 } as const;
 
@@ -44,25 +39,29 @@ export enum VaultTypeEnum {
   hardware = 'hardware',
   BSIM = 'BSIM',
 }
-type VaultType = keyof typeof VaultTypeEnum;
-
-export enum PrivateKeyTypeEnum {
-  secp256k1 = 'secp256k1',
-  ed25519Hex32 = 'ed25519Hex32',
-  ed25519Base58 = 'ed25519Base58',
-}
-type PrivateKeyType = keyof typeof PrivateKeyTypeEnum;
+export type VaultType = keyof typeof VaultTypeEnum;
 
 export enum VaultSourceEnum {
   create = 'create',
   import = 'import',
 }
-type VaultSource = keyof typeof VaultSourceEnum;
 
-type Overwrite<T, U> = Omit<T, keyof U> & U;
+export type VaultSource = keyof typeof VaultSourceEnum;
+
+export interface Encryptor {
+  encrypt: (value: any) => Promise<string>;
+  decrypt: <T = unknown>(encryptedDataString: string) => Promise<T>;
+}
+
+export interface VaultCollectionMethods {
+  encrypt?: Encryptor['encrypt'];
+  decrypt?: Encryptor['decrypt'];
+}
 
 const schemaTyped = toTypedRxJsonSchema(vaultSchemaLiteral);
 type _VaultDocType = ExtractDocumentTypeFromTypedRxJsonSchema<typeof schemaTyped>;
-export type VaultDocType = Overwrite<_VaultDocType, { source: VaultSource; type: VaultType; privateKeyType?: PrivateKeyType; }>;
+export type VaultDocType = Overwrite<_VaultDocType, { source: VaultSource; type: VaultType }>;
 export const vaultSchema: RxJsonSchema<VaultDocType> & { options: Record<string, any> } = vaultSchemaLiteral;
-export type VaultCollection = RxCollection<VaultDocType>;
+export type VaultCollection = RxCollection<VaultDocType, {}, VaultCollectionMethods>;
+
+type Overwrite<T, U> = Omit<T, keyof U> & U;

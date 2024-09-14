@@ -1,8 +1,9 @@
 import { Mutex } from 'async-mutex';
 import crypto from 'crypto';
-
 const getRandomValues =
-  global.crypto && typeof global.crypto.getRandomValues === 'function' ? (global.crypto.getRandomValues as typeof crypto.getRandomValues) : crypto.getRandomValues;
+  typeof globalThis !== 'undefined' && globalThis.crypto && typeof globalThis.crypto.getRandomValues === 'function'
+    ? (globalThis.crypto.getRandomValues as typeof crypto.getRandomValues)
+    : crypto.getRandomValues;
 
 /**
  * Passwords in memory should not exist in plain text. Therefore, here we add a salt and then use XOR for simple obfuscation.

@@ -1,3 +1,3 @@
-export * from './account/addMnemonicVault';
-export * from './account/getPrivateKeyOfAccount';
+export * from './account/addVault';
+export * from './account/getPrivateKeyOfAccountInChain';
 export * from './chain/addChain';

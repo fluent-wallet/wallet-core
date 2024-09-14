@@ -7,5 +7,7 @@ import wallet from './wallet';
   <Vaults />
 
   <button @click="wallet.methods.addMnemonicVault()">addMnemonicVaultCreate</button>
-  <button @click="wallet.methods.addMnemonicVault('tag refuse output old identify oval major middle duck staff tube develop')">addMnemonicVaultImported</button>
+  <button @click="wallet.methods.addMnemonicVault({ mnemonic: 'tag refuse output old identify oval major middle duck staff tube develop', source: 'import' })">
+    addMnemonicVaultImported
+  </button>
 </template>

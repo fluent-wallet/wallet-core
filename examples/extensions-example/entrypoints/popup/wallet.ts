@@ -3,8 +3,7 @@ import WalletClass from '@cfx-kit/wallet-core-wallet/src';
 import methods from '@cfx-kit/wallet-core-methods/src/allMethods';
 import { inject } from '@cfx-kit/wallet-core-react-inject/src';
 
-const wallet = new WalletClass<typeof methods>();
-wallet.init({
+const wallet = new WalletClass<typeof methods>({
   databaseOptions: {
     storage: getRxStorageDexie(),
   },

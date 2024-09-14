@@ -8,8 +8,7 @@ import { inject } from '@cfx-kit/wallet-core-react-inject/src';
 export default defineBackground({
   type: 'module',
   main: () => {
-    const wallet = new WalletClass<typeof methods>();
-    wallet.init({
+    const wallet = new WalletClass<typeof methods>({
       databaseOptions: {
         storage: getRxStorageDexie(),
       },
