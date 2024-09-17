@@ -22,9 +22,9 @@ export type Database = RxDatabase<DatabaseCollections>;
 
 type Storage = Parameters<typeof createRxDatabase>[0]['storage'];
 
-export const createDatabase = async ({ storage, encryptor }: { storage: Storage; encryptor?: Encryptor }) => {
+export const createDatabase = async ({ storage, encryptor, dbName = 'wallet-core' }: { storage: Storage; dbName?: string; encryptor?: Encryptor }) => {
   const database: Database = await createRxDatabase<DatabaseCollections>({
-    name: 'wallet-core',
+    name: dbName,
     storage,
     multiInstance: true,
   });

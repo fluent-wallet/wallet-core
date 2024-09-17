@@ -1,20 +1,11 @@
-import * as R from 'ramda';
-export { validateMnemonic } from '@scure/bip39';
-import { VaultTypeEnum, type Database } from '@cfx-kit/wallet-core-database/src';
+import { type Database } from '@cfx-kit/wallet-core-database/src';
 
-export const encryptVaultValue = R.curry(async (database: Database, field: string, obj: any) => {
-  const value = obj[field];
-  const encryptedValue = typeof database.vaults.encrypt === 'function' ? await database.vaults.encrypt(value) : value;
-  return {
-    ...obj,
-    [field]: encryptedValue,
-  };
-}) as <T extends Record<string, any>>(database: Database, field: keyof T, obj: T) => Promise<T>;
+export const encryptVaultValue = async (database: Database, value: string) => (typeof database.vaults.encrypt === 'function' ? await database.vaults.encrypt(value) : value);
 
 export const decryptVaultValue = async (database: Database, value: string) =>
   typeof database.vaults.decrypt === 'function' ? await database.vaults.decrypt<string>(value) : value;
 
-type VaultNeedBeEncrypted = VaultTypeEnum.privateKey | VaultTypeEnum.mnemonic;
+type VaultNeedBeEncrypted = 'privateKey' | 'mnemonic';
 const getAllEncryptedVaultsOfType = async (database: Database, type: VaultNeedBeEncrypted) =>
   database.vaults
     .find({

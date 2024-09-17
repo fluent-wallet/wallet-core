@@ -11,7 +11,6 @@ const KEY_DERIVATION_ITERATIONS = 5000;
 const AES_KEY_LENGTH = 256;
 
 const isSupportWebCryptoAPI = typeof globalThis !== 'undefined' && globalThis.crypto && typeof globalThis.crypto.subtle === 'object';
-
 const base64ToArrayBuffer = (base64: string): ArrayBuffer => Uint8Array.from(atob(base64), (c) => c.charCodeAt(0)).buffer;
 
 const arrayBufferToBase64 = (buffer: ArrayBuffer): string => btoa(String.fromCharCode(...new Uint8Array(buffer)));

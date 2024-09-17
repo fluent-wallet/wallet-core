@@ -1,56 +1,98 @@
-import { BehaviorSubject, filter } from 'rxjs';
+import { ReplaySubject, filter } from 'rxjs';
+
+export class PasswordRequestTimeoutError extends Error {
+  message = 'Password request timeout';
+  code = -2010289;
+}
 
 export interface PasswordRequest {
   resolve(value: string): void;
   reject(reason?: any): void;
+  timestamp: number;
+}
+
+export interface InteractivePasswordOptions {
+  cacheTime?: number;
+  timeout?: number;
 }
 
 class InteractivePassword {
-  private passwordRequestSubject = new BehaviorSubject<PasswordRequest | null>(null);
-  private pwdCache: string | null = null;
-  private getPasswordPromise: Promise<string | null> | null = null;
-  private pwdCacheTimer: NodeJS.Timeout | null = null;
-  private cacheTime = 750; // ms
+  readonly #options: Required<InteractivePasswordOptions>;
+  readonly #passwordRequestSubject = new ReplaySubject<PasswordRequest>(1);
+  #pwdCache: string | null = null;
+  #cacheExpiration: number = 0;
+  #currentPasswordPromise: Promise<string> | null = null;
 
-  public subPasswordRequest() {
-    return this.passwordRequestSubject.pipe(filter((v) => v !== null));
+  constructor(options: InteractivePasswordOptions = {}) {
+    this.#options = {
+      cacheTime: options.cacheTime ?? 750,
+      timeout: options.timeout ?? 5000,
+    };
   }
 
-  public clearPasswordRequest() {
-    this.passwordRequestSubject.next(null);
+  public get passwordRequest$() {
+    return this.#passwordRequestSubject.asObservable().pipe(
+      filter((request) => {
+        const now = Date.now();
+        return now - request.timestamp <= this.#options.cacheTime;
+      }),
+    );
   }
 
-  public getPassword = async () => {
-    if (this.getPasswordPromise) return this.getPasswordPromise;
-    this.getPasswordPromise = new Promise<string>((_resolve, _reject) => {
-      if (!this.pwdCache) {
-        if (this.pwdCacheTimer !== null) {
-          clearTimeout(this.pwdCacheTimer);
-          this.pwdCacheTimer = null;
-        }
+  public getPassword() {
+    if (this.#isPasswordCached()) {
+      return Promise.resolve(this.#pwdCache);
+    }
 
-        this.passwordRequestSubject.next({
-          resolve: (pwd: string) => {
-            this.pwdCache = pwd;
-            _resolve(pwd);
-            this.pwdCacheTimer = setTimeout(() => {
-              this.pwdCache = null;
-              this.pwdCacheTimer = null;
-            }, this.cacheTime);
-          },
-          reject: (err: any) => {
-            this.pwdCache = null;
-            _reject(err);
-          },
-        });
-      } else {
-        _resolve(this.pwdCache);
-      }
-    }).finally(() => {
-      this.getPasswordPromise = null;
+    if (this.#currentPasswordPromise) {
+      return this.#currentPasswordPromise;
+    }
+
+    this.#currentPasswordPromise = this.#requestNewPassword();
+    this.#currentPasswordPromise
+      .then((pwd) => {
+        this.#cachePassword(pwd);
+      })
+      .catch(() => {})
+      .finally(() => {
+        this.#currentPasswordPromise = null;
+      });
+    return this.#currentPasswordPromise;
+  }
+
+  async #requestNewPassword() {
+    return new Promise<string>((resolve, reject) => {
+      const timeoutId = setTimeout(() => {
+        reject(new PasswordRequestTimeoutError());
+      }, this.#options.timeout);
+
+      this.#passwordRequestSubject.next({
+        resolve: (value: string) => {
+          clearTimeout(timeoutId);
+          resolve(value);
+        },
+        reject: (reason?: any) => {
+          clearTimeout(timeoutId);
+          reject(reason);
+        },
+        timestamp: Date.now(),
+      });
     });
-    return this.getPasswordPromise;
-  };
+  }
+
+  #isPasswordCached() {
+    return this.#pwdCache !== null && (Date.now() < this.#cacheExpiration);
+  }
+
+  #cachePassword(pwd: string) {
+    this.#pwdCache = pwd;
+    this.#cacheExpiration = Date.now() + this.#options.cacheTime;
+  }
+
+  public clearCache(): void {
+    this.#pwdCache = null;
+    this.#cacheExpiration = 0;
+  }
 }
 
 export default InteractivePassword;

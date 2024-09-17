@@ -2,31 +2,31 @@ import { Mutex } from 'async-mutex';
 import crypto from 'crypto';
 const getRandomValues =
   typeof globalThis !== 'undefined' && globalThis.crypto && typeof globalThis.crypto.getRandomValues === 'function'
-    ? (globalThis.crypto.getRandomValues as typeof crypto.getRandomValues)
-    : crypto.getRandomValues;
+    ? (globalThis.crypto.getRandomValues.bind(globalThis.crypto) as typeof crypto.getRandomValues)
+    : crypto.getRandomValues.bind(crypto);
 
+interface SecureMemoryPasswordOptions {
+  updateInterval?: number;
+}
 /**
  * Passwords in memory should not exist in plain text. Therefore, here we add a salt and then use XOR for simple obfuscation.
  * Each time it is used, check the last update time.
  * If it exceeds the time specified by updateInterval (default 5 minutes), update the salt and re-encrypt it.
  */
 class SecureMemoryPassword {
-  private data: Uint8Array;
-  private salt: Uint8Array;
-  private lastUpdate: number;
+  private data: Uint8Array = null!;
+  private salt: Uint8Array = null!;
+  private lastUpdate: number = null!;
   private readonly updateInterval: number;
   private mutex: Mutex;
 
-  private constructor(password: string, updateIntervalMs: number = 60000 * 5) {
-    this.salt = getRandomValues(new Uint8Array(32));
-    this.data = this.encode(password);
-    this.lastUpdate = Date.now();
-    this.updateInterval = updateIntervalMs;
+  public constructor(options: SecureMemoryPasswordOptions = {}) {
+    this.updateInterval = options?.updateInterval ?? 60000 * 5;
     this.mutex = new Mutex();
   }
 
-  public static create(password: string, updateIntervalMs?: number): SecureMemoryPassword {
-    return new SecureMemoryPassword(password, updateIntervalMs);
+  public static create(options: SecureMemoryPasswordOptions = {}): SecureMemoryPassword {
+    return new SecureMemoryPassword(options);
   }
 
   private encode(password: string): Uint8Array {
@@ -68,7 +68,16 @@ class SecureMemoryPassword {
     });
   }
 
+  public setPassword(password: string) {
+    this.salt = getRandomValues(new Uint8Array(32));
+    this.data = this.encode(password);
+    this.lastUpdate = Date.now();
+  }
+
   public async getPassword(): Promise<string> {
+    if (!this.data) {
+      throw new Error('Password is not set');
+    }
     await this.updateEncoding();
     return this.mutex.runExclusive(() => this.decode());
   }

@@ -1,5 +1,5 @@
-import { addMnemonicVault } from './account/addVault';
-import { getPrivateKeyOfAccountInChain } from './account/getPrivateKeyOfAccountInChain';
+import { addMnemonicVault } from './accountSystem/vault/addVault';
+import { getPrivateKeyOfAccountInChain } from './accountSystem/getPrivateKeyOfAccountInChain';
 import { addChain } from './chain/addChain';
 
 const methods = {
