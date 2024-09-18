@@ -1,7 +1,7 @@
 import { getRxStorageMemory } from 'rxdb/plugins/storage-memory';
 import Encryptor from './src/mechanism/Encryptor';
 import type InteractivePassword from './src/mechanism/Encryptor/Password/InteractivePassword';
-import type SecureMemoryPassword from './src/mechanism/Encryptor/Password/SecureMemoryPassword';
+import type MemoryPassword from './src/mechanism/Encryptor/Password/MemoryPassword';
 import WalletClass from './src';
 import methods from '../methods/src/allMethods';
 import ConfluxChainMethods, { ConfluxNetworkType } from '../../chains/conflux/src';

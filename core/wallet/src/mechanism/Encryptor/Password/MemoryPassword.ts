@@ -5,7 +5,7 @@ const getRandomValues =
     ? (globalThis.crypto.getRandomValues.bind(globalThis.crypto) as typeof crypto.getRandomValues)
     : crypto.getRandomValues.bind(crypto);
 
-interface SecureMemoryPasswordOptions {
+interface MemoryPasswordOptions {
   updateInterval?: number;
 }
 /**
@@ -13,20 +13,16 @@ interface SecureMemoryPasswordOptions {
  * Each time it is used, check the last update time.
  * If it exceeds the time specified by updateInterval (default 5 minutes), update the salt and re-encrypt it.
  */
-class SecureMemoryPassword {
+class MemoryPassword {
   private data: Uint8Array = null!;
   private salt: Uint8Array = null!;
   private lastUpdate: number = null!;
   private readonly updateInterval: number;
   private mutex: Mutex;
 
-  public constructor(options: SecureMemoryPasswordOptions = {}) {
+  public constructor(options: MemoryPasswordOptions = {}) {
     this.updateInterval = options?.updateInterval ?? 60000 * 5;
     this.mutex = new Mutex();
-  }
-
-  public static create(options: SecureMemoryPasswordOptions = {}): SecureMemoryPassword {
-    return new SecureMemoryPassword(options);
   }
 
   private encode(password: string): Uint8Array {
@@ -91,4 +87,4 @@ class SecureMemoryPassword {
   }
 }
 
-export default SecureMemoryPassword;
+export default MemoryPassword;

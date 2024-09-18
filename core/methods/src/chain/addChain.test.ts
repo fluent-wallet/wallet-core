@@ -4,8 +4,8 @@ import { UniquePrimaryKeyError } from '../utils/MethodError';
 import { ConfluxMainnet, ConfluxTestnet } from './../../../../chains/conflux/src/chains';
 import { SolanaMainnet } from './../../../../chains/solana/src/chains';
 
-const { wallet } = global.createNewWallet({ encryptor: 'Memory' });
-beforeAll(() => wallet.initPromise);
+const { wallet, jestInitPromise } = global.createNewWallet({ encryptor: 'Memory' });
+beforeAll(() => jestInitPromise);
 
 describe('addChain Test', () => {
   test('add a chain', async () => {

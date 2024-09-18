@@ -2,9 +2,9 @@ import { addMnemonicVault, validateMnemonic, englishWordList } from './addVault'
 import { VaultTypeEnum, VaultSourceEnum } from '@cfx-kit/wallet-core-database/src';
 import { UniquePrimaryKeyError } from '../../utils/MethodError';
 
-const { wallet } = global.createNewWallet({ encryptor: 'Memory' });
-const { wallet: walletWithoutEncryptor } = global.createNewWallet({ encryptor: false });
-beforeAll(() => Promise.all([wallet.initPromise, walletWithoutEncryptor.initPromise]));
+const { wallet, jestInitPromise } = global.createNewWallet({ encryptor: 'Memory' });
+const { wallet: walletWithoutEncryptor, jestInitPromise: jestInitPromise2 } = global.createNewWallet({ encryptor: false });
+beforeAll(() => Promise.all([jestInitPromise, jestInitPromise2]));
 
 describe('addVault test', () => {
   test('create a new random mnemonic vault with Memory encryptor', async () => {

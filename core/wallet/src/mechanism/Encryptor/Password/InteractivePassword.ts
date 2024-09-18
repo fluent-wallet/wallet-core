@@ -5,6 +5,11 @@ export class PasswordRequestTimeoutError extends Error {
   code = -2010289;
 }
 
+export class PasswordRequestUserCancelError extends Error {
+  message = 'User canceled password request';
+  code = -2010288;
+}
+
 export interface PasswordRequest {
   resolve(value: string): void;
   reject(reason?: any): void;
@@ -25,7 +30,7 @@ class InteractivePassword {
 
   constructor(options: InteractivePasswordOptions = {}) {
     this.#options = {
-      cacheTime: options.cacheTime ?? 750,
+      cacheTime: options.cacheTime ?? 250,
       timeout: options.timeout ?? 5000,
     };
   }
@@ -34,14 +39,14 @@ class InteractivePassword {
     return this.#passwordRequestSubject.asObservable().pipe(
       filter((request) => {
         const now = Date.now();
-        return now - request.timestamp <= this.#options.cacheTime;
+        return now - request.timestamp <= this.#options.timeout;
       }),
     );
   }
 
   public getPassword() {
     if (this.#isPasswordCached()) {
-      return Promise.resolve(this.#pwdCache);
+      return Promise.resolve(this.#pwdCache!);
     }
 
     if (this.#currentPasswordPromise) {

@@ -2,7 +2,8 @@
   "name": "@cfx-kit/wallet-core-methods",
   "version": "0.0.0",
   "scripts": {
-    "build": "tsup --dts"
+    "build": "tsup --dts",
+    "test": "jest"
   },
   "dependencies": {
     "@cfx-kit/wallet-core-chain": "workspace:*",

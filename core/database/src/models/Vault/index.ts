@@ -49,8 +49,8 @@ export enum VaultSourceEnum {
 export type VaultSource = keyof typeof VaultSourceEnum;
 
 export interface Encryptor {
-  encrypt: (value: any) => Promise<string>;
-  decrypt: <T = unknown>(encryptedDataString: string) => Promise<T>;
+  encrypt: (value: any, password?: string) => Promise<string>;
+  decrypt: <T = unknown>(encryptedDataString: string, password?: string) => Promise<T>;
 }
 
 export interface VaultCollectionMethods {
