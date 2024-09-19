@@ -8,13 +8,16 @@ import { RxDBStatePlugin } from 'rxdb/plugins/state';
 import { RxDBPipelinePlugin } from 'rxdb/plugins/pipeline';
 import { RxDBLeaderElectionPlugin } from 'rxdb/plugins/leader-election';
 import TimestampPlugin from './plugins/timestamp';
-import IndexPlugin from './plugins/autoIndex';
+import AutoIndexPlugin from './plugins/autoIndex';
+import UniqueIdPlugin from './plugins/uniqueId';
+
 export { VaultTypeEnum, type VaultType, VaultSourceEnum, type VaultSource } from './models/Vault';
 addRxPlugin(RxDBStatePlugin);
 addRxPlugin(RxDBPipelinePlugin);
 addRxPlugin(RxDBLeaderElectionPlugin);
 addRxPlugin(TimestampPlugin);
-addRxPlugin(IndexPlugin);
+addRxPlugin(UniqueIdPlugin);
+addRxPlugin(AutoIndexPlugin);
 
 export interface DatabaseCollections {
   vaults: VaultCollection;

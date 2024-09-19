@@ -3,6 +3,7 @@ import { generateMnemonic, validateMnemonic } from '@scure/bip39';
 import { wordlist as englishWordList } from '@scure/bip39/wordlists/english';
 export { generateMnemonic, validateMnemonic, englishWordList };
 import { VaultSourceEnum, VaultTypeEnum, type VaultSource, type Database } from '@cfx-kit/wallet-core-database/src';
+import { type VaultDocType } from '@cfx-kit/wallet-core-database/src/models/Vault';
 import { encryptVaultValue, isVaultExist } from './vaultEncryptor';
 import { getLastVaultAutoIndexOfType } from './basic';
 import { UniquePrimaryKeyError } from '../../utils/MethodError';
@@ -50,7 +51,7 @@ export const addMnemonicVault = (database: Database, params?: MnemonicVaultParam
       source,
       isBackup: source === VaultSourceEnum.import,
     })),
-    R.andThen((data) => database.vaults.insert(data)),
+    R.andThen((data) => database.vaults.insert(data as unknown as VaultDocType)),
   )(params);
 
 /* <----------------------------------------------------------------------------------------------------------------> */
@@ -78,5 +79,5 @@ export const addPrivateKeyVault = (database: Database, params: PrivateKeyVaultPa
       source,
       isBackup: source === VaultSourceEnum.import,
     })),
-    R.andThen((data) => database.vaults.insert(data)),
+    R.andThen((data) => database.vaults.insert(data as unknown as VaultDocType)),
   )(params);

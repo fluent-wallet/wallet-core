@@ -3,12 +3,16 @@ import { type EnhanceAutoIndex } from '../../plugins/autoIndex';
 
 const vaultSchemaLiteral = {
   version: 0,
-  primaryKey: 'value',
+  primaryKey: 'id',
   type: 'object',
   properties: {
+    id: {
+      type: 'string',
+      final: true,
+      maxLength: 32
+    },
     value: {
       type: 'string',
-      maxLength: 128,
     },
     name: {
       type: 'string',
@@ -31,10 +35,11 @@ const vaultSchemaLiteral = {
       },
     },
   },
-  required: ['value', 'name', 'type', 'source', 'isBackup'],
+  required: ['id', 'value', 'name', 'type', 'source', 'isBackup'],
   indexes: ['type'],
   options: {
     autoIndex: true,
+    uniqueId: true
   },
 } as const;
 

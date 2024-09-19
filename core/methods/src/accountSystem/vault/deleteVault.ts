@@ -3,13 +3,13 @@ import { type VaultDocType } from '@cfx-kit/wallet-core-database/src/models/Vaul
 import { type DeepReadonly } from 'rxdb';
 import { ParamsError, NoDocumentError } from '../../utils';
 
-export const deleteVault = async (database: Database, vaultOrValue: string | VaultDocType | DeepReadonly<VaultDocType>) => {
-  const targetVaultValue = typeof vaultOrValue === 'string' ? vaultOrValue : vaultOrValue?.value;
-  if (!targetVaultValue) {
-    return Promise.reject(new ParamsError('Invalid vault or value'));
+export const deleteVault = async (database: Database, vaultIdOrVault: string | VaultDocType | DeepReadonly<VaultDocType>) => {
+  const targetId = typeof vaultIdOrVault === 'string' ? vaultIdOrVault : vaultIdOrVault?.id;
+  if (!targetId) {
+    return Promise.reject(new ParamsError('Invalid vault or id.'));
   }
 
-  const targetVault = await database.vaults.findOne(targetVaultValue).exec();
+  const targetVault = await database.vaults.findOne(targetId).exec();
   if (!targetVault) {
     return Promise.reject(new NoDocumentError('No vault found in the database.'));
   }

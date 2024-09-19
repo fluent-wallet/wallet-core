@@ -1,12 +1,12 @@
 import { of, map } from 'rxjs';
 import { type Database } from '@cfx-kit/wallet-core-database/src';
 
-export const observeAccountsOfVault = (database: Database | undefined, vaultValue: string | null) => {
-  if (!database || !vaultValue) return of(undefined);
+export const observeAccountsOfVault = (database: Database | undefined, vaultId: string | null) => {
+  if (!database || !vaultId) return of(undefined);
   return database.accounts
     .find({
       selector: {
-        vault: vaultValue,
+        vault: vaultId,
       },
       sort: [{ createAt: 'asc' }],
     })

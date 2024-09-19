@@ -3,10 +3,10 @@ import { atomFamily, atomWithObservable } from 'jotai/utils';
 import { databaseAtom } from '../store';
 import { observeAccountsOfVault } from '@cfx-kit/wallet-core-observable/src/account/account';
 
-export const accountsAtomFamilyOfVault = atomFamily((vaultValue: string | null) =>
-  atomWithObservable((get) => observeAccountsOfVault(get(databaseAtom), vaultValue), {
+export const accountsAtomFamilyOfVault = atomFamily((vaultId: string | null) =>
+  atomWithObservable((get) => observeAccountsOfVault(get(databaseAtom), vaultId), {
     initialValue: null,
   }),
 );
 
-export const useAccountsOfVault = (vaultValue: string | null) => useAtomValue(accountsAtomFamilyOfVault(vaultValue));
+export const useAccountsOfVault = (vaultId: string | null) => useAtomValue(accountsAtomFamilyOfVault(vaultId));

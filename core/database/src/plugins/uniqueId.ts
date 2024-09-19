@@ -1,11 +1,12 @@
 import type { RxPlugin } from 'rxdb';
+import { v4 as uuid } from 'uuid';
 
 const fieldsConfig = {
-  autoIndex: { type: 'integer', final: true },
+  id: { type: 'string', final: true, maxLength: 32 },
 };
 
-const autoIndex: RxPlugin = {
-  name: 'autoIndex',
+const uniqueId: RxPlugin = {
+  name: 'uniqueId',
   rxdb: true,
   overwritable: {},
   hooks: {
@@ -27,21 +28,15 @@ const autoIndex: RxPlugin = {
     createRxCollection: {
       before: function ({ collection }) {
         const options = collection.options;
-        if (options?.autoIndex) {
-          collection.preInsert(async (plainData) => {
-            const lastIndex: number = await collection
-              .findOne({ sort: [{ autoIndex: 'desc' }] })
-              .exec()
-              .then((doc) => (!doc ? 0 : doc.autoIndex));
-            plainData.autoIndex = lastIndex + 1;
-          }, false);
+        if (options?.uniqueId) {
+          collection.preInsert((plainData) => (plainData.id = uuid()), false);
         }
       },
     },
   },
 };
 
-export type EnhanceAutoIndex<T> = T & { autoIndex: number };
-export type RemoveAutoIndex<T> = Omit<T, 'autoIndex'>;
+export type EnhanceUniqueId<T> = T & { id: string };
+export type RemoveUniqueId<T> = Omit<T, 'id'>;
 
-export default autoIndex;
+export default uniqueId;

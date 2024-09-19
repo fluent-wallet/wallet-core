@@ -11,7 +11,7 @@ const accountSchemaLiteral = {
   properties: {
     id: {
       type: 'string',
-      maxLength: 128,
+      maxLength: 256,
     },
     hdIndex: {
       type: 'number',
