@@ -51,4 +51,10 @@ const TimestampPlugin: RxPlugin = {
   },
 };
 
+export type EnhanceCreateAt<T> = T & { createAt: number };
+export type RemoveCreateAt<T> = Omit<T, 'createAt'>;
+export type EnhanceUpdatedAt<T> = T & { updatedAt: number };
+export type RemoveUpdatedAt<T> = Omit<T, 'updatedAt'>;
+
+
 export default TimestampPlugin;

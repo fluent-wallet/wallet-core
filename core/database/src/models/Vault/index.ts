@@ -1,4 +1,5 @@
 import { toTypedRxJsonSchema, type RxCollection, type ExtractDocumentTypeFromTypedRxJsonSchema, type RxJsonSchema } from 'rxdb';
+import { type EnhanceAutoIndex } from '../../plugins/autoIndex';
 
 const vaultSchemaLiteral = {
   version: 0,
@@ -33,8 +34,7 @@ const vaultSchemaLiteral = {
   required: ['value', 'name', 'type', 'source', 'isBackup'],
   indexes: ['type'],
   options: {
-    createAt: true,
-    autoIndex: true
+    autoIndex: true,
   },
 } as const;
 
@@ -67,6 +67,7 @@ export interface VaultCollectionMethods {
 const schemaTyped = toTypedRxJsonSchema(vaultSchemaLiteral);
 type _VaultDocType = ExtractDocumentTypeFromTypedRxJsonSchema<typeof schemaTyped>;
 export type VaultDocType = Overwrite<_VaultDocType, { source: VaultSource; type: VaultType }>;
+export type VaultDocTypeEnhance = EnhanceAutoIndex<VaultDocType>;
 export const vaultSchema: RxJsonSchema<VaultDocType> & { options: Record<string, any> } = vaultSchemaLiteral;
 export type VaultCollection = RxCollection<VaultDocType, {}, VaultCollectionMethods>;
 

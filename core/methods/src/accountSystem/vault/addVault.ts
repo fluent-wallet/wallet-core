@@ -4,7 +4,7 @@ import { wordlist as englishWordList } from '@scure/bip39/wordlists/english';
 export { generateMnemonic, validateMnemonic, englishWordList };
 import { VaultSourceEnum, VaultTypeEnum, type VaultSource, type Database } from '@cfx-kit/wallet-core-database/src';
 import { encryptVaultValue, isVaultExist } from './vaultEncryptor';
-import { getVaultsCountOfType } from './basic';
+import { getLastVaultAutoIndexOfType } from './basic';
 import { UniquePrimaryKeyError } from '../../utils/MethodError';
 
 const encryptField = R.curry(async <T extends Record<string, any>>(database: Database, field: keyof T, obj: T) => {
@@ -40,7 +40,7 @@ export const addMnemonicVault = (database: Database, params?: MnemonicVaultParam
     }) as (params: MnemonicVaultParams) => Required<MnemonicVaultParams>,
     (params) => checkMnemonicExist(database, params),
     R.andThen((params: Required<MnemonicVaultParams>) =>
-      getVaultsCountOfType(database, VaultTypeEnum.mnemonic).then((count) => ({ ...params, name: params.name || `Wallet ${count + 1}` })),
+      getLastVaultAutoIndexOfType(database, VaultTypeEnum.mnemonic).then((index) => ({ ...params, name: params.name || `Wallet ${index + 1}` })),
     ),
     R.andThen((params: Required<MnemonicVaultParams>) => encryptField(database, 'mnemonic', params)),
     R.andThen(({ mnemonic, source, name }) => ({

@@ -28,13 +28,16 @@ const autoIndex: RxPlugin = {
         const options = collection.options;
         if (options?.autoIndex) {
           collection.preInsert(async (plainData) => {
-            const count = await collection.count().exec();
-            plainData.autoIndex = count;
+            const lastIndex: number = await collection.findOne({ sort: [{ autoIndex: 'desc' }] }).exec().then((doc) => !doc ? 0 : doc.autoIndex);
+            plainData.autoIndex = lastIndex + 1;
           }, false);
         }
       },
     },
   },
 };
+
+export type EnhanceAutoIndex<T> = T & { autoIndex: number };
+export type RemoveAutoIndex<T> = Omit<T, 'autoIndex'>;
 
 export default autoIndex;
