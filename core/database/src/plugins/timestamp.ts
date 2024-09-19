@@ -41,10 +41,10 @@ const TimestampPlugin: RxPlugin = {
       before: function ({ collection }) {
         const options = collection.options;
         if (options?.createAt) {
-          collection.preInsert((plainData) => (plainData.createAt = new Date().toISOString()), false);
+          collection.preInsert((plainData) => (plainData.createAt = Date.now()), false);
         }
         if (options?.updatedAt) {
-          collection.preSave((plainData) => (plainData.updatedAt = new Date().toISOString()), false);
+          collection.preSave((plainData) => (plainData.updatedAt = Date.now()), false);
         }
       },
     },

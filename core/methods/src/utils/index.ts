@@ -1,6 +1,7 @@
 import * as R from 'ramda';
 import { RxError } from 'rxdb';
 import { UniquePrimaryKeyError, type MethodError } from './MethodError';
+export * from './MethodError';
 
 const createIsSpecificError = (regStr: string) => R.test(new RegExp(regStr));
 const createIsRxError = (err: any) => err instanceof RxError;

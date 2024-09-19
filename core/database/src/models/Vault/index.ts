@@ -14,6 +14,7 @@ const vaultSchemaLiteral = {
     },
     type: {
       type: 'string',
+      maxLength: 32,
     },
     source: {
       type: 'string',
@@ -33,6 +34,7 @@ const vaultSchemaLiteral = {
   indexes: ['type'],
   options: {
     createAt: true,
+    autoIndex: true
   },
 } as const;
 

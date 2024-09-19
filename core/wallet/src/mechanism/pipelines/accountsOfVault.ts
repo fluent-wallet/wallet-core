@@ -12,7 +12,7 @@ export const accountsOfVault = (database: Database) => {
         hidden: false,
         vault: vault.value,
       }) as AccountDocType);
-      // database.accounts.bulkInsert(insertAccounts);
+      database.accounts.bulkInsert(insertAccounts);
     }
   });
 }

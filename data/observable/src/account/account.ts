@@ -8,6 +8,7 @@ export const observeAccountsOfVault = (database: Database | undefined, vaultValu
       selector: {
         vault: vaultValue,
       },
+      sort: [{ createAt: 'asc' }],
     })
     .$.pipe(map((accounts) => (!accounts || !accounts.length ? null : accounts.map((account) => account.toJSON()))));
 };

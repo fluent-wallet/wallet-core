@@ -11,6 +11,7 @@ describe('addVault test', () => {
     const vault = await addMnemonicVault(wallet.database);
     expect(vault).toEqual(
       expect.objectContaining({
+        name: expect.any(String),
         value: expect.any(String),
         type: VaultTypeEnum.mnemonic,
         source: VaultSourceEnum.create,
@@ -24,6 +25,7 @@ describe('addVault test', () => {
     const vault = await addMnemonicVault(walletWithoutEncryptor.database);
     expect(vault).toEqual(
       expect.objectContaining({
+        name: expect.any(String),
         value: expect.any(String),
         type: VaultTypeEnum.mnemonic,
         source: VaultSourceEnum.create,
@@ -38,6 +40,7 @@ describe('addVault test', () => {
     const vault = await addMnemonicVault(wallet.database, { mnemonic: aMnemonic, source: VaultSourceEnum.import });
     expect(vault).toEqual(
       expect.objectContaining({
+        name: expect.any(String),
         value: expect.any(String),
         type: VaultTypeEnum.mnemonic,
         source: VaultSourceEnum.import,
@@ -53,6 +56,7 @@ describe('addVault test', () => {
     const vault = await addMnemonicVault(walletWithoutEncryptor.database, { mnemonic: aMnemonic, source: VaultSourceEnum.import });
     expect(vault).toEqual(
       expect.objectContaining({
+        name: expect.any(String),
         value: aMnemonic,
         type: VaultTypeEnum.mnemonic,
         source: VaultSourceEnum.import,
