@@ -23,10 +23,8 @@ const wallet = new WalletClass<typeof methods>({
 
 export default wallet;
 
-const initPasswordPromise = wallet.methods.initPassword('12345678');
-
 async function interactivePasswordExample() {
-  await initPasswordPromise;
+  await wallet.methods.initPassword('12345678');
   interactivePassword.passwordRequest$.subscribe(async (request) => {
     const password = prompt('Please input password', '12345678');
     if (password) {
@@ -42,7 +40,7 @@ async function interactivePasswordExample() {
 }
 
 async function memoryPasswordExample() {
-  await initPasswordPromise;
+  await wallet.methods.initPassword('12345678');
   let isValid = false;
   while (!isValid) {
     const password = prompt('Please set memory password', '12345678');

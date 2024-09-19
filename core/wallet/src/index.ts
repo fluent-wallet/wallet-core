@@ -2,6 +2,7 @@ import * as R from 'ramda';
 import { createDatabase, type Database } from '@cfx-kit/wallet-core-database/src';
 import { ChainMethods } from '@cfx-kit/wallet-core-chain/src';
 import { protectAddChain } from './mechanism/protectAddChain';
+import pipelines from './mechanism/pipelines';
 export { default as InteractivePassword } from './mechanism/Encryptor/Password/InteractivePassword';
 export { default as SecureMemoryPassword } from './mechanism/Encryptor/Password/MemoryPassword';
 export { IncorrectPassworError } from './mechanism/Encryptor/Encryptor';
@@ -112,6 +113,7 @@ class WalletClass<T extends MethodsMap = any, J extends ChainsMap = any> {
         if (Array.isArray(injectDatabase)) {
           injectDatabase.forEach((fn) => fn?.(database));
         }
+        pipelines.forEach((pipeline) => pipeline(database));
         this.resolve(database);
       })
       .catch((reason) => {

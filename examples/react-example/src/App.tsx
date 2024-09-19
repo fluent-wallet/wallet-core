@@ -1,16 +1,37 @@
+import { useEffect } from 'react';
 import { useVaults } from '@cfx-kit/wallet-core-react-inject/src';
 import wallet from './wallet';
 
 const Vaults = () => {
   const vaults = useVaults();
-  return <h2>valuts length: {Array.isArray(vaults) ? vaults?.length : -1}</h2>;
-};
+  return (
+    <div>
+      <h2>vaults length: {vaults?.length || 0}</h2>
+      <div>
+        {vaults?.map((vault, index) => <div key={vault.value} style={{ background: index % 2 === 0 ? 'red' : 'green', height: 88 }}>
+          <div>{vault.name}</div>
+          <button onClick={() => wallet.methods.deleteVault(vault)}>delete</button>
+        </div>)}
+      </div>
+    </div>
+
+  )
+}
 
 function IndexPopup() {
+  useEffect(() => {
+    const func = async () => {
+      wallet.methods.getVaultsCountOfType('mnemonic').then(res => {
+        console.log('getVaultsCountOfType', res);
+      }).catch(err => {
+        console.log('Error getVaultsCountOfType', err);
+      });
+    }
+    func();
+  }, []);
 
   return (
     <div>
-      <Vaults />
       <button
         onClick={async () => {
           wallet.methods.addMnemonicVault();
@@ -25,6 +46,7 @@ function IndexPopup() {
       >
         addMnemonicVaultImported
       </button>
+      <Vaults />
     </div>
   );
 }

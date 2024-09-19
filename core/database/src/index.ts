@@ -5,10 +5,14 @@ import { addressSchema, type AddressCollection } from './models/Address';
 import { chainSchema, type ChainCollection } from './models/Chain';
 import { hdPathSchema, type HdPathCollection } from './models/HdPath';
 import { RxDBStatePlugin } from 'rxdb/plugins/state';
+import { RxDBPipelinePlugin } from 'rxdb/plugins/pipeline';
+import { RxDBLeaderElectionPlugin } from 'rxdb/plugins/leader-election';
 import TimestampPlugin from './plugins/timestamp';
 import IndexPlugin from './plugins/autoIndex';
 export { VaultTypeEnum, type VaultType, VaultSourceEnum, type VaultSource } from './models/Vault';
 addRxPlugin(RxDBStatePlugin);
+addRxPlugin(RxDBPipelinePlugin);
+addRxPlugin(RxDBLeaderElectionPlugin);
 addRxPlugin(TimestampPlugin);
 addRxPlugin(IndexPlugin);
 

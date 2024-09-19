@@ -9,6 +9,9 @@ const vaultSchemaLiteral = {
       type: 'string',
       maxLength: 128,
     },
+    name: {
+      type: 'string',
+    },
     type: {
       type: 'string',
     },
@@ -26,7 +29,8 @@ const vaultSchemaLiteral = {
       },
     },
   },
-  required: ['value', 'type', 'source', 'isBackup'],
+  required: ['value', 'name', 'type', 'source', 'isBackup'],
+  indexes: ['type'],
   options: {
     createAt: true,
   },

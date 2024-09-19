@@ -4,6 +4,7 @@ import { wordlist as englishWordList } from '@scure/bip39/wordlists/english';
 export { generateMnemonic, validateMnemonic, englishWordList };
 import { VaultSourceEnum, VaultTypeEnum, type VaultSource, type Database } from '@cfx-kit/wallet-core-database/src';
 import { encryptVaultValue, isVaultExist } from './vaultEncryptor';
+import { getVaultsCountOfType } from './basic';
 import { UniquePrimaryKeyError } from '../../utils/MethodError';
 
 const encryptField = R.curry(async <T extends Record<string, any>>(database: Database, field: keyof T, obj: T) => {
@@ -14,23 +15,36 @@ const encryptField = R.curry(async <T extends Record<string, any>>(database: Dat
   } as T;
 }) as <T extends Record<string, any>>(database: Database, field: keyof T, obj: T) => Promise<T>;
 
-const checkMnemonicExist = R.curry((database: Database, params: MnemonicVaultParams) =>
+const checkMnemonicExist = R.curry((database: Database, params: Required<MnemonicVaultParams>) =>
   isVaultExist(database, { value: params.mnemonic, type: VaultTypeEnum.mnemonic }).then((exists) =>
     exists ? Promise.reject(new UniquePrimaryKeyError('The mnemonic already exists in wallet.')) : params,
   ),
 );
 
 export interface MnemonicVaultParams {
-  mnemonic: string;
-  source: VaultSource;
+  name?: string;
+  mnemonic?: string;
+  source?: VaultSource;
 }
 
 export const addMnemonicVault = (database: Database, params?: MnemonicVaultParams) =>
   R.pipe(
-    R.defaultTo({ mnemonic: generateMnemonic(englishWordList), source: VaultSourceEnum.create }),
-    (params: MnemonicVaultParams) => checkMnemonicExist(database, params),
-    R.andThen((params: MnemonicVaultParams) => encryptField(database, 'mnemonic', params)),
-    R.andThen(({ mnemonic, source }) => ({
+    R.mergeRight({
+      mnemonic: undefined,
+      source: undefined,
+      name: undefined,
+    }),
+    R.evolve({
+      mnemonic: R.defaultTo(generateMnemonic(englishWordList)),
+      source: R.defaultTo(VaultSourceEnum.create),
+    }) as (params: MnemonicVaultParams) => Required<MnemonicVaultParams>,
+    (params) => checkMnemonicExist(database, params),
+    R.andThen((params: Required<MnemonicVaultParams>) =>
+      getVaultsCountOfType(database, VaultTypeEnum.mnemonic).then((count) => ({ ...params, name: params.name || `Wallet ${count + 1}` })),
+    ),
+    R.andThen((params: Required<MnemonicVaultParams>) => encryptField(database, 'mnemonic', params)),
+    R.andThen(({ mnemonic, source, name }) => ({
+      name,
       value: mnemonic,
       type: VaultTypeEnum.mnemonic,
       source,
@@ -42,6 +56,7 @@ export const addMnemonicVault = (database: Database, params?: MnemonicVaultParam
 /* <----------------------------------------------------------------------------------------------------------------> */
 
 export interface PrivateKeyVaultParams {
+  name?: string;
   privateKey: string;
   source: VaultSource;
 }
@@ -56,7 +71,8 @@ export const addPrivateKeyVault = (database: Database, params: PrivateKeyVaultPa
   R.pipe(
     (params: PrivateKeyVaultParams) => checkPrivateKeyExist(database, params),
     R.andThen((params: PrivateKeyVaultParams) => encryptField(database, 'privateKey', params)),
-    R.andThen(({ privateKey, source }) => ({
+    R.andThen(({ privateKey, source, name }) => ({
+      name: name ?? '',
       value: privateKey,
       type: VaultTypeEnum.privateKey,
       source,

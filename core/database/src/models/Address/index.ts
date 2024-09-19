@@ -13,6 +13,10 @@ const addressSchemaLiteral = {
       ref: 'account',
       type: 'string',
     },
+    chain: {
+      ref: 'hdPath',
+      type: 'string',
+    },
     hdPath: {
       ref: 'hdPath',
       type: 'string',
