@@ -71,6 +71,9 @@ const checkPrivateKeyExist = R.curry((database: Database, params: PrivateKeyVaul
 export const addPrivateKeyVault = (database: Database, params: PrivateKeyVaultParams) =>
   R.pipe(
     (params: PrivateKeyVaultParams) => checkPrivateKeyExist(database, params),
+    R.andThen((params: PrivateKeyVaultParams) =>
+      getLastVaultAutoIndexOfType(database, VaultTypeEnum.privateKey).then((index) => ({ ...params, name: params.name || `PrivateKey Wallet ${index + 1}` })),
+    ),
     R.andThen((params: PrivateKeyVaultParams) => encryptField(database, 'privateKey', params)),
     R.andThen(({ privateKey, source, name }) => ({
       name: name ?? '',

@@ -1,4 +1,5 @@
 import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
+import { getRxStorageMemory } from 'rxdb/plugins/storage-memory';
 import WalletClass, { IncorrectPassworError } from '@cfx-kit/wallet-core-wallet/src';
 import methods from '@cfx-kit/wallet-core-methods/src/allMethods';
 import { inject } from '@cfx-kit/wallet-core-react-inject/src';
@@ -6,18 +7,27 @@ import Encryptor from '@cfx-kit/wallet-core-wallet/src/mechanism/Encryptor';
 import InteractivePassword from '@cfx-kit/wallet-core-wallet/src/mechanism/Encryptor/Password/InteractivePassword';
 import MemoryPassword from '@cfx-kit/wallet-core-wallet/src/mechanism/Encryptor/Password/MemoryPassword';
 import { PasswordRequestUserCancelError } from '@cfx-kit/wallet-core-wallet/src/mechanism/Encryptor/Password/InteractivePassword';
+import EVMChainMethods, { EVMNetworkType } from '../../../chains/evm/src';
+import SolanaChainMethods, { SolanaNetworkType } from '../../../chains/solana/src';
 
-export const useMemoryPassword = true;
+const chains = {
+  [EVMNetworkType]: EVMChainMethods,
+  [SolanaNetworkType]: SolanaChainMethods,
+};
+
+const useMemoryStorage = true;
+const useMemoryPassword = true;
 
 export const interactivePassword = new InteractivePassword();
 export const memoryPassword = new MemoryPassword();
 
-const wallet = new WalletClass<typeof methods>({
+const wallet = new WalletClass<typeof methods, typeof chains>({
   databaseOptions: {
-    storage: getRxStorageDexie(),
+    storage: useMemoryStorage ? getRxStorageMemory() : getRxStorageDexie(),
     encryptor: useMemoryPassword ? new Encryptor(memoryPassword.getPassword.bind(memoryPassword)) : new Encryptor(interactivePassword.getPassword.bind(interactivePassword)),
   },
   methods,
+  chains,
   injectDatabasePromise: [inject],
 });
 

@@ -8,7 +8,6 @@ const vaultSchemaLiteral = {
   properties: {
     id: {
       type: 'string',
-      final: true,
       maxLength: 32
     },
     value: {
@@ -20,9 +19,11 @@ const vaultSchemaLiteral = {
     type: {
       type: 'string',
       maxLength: 32,
+      final: true,
     },
     source: {
       type: 'string',
+      final: true,
     },
     isBackup: {
       type: 'boolean',
@@ -38,8 +39,9 @@ const vaultSchemaLiteral = {
   required: ['id', 'value', 'name', 'type', 'source', 'isBackup'],
   indexes: ['type'],
   options: {
-    autoIndex: true,
-    uniqueId: true
+    autoIndex: 'type',
+    uniqueId: true,
+    createAt: true,
   },
 } as const;
 

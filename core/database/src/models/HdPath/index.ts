@@ -1,4 +1,5 @@
 import { toTypedRxJsonSchema, type RxCollection, type ExtractDocumentTypeFromTypedRxJsonSchema, type RxJsonSchema } from 'rxdb';
+import autoIndex from '../../plugins/autoIndex';
 
 const hdPathSchemaLiteral = {
   version: 0,

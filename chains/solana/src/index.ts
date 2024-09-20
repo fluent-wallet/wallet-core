@@ -33,7 +33,7 @@ class SolanaChainMethods extends ChainMethods {
             throw new Error('Failed to derive private key');
         }
         const keypair = Keypair.fromSeed(hdResult.privateKey);
-        return keypair.secretKey.toString();
+        return bs58.encode(keypair.secretKey);
     }
 
     getAddressFromPrivateKey({ privateKey }: { privateKey: string; }) {
@@ -41,7 +41,7 @@ class SolanaChainMethods extends ChainMethods {
     }
 
     getRandomPrivateKey() {
-        return Keypair.generate().secretKey.toString();
+        return bs58.encode(Keypair.generate().secretKey);
     }
 
     async signTransaction({ privateKey, data }: { privateKey: string; data: Parameters<typeof SystemProgram['transfer']>[0]; }) {

@@ -95,7 +95,7 @@ class WalletClass<T extends MethodsMap = any, J extends ChainsMap = any> {
             if (!password) {
               return false;
             }
-            const encryptorContent = await state.get('encryptorContent');
+            const encryptorContent: string = await state.get('encryptorContent');
             if (typeof encryptorContent !== 'string') {
               throw new PasswordNotInitializedError();
             }

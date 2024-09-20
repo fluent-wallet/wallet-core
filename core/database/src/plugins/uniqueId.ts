@@ -1,35 +1,25 @@
 import type { RxPlugin } from 'rxdb';
 import { v4 as uuid } from 'uuid';
+import { preCreateRxSchemaByConfig } from './utils';
 
 const fieldsConfig = {
-  id: { type: 'string', final: true, maxLength: 32 },
-};
+  id: { type: 'string', maxLength: 32 },
+} as const;
 
 const uniqueId: RxPlugin = {
   name: 'uniqueId',
   rxdb: true,
   overwritable: {},
   hooks: {
-    preCreateRxSchema: {
-      before: function (schema) {
-        if (!schema || !schema.properties) {
-          throw Error('schema must have a "properties" property');
-        }
-        const { options } = schema;
-        Object.keys(fieldsConfig).forEach((key) => {
-          if (options?.[key as keyof typeof options]) {
-            schema.properties[key] = fieldsConfig[key as keyof typeof fieldsConfig];
-            schema.required = Array.from(new Set((schema.required ?? []).concat(key)));
-            schema.indexes = Array.from(new Set((schema.indexes ?? []).concat(key)));
-          }
-        });
-      },
-    },
+    preCreateRxSchema: preCreateRxSchemaByConfig(fieldsConfig),
     createRxCollection: {
       before: function ({ collection }) {
         const options = collection.options;
         if (options?.uniqueId) {
-          collection.preInsert((plainData) => (plainData.id = uuid()), false);
+          collection.preInsert((plainData) => {
+            plainData.id = uuid();
+            return plainData;
+          }, false);
         }
       },
     },

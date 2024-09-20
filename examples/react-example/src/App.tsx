@@ -54,14 +54,19 @@ function IndexPopup() {
           wallet.methods.addMnemonicVault();
         }}
       >
-        addMnemonicVaultCreate
+        add Random Mnemonic Vault
+      </button>
+      <button onClick={async () => {
+        wallet.methods.addPrivateKeyVault({ privateKey: wallet.chains.Solana.getRandomPrivateKey(), source: 'create' });
+      }}>
+        add Random Solana PrivateKey Vault
       </button>
       <button
         onClick={async () => {
           wallet.methods.addMnemonicVault({ mnemonic: 'tag refuse output old identify oval major middle duck staff tube develop', source: 'import' });
         }}
       >
-        addMnemonicVaultImported
+        add exist Mnemonic Vault
       </button>
       <Vaults />
     </div>

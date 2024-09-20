@@ -1,39 +1,33 @@
 import type { RxPlugin } from 'rxdb';
+import { preCreateRxSchemaByConfig } from './utils';
 
 const fieldsConfig = {
-  autoIndex: { type: 'integer', final: true },
-};
+  autoIndex: { type: 'integer', final: true, minimum: 0, maximum: 99999, multipleOf: 1 },
+} as const;
 
 const autoIndex: RxPlugin = {
   name: 'autoIndex',
   rxdb: true,
   overwritable: {},
   hooks: {
-    preCreateRxSchema: {
-      before: function (schema) {
-        if (!schema || !schema.properties) {
-          throw Error('schema must have a "properties" property');
-        }
-        const { options } = schema;
-        Object.keys(fieldsConfig).forEach((key) => {
-          if (options?.[key as keyof typeof options]) {
-            schema.properties[key] = fieldsConfig[key as keyof typeof fieldsConfig];
-            schema.required = Array.from(new Set((schema.required ?? []).concat(key)));
-            schema.indexes = Array.from(new Set((schema.indexes ?? []).concat(key)));
-          }
-        });
-      },
-    },
+    preCreateRxSchema: preCreateRxSchemaByConfig(fieldsConfig),
     createRxCollection: {
       before: function ({ collection }) {
         const options = collection.options;
         if (options?.autoIndex) {
+          const isCollectionHasType = typeof options.autoIndex === 'string' && !!(collection as any)?.schema.jsonSchema?.properties?.[options.autoIndex];
+
           collection.preInsert(async (plainData) => {
+            const isDocumentHasType = typeof options.autoIndex === 'string' && !!plainData?.[options.autoIndex];
             const lastIndex: number = await collection
-              .findOne({ sort: [{ autoIndex: 'desc' }] })
+              .findOne({
+                sort: [{ autoIndex: 'desc' }],
+                ...(isCollectionHasType && isDocumentHasType ? { selector: { [options.autoIndex]: plainData[options.autoIndex] } } : undefined),
+              })
               .exec()
               .then((doc) => (!doc ? 0 : doc.autoIndex));
             plainData.autoIndex = lastIndex + 1;
+            return plainData;
           }, false);
         }
       },
