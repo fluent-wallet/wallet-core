@@ -44,3 +44,15 @@ export class NoDocumentError extends Error implements MethodError {
     }
   }
 }
+
+export class UnknowError extends Error implements MethodError {
+  message = 'Unknow error';
+  code = -2010294;
+
+  constructor(message?: string) {
+    super(message);
+    if (typeof message === 'string') {
+      this.message = message;
+    }
+  }
+}

@@ -1,9 +1,6 @@
-import { type AccountDocType } from '@cfx-kit/wallet-core-database/src/models/Account';
-import { type VaultDocType } from '@cfx-kit/wallet-core-database/src/models/Vault';
-import { type Database } from '@cfx-kit/wallet-core-database/src';
-import { ChainMethods } from '../../../../chains/base/src';
-import { VaultTypeEnum } from '@cfx-kit/wallet-core-database/src';
-import { NoDocumentError } from '../utils/MethodError';
+import { VaultTypeEnum, type Database, type AccountDocType, type VaultDocType } from '@cfx-kit/wallet-core-database/src';
+import { ChainMethods } from '../../../../../chains/base/src';
+import { NoDocumentError } from '../../utils/MethodError';
 
 export const getPrivateKeyOfAccountInChain = (
   database: Database,
@@ -16,7 +13,7 @@ export const getPrivateKeyOfAccountInChain = (
       if (!accountDoc) {
         throw new NoDocumentError(`Account with id ${account.id} not found in database`);
       }
-      const vault = (await accountDoc?.populate('vault')) as unknown as VaultDocType;
+      const vault = (await accountDoc?.populate('vault')) as VaultDocType;
       return { vault, account: accountDoc };
     })
     .then(({ vault, account }) => {

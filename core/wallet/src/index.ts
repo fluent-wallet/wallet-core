@@ -1,11 +1,12 @@
 import * as R from 'ramda';
+import { type RxPipeline } from 'rxdb/plugins/pipeline';
 import { createDatabase, type Database } from '@cfx-kit/wallet-core-database/src';
 import { ChainMethods } from '@cfx-kit/wallet-core-chain/src';
 import { protectAddChain } from './mechanism/protectAddChain';
-import pipelines from './mechanism/pipelines';
+import { pipelines } from '../../methods/src';
 export { default as InteractivePassword } from './mechanism/Encryptor/Password/InteractivePassword';
 export { default as SecureMemoryPassword } from './mechanism/Encryptor/Password/MemoryPassword';
-export { IncorrectPassworError } from './mechanism/Encryptor/Encryptor';
+export { IncorrectPasswordError } from './mechanism/Encryptor/Encryptor';
 
 type MethodWithDatabase<T> = (db: Database, ...args: any[]) => T;
 type MethodWithDBConstraint = MethodWithDatabase<any>;
@@ -32,6 +33,9 @@ class WalletClass<T extends MethodsMap = any, J extends ChainsMap = any> {
     initPassword: (password: string) => Promise<void>;
   } = null!;
   chains: J = null!;
+  pipelines: {
+    [K in keyof typeof pipelines]: ReturnType<(typeof pipelines)[K]> extends Promise<RxPipeline<infer T>> ? RxPipeline<T> : never;
+  } = null!;
 
   initPromise: Promise<Database> = null!;
   private resolve: (value: Database) => void = null!;
@@ -113,7 +117,8 @@ class WalletClass<T extends MethodsMap = any, J extends ChainsMap = any> {
         if (Array.isArray(injectDatabase)) {
           injectDatabase.forEach((fn) => fn?.(database));
         }
-        pipelines.forEach((pipeline) => pipeline(database));
+        const pipelinesArray = await Promise.all(Object.entries(pipelines).map(async ([name, pipeline]) => [name, await pipeline(database)] as const))
+        this.pipelines = Object.fromEntries(pipelinesArray) as any;
         this.resolve(database);
       })
       .catch((reason) => {

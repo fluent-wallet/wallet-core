@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-export class IncorrectPassworError extends Error {
+export class IncorrectPasswordError extends Error {
   message = 'Incorrect password';
   code = -2010287;
 }
@@ -132,7 +132,7 @@ class Encryptor {
       const data = await this.decryptWithKey(encryptedData, key);
       return JSON.parse(data);
     } catch (error) {
-      throw new IncorrectPassworError();
+      throw new IncorrectPasswordError();
     }
   };
 }

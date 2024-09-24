@@ -11,7 +11,7 @@ const accountSchemaLiteral = {
   properties: {
     id: {
       type: 'string',
-      maxLength: 256,
+      maxLength: 36,
     },
     hdIndex: {
       type: 'number',
@@ -23,7 +23,7 @@ const accountSchemaLiteral = {
       type: 'boolean',
     },
     vault: {
-      ref: 'vault',
+      ref: 'vaults',
       type: 'string',
     },
   },

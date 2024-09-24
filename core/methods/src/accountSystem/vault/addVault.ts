@@ -1,12 +1,11 @@
 import * as R from 'ramda';
 import { generateMnemonic, validateMnemonic } from '@scure/bip39';
 import { wordlist as englishWordList } from '@scure/bip39/wordlists/english';
-export { generateMnemonic, validateMnemonic, englishWordList };
-import { VaultSourceEnum, VaultTypeEnum, type VaultSource, type Database } from '@cfx-kit/wallet-core-database/src';
-import { type VaultDocType } from '@cfx-kit/wallet-core-database/src/models/Vault';
+import { VaultSourceEnum, VaultTypeEnum, type VaultSource, type Database, type VaultDocType } from '@cfx-kit/wallet-core-database/src';
 import { encryptVaultValue, isVaultExist } from './vaultEncryptor';
-import { getLastVaultAutoIndexOfType } from './basic';
+import { getLastVaultAutoIndexOfType, generateDefaultVaultCode } from './basic';
 import { UniquePrimaryKeyError } from '../../utils/MethodError';
+export { generateMnemonic, validateMnemonic, englishWordList };
 
 const encryptField = R.curry(async <T extends Record<string, any>>(database: Database, field: keyof T, obj: T) => {
   const encryptedValue = await encryptVaultValue(database, obj[field]);
@@ -41,7 +40,7 @@ export const addMnemonicVault = (database: Database, params?: MnemonicVaultParam
     }) as (params: MnemonicVaultParams) => Required<MnemonicVaultParams>,
     (params) => checkMnemonicExist(database, params),
     R.andThen((params: Required<MnemonicVaultParams>) =>
-      getLastVaultAutoIndexOfType(database, VaultTypeEnum.mnemonic).then((index) => ({ ...params, name: params.name || `Wallet ${index + 1}` })),
+      getLastVaultAutoIndexOfType(database, VaultTypeEnum.mnemonic).then((index) => ({ ...params, name: params.name || `Wallet ${generateDefaultVaultCode(index)}` })),
     ),
     R.andThen((params: Required<MnemonicVaultParams>) => encryptField(database, 'mnemonic', params)),
     R.andThen(({ mnemonic, source, name }) => ({
@@ -72,7 +71,7 @@ export const addPrivateKeyVault = (database: Database, params: PrivateKeyVaultPa
   R.pipe(
     (params: PrivateKeyVaultParams) => checkPrivateKeyExist(database, params),
     R.andThen((params: PrivateKeyVaultParams) =>
-      getLastVaultAutoIndexOfType(database, VaultTypeEnum.privateKey).then((index) => ({ ...params, name: params.name || `PrivateKey Wallet ${index + 1}` })),
+      getLastVaultAutoIndexOfType(database, VaultTypeEnum.privateKey).then((index) => ({ ...params, name: params.name || `PrivateKey Wallet ${generateDefaultVaultCode(index)}` })),
     ),
     R.andThen((params: PrivateKeyVaultParams) => encryptField(database, 'privateKey', params)),
     R.andThen(({ privateKey, source, name }) => ({

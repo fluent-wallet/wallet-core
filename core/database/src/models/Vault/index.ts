@@ -30,7 +30,7 @@ const vaultSchemaLiteral = {
     },
     accounts: {
       type: 'array',
-      ref: 'account',
+      ref: 'accounts',
       items: {
         type: 'string',
       },

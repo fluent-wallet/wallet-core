@@ -1,5 +1,5 @@
-import { addMnemonicVault, validateMnemonic, englishWordList } from './addVault';
 import { VaultTypeEnum, VaultSourceEnum } from '@cfx-kit/wallet-core-database/src';
+import { addMnemonicVault, validateMnemonic, englishWordList } from './addVault';
 import { UniquePrimaryKeyError } from '../../utils/MethodError';
 
 const { wallet, jestInitPromise } = global.createNewWallet({ encryptor: 'Memory' });
