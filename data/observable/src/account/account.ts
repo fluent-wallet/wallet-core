@@ -1,31 +1,30 @@
-import { of, map, switchMap, type Observable, tap } from 'rxjs';
+import { of, from, map, switchMap, concatMap, bufferCount, mergeMap, combineLatest } from 'rxjs';
 import { type Database, type RxDocument } from '@cfx-kit/wallet-core-database/src';
 import { type AccountDocType } from '@cfx-kit/wallet-core-database/src/models/Account';
 
-export const observeAccountsOfVault1 = (database: Database | undefined, vaultId: string | null) => {
+const BATCH_SIZE = 128; // Set the batch processing size
+const CONCURRENCY = 16; // Set the maximum concurrency
+
+export const observeAccountsOfVault = (database: Database | undefined, vaultId: string | null) => {
   if (!database || !vaultId) return of(undefined);
   return database.vaults.findOne(vaultId).$.pipe(
     switchMap((vault) => {
-      if (!vault) return of(null);
-      return (vault as any).accounts_ as Observable<Array<RxDocument<AccountDocType>>>;
+      if (!vault || !vault.accounts$) return of(null);
+      return from(vault.populate('accounts') as Promise<Array<RxDocument<AccountDocType>>>);
     }),
-    map((accounts) => !accounts ? null : accounts.map((account) => account.toJSON()))
+    switchMap((accounts) => {
+      if (!accounts) return of(null);
+      return from(accounts).pipe(
+        bufferCount(BATCH_SIZE),
+        concatMap(batch =>
+          combineLatest(batch.map(accountDoc => accountDoc.$).map(observable =>
+            from(observable).pipe(mergeMap(data => of(data), CONCURRENCY))
+          ))
+        ),
+        map(accountsData =>
+          !accountsData ? null : accountsData.map(account => account.toJSON())
+        )
+      );
+    }),
   );
 };
-
-export const observeAccountsOfVault2 = (database: Database | undefined, vaultId: string | null) => {
-  if (!database || !vaultId) return of(undefined);
-  return database.accounts
-    .find({
-      selector: {
-        vault: vaultId,
-      },
-      sort: [{ createAt: 'asc' }],
-    })
-    .$.pipe(
-      map((accounts) => (!accounts || !accounts.length ? null : accounts.map((account) => account.toJSON())))
-    );
-};
-
-
-export const observeAccountsOfVault = observeAccountsOfVault1;

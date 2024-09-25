@@ -1,18 +1,74 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useVaults, useAccountsOfVault } from '@cfx-kit/wallet-core-react-inject/src';
 import wallet from './wallet';
 
+const Account = ({ account }: { account: NonNullable<ReturnType<typeof useAccountsOfVault>>[number] }) => {
+  const [inEdit, setInEdit] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null!);
+
+  return (
+    <div>
+      {inEdit ? <input ref={inputRef} defaultValue={account.name} /> : account.name}
+      <button
+        style={{ marginLeft: 8 }}
+        onClick={async () => {
+          if (inEdit) {
+            await wallet.methods.updateAccount(account.id, { name: inputRef.current.value || account.name });
+          }
+          setInEdit((pre) => !pre);
+        }}
+      >
+        {inEdit ? 'save' : 'edit'}
+      </button>
+      <button style={{ marginLeft: 8 }} onClick={() => wallet.methods.deleteAccount(account)}>delete account</button>
+    </div>
+  );
+};
+
 const Accounts = ({ vaultId }: { vaultId: string }) => {
   const accounts = useAccountsOfVault(vaultId);
-  // console.log(vaultId, accounts);
+
   return (
     <div>
       {accounts?.map((account, index) => (
-        <div key={account.id} style={{ background: index % 2 === 0 ? 'blue' : 'yellow', height: 'fit-content', padding: 8 }}>
-          <div>{account.name}</div>
+        <div key={account.id} style={{ background: index % 2 === 0 ? 'gray' : 'yellow', height: 'fit-content', padding: 8 }}>
+          <Account account={account} />
         </div>
       ))}
     </div>
+  );
+};
+
+const Vault = ({ vault }: { vault: NonNullable<ReturnType<typeof useVaults>>[number] }) => {
+  const [inEdit, setInEdit] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null!);
+
+  return (
+    <>
+      <div>
+        {inEdit ? <input ref={inputRef} defaultValue={vault.name} /> : vault.name}
+        {vault.type === 'mnemonic' && (
+          <button style={{ marginLeft: 8 }} onClick={() => wallet.methods.addAccountOfMnemonicVault(vault)}>
+            add account
+          </button>
+        )}
+        <button
+          style={{ marginLeft: 8 }}
+          onClick={async () => {
+            if (inEdit) {
+              await wallet.methods.updateVault(vault.id, { name: inputRef.current.value || vault.name });
+            }
+            setInEdit((pre) => !pre);
+          }}
+        >
+          {inEdit ? 'save' : 'edit'}
+        </button>
+        <button style={{ marginLeft: 8 }} onClick={() => wallet.methods.deleteVault(vault)}>
+          delete vault
+        </button>
+      </div>
+      <Accounts vaultId={vault.id} />
+    </>
   );
 };
 
@@ -24,13 +80,8 @@ const Vaults = () => {
       <h2>vaults length: {vaults?.length || 0}</h2>
       <div>
         {vaults?.map((vault, index) => (
-          <div key={vault.value} style={{ background: index % 2 === 0 ? 'red' : 'green', height: 'fit-content', marginTop: 20 }}>
-            <div>
-              {vault.name}
-              <button onClick={() => wallet.methods.deleteVault(vault)}>delete vault</button>
-              {vault.type === 'mnemonic' && <button onClick={() => wallet.methods.addAccountOfMnemonicVault(vault)}>add account</button>}
-            </div>
-            <Accounts vaultId={vault.id} />
+          <div key={vault.value} style={{ background: index % 2 === 0 ? 'red' : 'lightblue', height: 'fit-content', marginTop: 20 }}>
+            <Vault vault={vault} />
           </div>
         ))}
       </div>

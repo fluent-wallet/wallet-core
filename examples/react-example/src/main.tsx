@@ -10,6 +10,6 @@ wallet.initPromise.then(() => {
       <Provider store={store}>
         <App />
       </Provider>
-    </StrictMode>
+    </StrictMode>,
   );
 });

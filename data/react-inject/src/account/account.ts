@@ -1,5 +1,5 @@
 import { useAtomValue } from 'jotai';
-import { atomFamily, atomWithObservable } from 'jotai/utils';
+import { atomFamily, atomWithObservable, selectAtom } from 'jotai/utils';
 import { databaseAtom } from '../store';
 import { observeAccountsOfVault } from '@cfx-kit/wallet-core-observable/src/account/account';
 
@@ -9,4 +9,11 @@ export const accountsAtomFamilyOfVault = atomFamily((vaultId: string | null) =>
   }),
 );
 
-export const useAccountsOfVault = (vaultId: string | null) => useAtomValue(accountsAtomFamilyOfVault(vaultId));
+export const visibleAccountsAtomFamilyOfVault = atomFamily((vaultId: string | null) =>
+  selectAtom(accountsAtomFamilyOfVault(vaultId), (accounts) =>
+    accounts ? accounts.filter(account => !account.hidden) : accounts
+  )
+);
+
+export const useAllAccountsOfVault = (vaultId: string | null) => useAtomValue(accountsAtomFamilyOfVault(vaultId));
+export const useAccountsOfVault = (vaultId: string | null) => useAtomValue(visibleAccountsAtomFamilyOfVault(vaultId));

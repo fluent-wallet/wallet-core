@@ -10,6 +10,7 @@
     "@cfx-kit/wallet-core-database": "workspace:*",
     "@cfx-kit/wallet-core-wallet": "workspace:*",
     "@scure/bip39": "^1.3.0",
+    "radash": "^12.1.0",
     "ramda": "^0.30.1",
     "rxdb": "^15.31.1",
     "rxjs": "^7.8.1"

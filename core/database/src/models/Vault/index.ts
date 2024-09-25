@@ -12,6 +12,7 @@ const vaultSchemaLiteral = {
     },
     value: {
       type: 'string',
+      final: true,
     },
     name: {
       type: 'string',
