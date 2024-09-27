@@ -1,9 +1,8 @@
 import { addRxPlugin, createRxDatabase, type RxDatabase, type RxState } from 'rxdb';
-import { vaultSchema, type VaultDocType, type VaultDocTypeEnhance,  type VaultCollection, type Encryptor, VaultTypeEnum, type VaultType, VaultSourceEnum, type VaultSource } from './models/Vault';
+import { vaultSchema, type VaultDocType, type VaultDocTypeEnhance, type VaultCollection, type Encryptor, VaultTypeEnum, type VaultType, VaultSourceEnum, type VaultSource } from './models/Vault';
 import { accountSchema, type AccountDocType, type AccountCollection } from './models/Account';
 import { addressSchema, type AddressDocType, type AddressCollection } from './models/Address';
 import { chainSchema, type ChainDocType, type ChainCollection } from './models/Chain';
-import { hdPathSchema, type HdPathDocType, type HdPathCollection } from './models/HdPath';
 import { RxDBStatePlugin } from 'rxdb/plugins/state';
 import { RxDBPipelinePlugin } from 'rxdb/plugins/pipeline';
 import { RxDBLeaderElectionPlugin } from 'rxdb/plugins/leader-election';
@@ -26,8 +25,6 @@ export {
   AddressCollection,
   ChainDocType,
   ChainCollection,
-  HdPathDocType,
-  HdPathCollection,
 }
 
 addRxPlugin(RxDBStatePlugin);
@@ -43,7 +40,6 @@ export interface DatabaseCollections {
   accounts: AccountCollection;
   addresses: AddressCollection;
   chains: ChainCollection;
-  hd_paths: HdPathCollection;
 }
 
 export type Database = RxDatabase<DatabaseCollections>;
@@ -69,11 +65,11 @@ export const createDatabase = async ({ storage, encryptor, dbName = 'wallet-core
       options: vaultSchema.options,
       ...(encryptor
         ? {
-            statics: {
-              encrypt: encryptor.encrypt.bind(encryptor),
-              decrypt: encryptor.decrypt.bind(encryptor),
-            },
-          }
+          statics: {
+            encrypt: encryptor.encrypt.bind(encryptor),
+            decrypt: encryptor.decrypt.bind(encryptor),
+          },
+        }
         : null),
     },
     accounts: {
@@ -84,9 +80,6 @@ export const createDatabase = async ({ storage, encryptor, dbName = 'wallet-core
     },
     chains: {
       schema: chainSchema,
-    },
-    hd_paths: {
-      schema: hdPathSchema,
     },
   });
   return {

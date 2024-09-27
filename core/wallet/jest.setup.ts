@@ -4,10 +4,11 @@ import type InteractivePassword from './src/mechanism/Encryptor/Password/Interac
 import type MemoryPassword from './src/mechanism/Encryptor/Password/MemoryPassword';
 import WalletClass from './src';
 import methods from '../methods/src/allMethods';
-import ConfluxChainMethods, { ConfluxNetworkType } from '../../chains/conflux/src';
+import ConfluxChainMethods, { ConfluxNetworkType, ConfluxChainMethodsClass } from '../../chains/conflux/src';
 
 const chains = {
   [ConfluxNetworkType]: ConfluxChainMethods,
+  ['custom-Conflux']: new ConfluxChainMethodsClass(`m/44'/50333'/0'/0/0`),
 };
 
 const wallet = new WalletClass<typeof methods, typeof chains>({

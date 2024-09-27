@@ -2,27 +2,28 @@ import { toTypedRxJsonSchema, type RxCollection, type ExtractDocumentTypeFromTyp
 
 const addressSchemaLiteral = {
   version: 0,
-  primaryKey: 'value',
+  primaryKey: 'publicAddress',
   type: 'object',
   properties: {
-    value: {
+    publicAddress: {
       type: 'string',
-      maxLength: 64,
+      maxLength: 128,
+    },
+    privateKey: {
+      type: 'string',
+      maxLength: 128,
+      final: true,
     },
     account: {
-      ref: 'account',
+      ref: 'accounts',
       type: 'string',
     },
     chain: {
-      ref: 'hdPath',
-      type: 'string',
-    },
-    hdPath: {
-      ref: 'hdPath',
+      ref: 'chainns',
       type: 'string',
     },
   },
-  required: ['value', 'account'],
+  required: ['publicAddress', 'account', 'chain'],
 } as const;
 
 const schemaTyped = toTypedRxJsonSchema(addressSchemaLiteral);

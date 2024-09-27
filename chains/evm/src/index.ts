@@ -10,7 +10,11 @@ export enum EvmMessageTypes {
   TYPE_DATA_V4 = 'TYPE_DATA_V4',
 }
 
-class EVMChainMethods extends ChainMethods {
+export class EVMChainMethodsClass extends ChainMethods {
+  constructor(hdPath: string = "m/44'/60'/0'/0/0") {
+    super(hdPath);
+  }
+
   isValidPrivateKey(privateKey: string) {
     return typeof privateKey === 'string' && privateKey.startsWith('0x') && privateKey.length === 64;
   }
@@ -19,7 +23,7 @@ class EVMChainMethods extends ChainMethods {
     return isAddress(address);
   }
 
-  getDerivedPrivateKey({ mnemonic, hdPath = "m/44'/60'/0'/0/0", index }: { mnemonic: string; hdPath: string; index: number }) {
+  getDerivedPrivateKey({ mnemonic, hdPath = this.hdPath, index }: { mnemonic: string; hdPath: string; index: number }) {
     const hdAccount = mnemonicToAccount(mnemonic, {
       path: hdPath.replace(/\d+$/, index.toString()) as `m/44'/60'/${string}`
     });
@@ -62,4 +66,4 @@ class EVMChainMethods extends ChainMethods {
   }
 }
 
-export default new EVMChainMethods();
+export default new EVMChainMethodsClass();
