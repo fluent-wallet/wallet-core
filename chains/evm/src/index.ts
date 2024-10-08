@@ -23,15 +23,23 @@ export class EVMChainMethodsClass extends ChainMethods {
     return isAddress(address);
   }
 
-  getDerivedPrivateKey({ mnemonic, hdPath = this.hdPath, index }: { mnemonic: string; hdPath: string; index: number }) {
+  getDerivedFromMnemonic({ mnemonic, hdPath = this.hdPath, index }: { mnemonic: string; hdPath: string; index: number }) {
     const hdAccount = mnemonicToAccount(mnemonic, {
       path: hdPath.replace(/\d+$/, index.toString()) as `m/44'/60'/${string}`
     });
-    const privateKey = hdAccount.getHdKey().privateKey;
-    if (!privateKey) {
+
+    const hdKey = hdAccount.getHdKey();
+    const privateKey = hdKey.privateKey;
+    const publicKey = hdKey.publicKey;
+
+    if (!privateKey || !publicKey) {
       throw new Error('Failed to derive private key');
     }
-    return privateKey.toString();
+
+    return {
+      privateKey: privateKey.toString(),
+      publicAddress: publicKey.toString()
+    } as const;
   }
 
   getAddressFromPrivateKey({ privateKey }: { privateKey: string; }) {

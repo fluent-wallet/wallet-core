@@ -19,8 +19,8 @@ const wallet = new WalletClass<typeof methods, typeof chains>({
   methods,
   chains,
   injectDatabase: [
-    (db) => {
-      global.database = db;
+    ({ database}) => {
+      global.database = database;
     },
   ],
 });

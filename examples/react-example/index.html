@@ -7,6 +7,94 @@
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <div id="wallet-core-config">
+      <form id="config-form">
+        <div style="display: flex; flex-direction: row; gap: 8px; align-items: center">
+          <p>Password methods:</p>
+          <label>
+            <input type="radio" name="password-method" value="interactive" required />
+            <span>Interactive</span>
+          </label>
+          <label>
+            <input type="radio" name="password-method" value="persistence" />
+            <span>Persistence (in memory)</span>
+          </label>
+        </div>
+
+        <div style="display: flex; flex-direction: row; gap: 8px; align-items: center">
+          <p>Storage methods:</p>
+          <label>
+            <input type="radio" name="storage-method" value="IndexedDB" required />
+            <span>IndexedDB</span>
+          </label>
+          <label>
+            <input type="radio" name="storage-method" value="Memory" />
+            <span>Memory</span>
+          </label>
+        </div>
+
+        <button
+          type="submit"
+          id="submit-button"
+          disabled
+          style="margin-top: 16px; font-size: 22px; width: 360px; height: 36px; background-color: gray; color: white; border: none; border-radius: 4px; cursor: pointer"
+        >
+          Go
+        </button>
+      </form>
+    </div>
+    <script>
+      function saveSelection(name) {
+        const selected = document.querySelector(`input[name="${name}"]:checked`);
+        if (selected) {
+          localStorage.setItem(name, selected.value);
+        }
+      }
+
+      function loadSelection(name) {
+        const savedValue = localStorage.getItem(name);
+        if (savedValue) {
+          const radio = document.querySelector(`input[name="${name}"][value="${savedValue}"]`);
+          if (radio) {
+            radio.checked = true;
+          }
+        }
+      }
+
+      function checkFormCompletion() {
+        const passwordMethodSelected = document.querySelector('input[name="password-method"]:checked');
+        const storageMethodSelected = document.querySelector('input[name="storage-method"]:checked');
+        const submitButton = document.getElementById('submit-button');
+        submitButton.disabled = !(passwordMethodSelected && storageMethodSelected);
+        submitButton.style.backgroundColor = submitButton.disabled ? 'gray' : '#007bff';
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        loadSelection('password-method');
+        loadSelection('storage-method');
+        checkFormCompletion();
+      });
+
+      document.querySelectorAll('input[type="radio"]').forEach((radio) => {
+        radio.addEventListener('change', (event) => {
+          saveSelection(event.target.name);
+          checkFormCompletion();
+        });
+      });
+
+      document.getElementById('config-form').addEventListener('submit', (event) => {
+        event.preventDefault();
+        const passwordMethod = document.querySelector('input[name="password-method"]:checked').value;
+        const storageMethod = document.querySelector('input[name="storage-method"]:checked').value;
+        globalThis.walletConfig = { passwordMethod, storageMethod };
+
+        const configDOM = document.querySelector('#wallet-core-config');
+        configDOM.remove();
+        const script = document.createElement('script');
+        script.type = 'module';
+        script.src = '/src/main.tsx';
+        document.body.appendChild(script);
+      });
+    </script>
   </body>
 </html>

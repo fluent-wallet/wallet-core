@@ -7,6 +7,7 @@ import { addAccountOfMnemonicVault, addFirstAccountOfVaultPipleline } from './ac
 import { updateAccount, getVaultOfAccount } from './accountSystem/account/basic';
 import { deleteAccount } from './accountSystem/account/deleteAccount';
 import { deleteAccountsOfVaultPipleline } from './accountSystem/vault/deleteVault';
+import { addAddressOfChainPipleline, addAddressOfAccountPipleline } from './address/addAddressPipeline';
 
 const methods = {
   getVaultsCountOfType,
@@ -26,6 +27,9 @@ const methods = {
 export const pipelines = {
   addFirstAccountOfVault: addFirstAccountOfVaultPipleline,
   deleteAccountsOfVault: deleteAccountsOfVaultPipleline,
+  addAddressOfChain: addAddressOfChainPipleline,
+  addAddressOfAccount: addAddressOfAccountPipleline,
 } as const;
+
 
 export default methods;

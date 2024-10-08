@@ -28,7 +28,7 @@ export class SolanaChainMethodsClass extends ChainMethods {
     }
   }
 
-  getDerivedPrivateKey({ mnemonic, hdPath = this.hdPath, index }: { mnemonic: string; hdPath: string; index: number }) {
+  getDerivedFromMnemonic({ mnemonic, hdPath = this.hdPath, index }: { mnemonic: string; hdPath: string; index: number }) {
     const seed = mnemonicToSeedSync(mnemonic, ""); // (mnemonic, password)
     const hd = HDKey.fromMasterSeed(seed);
 
@@ -37,7 +37,10 @@ export class SolanaChainMethodsClass extends ChainMethods {
       throw new Error('Failed to derive private key');
     }
     const keypair = Keypair.fromSeed(hdResult.privateKey);
-    return bs58.encode(keypair.secretKey);
+    return {
+      privateKey: bs58.encode(keypair.secretKey),
+      publicAddress: keypair.publicKey.toString()
+    } as const;
   }
 
   getAddressFromPrivateKey({ privateKey }: { privateKey: string; }) {

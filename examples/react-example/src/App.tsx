@@ -116,7 +116,7 @@ function IndexPopup() {
           const addMnemonicEnd = performance.now();
           showLog && console.log(`addMnemonicVault completed in ${addMnemonicEnd - addMnemonicStart} ms`);
 
-          console.log('Starting addAccountOfVault...');
+          showLog && console.log('Starting addAccountOfVault...');
           const addAccountStart = performance.now();
           await wallet.pipelines.addFirstAccountOfVault.awaitIdle();
           const addAccountEnd = performance.now();

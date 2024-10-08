@@ -26,6 +26,13 @@ const accountSchemaLiteral = {
       ref: 'vaults',
       type: 'string',
     },
+    addresses: {
+      type: 'array',
+      ref: 'addresses',
+      items: {
+        type: 'string',
+      },
+    },
   },
   required: ['id', 'hdIndex', 'vault', 'name'],
 } as const;

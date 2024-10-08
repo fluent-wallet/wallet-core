@@ -10,7 +10,7 @@ import { RxDBCleanupPlugin } from 'rxdb/plugins/cleanup';
 import TimestampPlugin from './plugins/timestamp';
 import AutoIndexPlugin from './plugins/autoIndex';
 import UniqueIdPlugin from './plugins/uniqueId';
-export { RxError, type RxDocument, type DeepReadonly } from 'rxdb';
+export { RxError, type RxDocument, type DeepReadonly, type RxState } from 'rxdb';
 export {
   VaultTypeEnum,
   VaultSourceEnum,
@@ -46,8 +46,15 @@ export type Database = RxDatabase<DatabaseCollections>;
 
 type Storage = Parameters<typeof createRxDatabase>[0]['storage'];
 
-interface DBState {
-  encryptorContent: string;
+export interface DBState {
+  encryptorContent: string; 
+}
+
+export type State = RxState<DBState>;
+
+export interface Data {
+  database: Database;
+  state: State;
 }
 
 export const createDatabase = async ({ storage, encryptor, dbName = 'wallet-core' }: { storage: Storage; dbName?: string; encryptor?: Encryptor }) => {
@@ -57,7 +64,7 @@ export const createDatabase = async ({ storage, encryptor, dbName = 'wallet-core
     multiInstance: true,
   });
 
-  const state: RxState<DBState> = await database.addState();
+  const state: RxState<DBState> = await database.addState('wallet-core-inner');
 
   await database.addCollections({
     vaults: {

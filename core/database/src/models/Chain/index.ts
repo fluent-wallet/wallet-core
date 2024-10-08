@@ -40,6 +40,13 @@ const chainSchemaLiteral = {
     chainType: {
       type: 'string',
     },
+    addresses: {
+      type: 'array',
+      ref: 'addresses',
+      items: {
+        type: 'string',
+      },
+    },
   },
   required: ['id', 'name', 'type', 'chainId', 'endpoints', 'icon', 'scanUrl', 'chainType'],
   indexes: ['type'],

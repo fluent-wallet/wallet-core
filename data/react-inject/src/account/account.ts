@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai';
 import { atomFamily, atomWithObservable, selectAtom } from 'jotai/utils';
 import { databaseAtom } from '../store';
-import { observeAccountsOfVault } from '@cfx-kit/wallet-core-observable/src/account/account';
+import { observeAccountsOfVault } from '@cfx-kit/wallet-core-observable/src';
 
 export const accountsAtomFamilyOfVault = atomFamily((vaultId: string | null) =>
   atomWithObservable((get) => observeAccountsOfVault(get(databaseAtom), vaultId), {

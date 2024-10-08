@@ -19,7 +19,7 @@ const addressSchemaLiteral = {
       type: 'string',
     },
     chain: {
-      ref: 'chainns',
+      ref: 'chains',
       type: 'string',
     },
   },
