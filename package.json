@@ -3,9 +3,8 @@
   "private": true,
   "scripts": {
     "build:core": "turbo build --filter=@cfx-kit/wallet-core-methods",
-    "dev": "turbo dev",
     "dev:extensions": "pnpm run dev --filter=extensions-example",
-    "dev:react": "turbo run dev --filter=react-example",
+    "dev:react": "turbo run dev --filter=react-example --filter=common-web",
     "dev:vue": "turbo run dev --filter=vue-example",
     "test": "turbo test",
     "lint": "turbo lint",
@@ -13,8 +12,7 @@
   },
   "devDependencies": {
     "prettier": "^3.3.3",
-    "turbo": "^2.1.1",
-    "typescript": "^5.5.4"
+    "turbo": "^2.1.1"
   },
   "packageManager": "pnpm@9.9.0",
   "engines": {

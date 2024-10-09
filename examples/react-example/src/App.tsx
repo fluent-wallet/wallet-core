@@ -20,7 +20,9 @@ const Account = ({ account }: { account: NonNullable<ReturnType<typeof useAccoun
       >
         {inEdit ? 'save' : 'edit'}
       </button>
-      <button style={{ marginLeft: 8 }} onClick={() => wallet.methods.deleteAccount(account)}>delete account</button>
+      <button style={{ marginLeft: 8 }} onClick={() => wallet.methods.deleteAccount(account)}>
+        delete account
+      </button>
     </div>
   );
 };
@@ -106,7 +108,7 @@ function IndexPopup() {
 
   return (
     <div>
-      <button
+      {/* <button
         onClick={async () => {
           const showLog = false;
           const startTime = performance.now();
@@ -142,9 +144,11 @@ function IndexPopup() {
       >
         add exist Mnemonic Vault
       </button>
-      <Vaults />
+      <Vaults /> */}
+      <set-password-page />
     </div>
   );
 }
 
 export default IndexPopup;
+

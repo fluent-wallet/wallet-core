@@ -6,9 +6,25 @@
     <title>React Example</title>
   </head>
   <body>
+    <div id="go-to-config-container" style="display: none">
+      <button id="go-to-config">Go to config</button>
+    </div>
     <div id="root"></div>
-    <div id="wallet-core-config">
+
+    <div id="wallet-core-config" style="display: none">
       <form id="config-form">
+        <div style="display: flex; flex-direction: row; gap: 8px; align-items: center">
+          <p>Language:</p>
+          <label>
+            <input type="radio" name="language" value="english" required />
+            <span>English</span>
+          </label>
+          <label>
+            <input type="radio" name="language" value="chinese" />
+            <span>简体中文</span>
+          </label>
+        </div>
+
         <div style="display: flex; flex-direction: row; gap: 8px; align-items: center">
           <p>Password methods:</p>
           <label>
@@ -33,6 +49,30 @@
           </label>
         </div>
 
+        <div style="display: flex; flex-direction: row; gap: 8px; align-items: center">
+          <p>Backup Mnemonic in init:</p>
+          <label>
+            <input type="radio" name="backup-Mnemonic-inInit" value="yes" required />
+            <span>Yes</span>
+          </label>
+          <label>
+            <input type="radio" name="backup-Mnemonic-inInit" value="no" />
+            <span>No</span>
+          </label>
+        </div>
+
+        <div style="display: flex; flex-direction: row; gap: 8px; align-items: center">
+          <p>Remember config and skip next time:</p>
+          <label>
+            <input type="radio" name="remember-config" value="yes" />
+            <span>Yes</span>
+          </label>
+          <label>
+            <input type="radio" name="remember-config" value="no" />
+            <span>No</span>
+          </label>
+        </div>
+
         <button
           type="submit"
           id="submit-button"
@@ -44,6 +84,13 @@
       </form>
     </div>
     <script>
+      const configDOM = document.querySelector('#wallet-core-config');
+      document.getElementById('go-to-config').addEventListener('click', () => {
+        configDOM.style.display = 'block';
+        localStorage.setItem('remember-config', 'no');
+        location.reload();
+      });
+
       function saveSelection(name) {
         const selected = document.querySelector(`input[name="${name}"]:checked`);
         if (selected) {
@@ -70,9 +117,18 @@
       }
 
       document.addEventListener('DOMContentLoaded', () => {
+        loadSelection('remember-config');
         loadSelection('password-method');
         loadSelection('storage-method');
-        checkFormCompletion();
+        loadSelection('language');
+
+        const rememberConfig = document.querySelector('input[name="remember-config"]:checked').value;
+        if (rememberConfig === 'yes') {
+          loadFramework();
+        } else {
+          configDOM.style.display = 'block';
+          checkFormCompletion();
+        }
       });
 
       document.querySelectorAll('input[type="radio"]').forEach((radio) => {
@@ -82,18 +138,23 @@
         });
       });
 
-      document.getElementById('config-form').addEventListener('submit', (event) => {
-        event.preventDefault();
+      function loadFramework() {
+        document.getElementById('go-to-config-container').style.display = 'block';
+
         const passwordMethod = document.querySelector('input[name="password-method"]:checked').value;
         const storageMethod = document.querySelector('input[name="storage-method"]:checked').value;
         globalThis.walletConfig = { passwordMethod, storageMethod };
 
-        const configDOM = document.querySelector('#wallet-core-config');
         configDOM.remove();
         const script = document.createElement('script');
         script.type = 'module';
         script.src = '/src/main.tsx';
         document.body.appendChild(script);
+      }
+
+      document.getElementById('config-form').addEventListener('submit', (event) => {
+        event.preventDefault();
+        loadFramework();
       });
     </script>
   </body>
