@@ -50,13 +50,13 @@
         </div>
 
         <div style="display: flex; flex-direction: row; gap: 8px; align-items: center">
-          <p>Backup Mnemonic in init:</p>
+          <p>Backup Mnemonic in create:</p>
           <label>
-            <input type="radio" name="backup-Mnemonic-inInit" value="yes" required />
+            <input type="radio" name="backup-Mnemonic-in-create" value="yes" required />
             <span>Yes</span>
           </label>
           <label>
-            <input type="radio" name="backup-Mnemonic-inInit" value="no" />
+            <input type="radio" name="backup-Mnemonic-in-create" value="no" />
             <span>No</span>
           </label>
         </div>
@@ -87,8 +87,8 @@
       const configDOM = document.querySelector('#wallet-core-config');
       document.getElementById('go-to-config').addEventListener('click', () => {
         configDOM.style.display = 'block';
-        localStorage.setItem('remember-config', 'no');
-        location.reload();
+        localStorage.setItem('remember-config', null);
+        window.location.replace('/');
       });
 
       function saveSelection(name) {
@@ -117,12 +117,12 @@
       }
 
       document.addEventListener('DOMContentLoaded', () => {
-        loadSelection('remember-config');
-        loadSelection('password-method');
-        loadSelection('storage-method');
-        loadSelection('language');
+        const selections = document.querySelectorAll('input[type="radio"]');
+        const inputNames = Array.from(new Set(Array.from(selections).map((selection) => selection.name)));
+        inputNames.forEach(loadSelection);
 
-        const rememberConfig = document.querySelector('input[name="remember-config"]:checked').value;
+
+        const rememberConfig = document.querySelector('input[name="remember-config"]:checked')?.value;
         if (rememberConfig === 'yes') {
           loadFramework();
         } else {

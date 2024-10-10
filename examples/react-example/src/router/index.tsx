@@ -1,19 +1,39 @@
-import { Routes, HashRouter, Route, Outlet, Link } from 'react-router-dom';
+import { Routes, HashRouter, Route, Outlet, Navigate } from 'react-router-dom';
 import { useIsPasswordInitialized } from '@cfx-kit/wallet-core-react-inject/src';
 
-const AppRoutes = () => {
+const AuthInitialize: React.FC<{ reverse?: boolean }> = ({ reverse }) => {
   const isPasswordInitialized = useIsPasswordInitialized();
-  console.log('isPasswordInitialized', isPasswordInitialized);
 
+  if (reverse) {
+    if (isPasswordInitialized) {
+      return <Navigate to="/wallet" />;
+    }
+  } else {
+    if (!isPasswordInitialized) {
+      return <Navigate to="/initialize" />;
+    }
+  }
+};
+
+const AppRoutes = () => {
   return (
-    <div>
-      <h1>Basic Example</h1>
+    <>
+      <Routes>
+        <Route path="/" element={<Outlet />}>
+          <Route path="initialize" element={<Outlet />}>
+            <Route index element={<Navigate to="create-or-import" />} />
+            <Route path="create-or-import" element={<initialize-create-or-import />} />
+            <Route path="vault" element={<div>vault</div>} />
+          </Route>
+          <Route path="wallet" element={<Outlet />}>
+            <Route index element={<div>wallet</div>} />
+          </Route>
 
-      <p>
-        This example demonstrates some of the core features of React Router including nested <code>&lt;Route&gt;</code>s, <code>&lt;Outlet&gt;</code>s, <code>&lt;Link&gt;</code>s,
-        and using a "*" route (aka "splat route") to render a "not found" page when someone visits an unrecognized URL.
-      </p>
-    </div>
+          <Route path="*" element={<Navigate to="/initialize" />} />
+        </Route>
+      </Routes>
+      <AuthInitialize />
+    </>
   );
 };
 

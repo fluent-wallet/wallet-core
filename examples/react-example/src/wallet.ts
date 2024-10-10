@@ -37,41 +37,41 @@ const wallet = new WalletClass<typeof methods, typeof chains>({
 
 export default wallet;
 
-async function interactivePasswordExample() {
-  await wallet.methods.initPassword('12345678');
-  interactivePassword.passwordRequest$.subscribe(async (request) => {
-    const password = prompt('Please input password', '12345678');
-    if (password) {
-      if (await wallet.methods.validatePassword(password)) {
-        request.resolve(password);
-      } else {
-        request.reject(new IncorrectPasswordError());
-      }
-    } else {
-      request.reject(new PasswordRequestUserCancelError());
-    }
-  });
-}
+// async function interactivePasswordExample() {
+//   await wallet.methods.initPassword('12345678');
+//   interactivePassword.passwordRequest$.subscribe(async (request) => {
+//     const password = prompt('Please input password', '12345678');
+//     if (password) {
+//       if (await wallet.methods.validatePassword(password)) {
+//         request.resolve(password);
+//       } else {
+//         request.reject(new IncorrectPasswordError());
+//       }
+//     } else {
+//       request.reject(new PasswordRequestUserCancelError());
+//     }
+//   });
+// }
 
-async function memoryPasswordExample() {
-  await wallet.methods.initPassword('12345678');
-  let isValid = false;
-  while (!isValid) {
-    const password = prompt('Please set memory password', '12345678');
-    isValid = await wallet.methods.validatePassword(password);
-    if (isValid) {
-      memoryPassword.setPassword(password!);
-      console.log('Password set successfully');
-    } else {
-      console.log('Invalid password. Please try again.');
-    }
-  }
-}
+// async function memoryPasswordExample() {
+//   await wallet.methods.initPassword('12345678');
+//   let isValid = false;
+//   while (!isValid) {
+//     const password = prompt('Please set memory password', '12345678');
+//     isValid = await wallet.methods.validatePassword(password);
+//     if (isValid) {
+//       memoryPassword.setPassword(password!);
+//       console.log('Password set successfully');
+//     } else {
+//       console.log('Invalid password. Please try again.');
+//     }
+//   }
+// }
 
-wallet.initPromise.then(() => {
-  if (walletConfig.passwordMethod === 'persistence') {
-    memoryPasswordExample();
-  } else {
-    interactivePasswordExample();
-  }
-});
+// wallet.initPromise.then(() => {
+//   if (walletConfig.passwordMethod === 'persistence') {
+//     memoryPasswordExample();
+//   } else {
+//     interactivePasswordExample();
+//   }
+// });

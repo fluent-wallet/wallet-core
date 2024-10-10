@@ -15,33 +15,23 @@
     "common-web": "workspace:*",
     "dexie": "^4.0.8",
     "jotai": "^2.9.3",
-    "react": "19.0.0-rc-ed966dac-20241007",
-    "react-dom": "19.0.0-rc-ed966dac-20241007",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.2",
     "rxdb": "^15.31.1",
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
-    "@types/react": "npm:types-react@rc",
-    "@types/react-dom": "npm:types-react-dom@rc",
-    "@vitejs/plugin-react": "^4.3.2",
-    "babel-plugin-react-compiler": "0.0.0-experimental-58c2b1c-20241007",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react-swc": "^3.7.1",
     "eslint": "^9.9.0",
-    "eslint-plugin-react-compiler": "0.0.0-experimental-4c9207a-20241007",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
     "typescript": "^5",
     "typescript-eslint": "^8.0.1",
     "vite": "^5.4.1"
-  },
-  "resolutions": {
-    "react": "19.0.0-rc-ed966dac-20241007",
-    "react-dom": "19.0.0-rc-ed966dac-20241007"
-  },
-  "overrides": {
-    "@types/react": "npm:types-react@rc",
-    "@types/react-dom": "npm:types-react-dom@rc"
   }
 }
