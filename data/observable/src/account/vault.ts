@@ -6,3 +6,6 @@ export const observeVaults = (database: Database | undefined) =>
 
 export const observeVaultCount = (database: Database | undefined) =>
   !database ? of(0) : database.vaults.count().$;
+
+export const observeVaultById = (database: Database | undefined, vaultId: string | null | undefined) =>
+  !database || !vaultId ? of(undefined) : database.vaults.findOne(vaultId).$;

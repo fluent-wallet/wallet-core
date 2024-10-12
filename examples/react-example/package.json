@@ -12,6 +12,7 @@
     "@cfx-kit/wallet-core-methods": "workspace:*",
     "@cfx-kit/wallet-core-react-inject": "workspace:*",
     "@cfx-kit/wallet-core-wallet": "workspace:*",
+    "@lit/react": "^1.0.6",
     "common-web": "workspace:*",
     "dexie": "^4.0.8",
     "jotai": "^2.9.3",

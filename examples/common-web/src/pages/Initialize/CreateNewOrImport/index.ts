@@ -1,16 +1,46 @@
 import { LitElement, css, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
+const transitions = {
+  'en': {
+    'title': 'XXX Wallet',
+    'subtitle': 'Explore the new wolrd of blockchain',
+    'create-new-wallet': 'Create New Wallet',
+    'import-existed-wallet': 'Import Existed Wallet',
+  },
+  'zh': {
+    'title': 'XXX Wallet',
+    'subtitle': '探索区块链的新世界',
+    'create-new-wallet': '创建新钱包',
+    'import-existed-wallet': '导入现有钱包',
+  },
+} as const;
+
+const i18n = transitions[globalThis.walletConfig?.language ?? 'en'];
+
 @customElement('initialize-create-or-import')
-export class CreateOrImportPage extends LitElement {
+export class CreateOrImport extends LitElement {
+  private handleClickCreateNew(evt: MouseEvent) {
+    evt.stopPropagation();
+    this.dispatchEvent(new Event('onClickCreateNew', { bubbles: true, composed: true }));
+  }
+
+  private handleClickImportExist(evt: MouseEvent) {
+    evt.stopPropagation();
+    this.dispatchEvent(new Event('onClickImportExist', { bubbles: true, composed: true }));
+  }
   render() {
     return html` 
       <div class="wrapper">
-        <p class="title">XXX Wallet</p>
-        <p class="subtitle">Explore the new wolrd of blockchain</p>
+        <p class="title">${i18n['title']}</p>
+        <p class="subtitle">${i18n['subtitle']}</p>
 
-        <button class="btn">Create New Wallet</button>
-        <button class="btn">Import Existed Wallet</button>
+        <button class="btn" @click="${this.handleClickCreateNew}">
+          ${i18n['create-new-wallet']}
+        </button>
+        <button class="btn" @click="${this.handleClickImportExist}">
+          ${i18n['import-existed-wallet']}
+        </button>
       </div>
     `;
   }
@@ -60,6 +90,7 @@ export class CreateOrImportPage extends LitElement {
       color: #fff;
       outline: none;
       cursor: pointer;
+      user-select: none;
     }
 
     .btn:hover {
@@ -79,7 +110,7 @@ export class CreateOrImportPage extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'initialize-create-or-import': CreateOrImportPage;
+    'initialize-create-or-import': CreateOrImport;
   }
 
   namespace JSX {

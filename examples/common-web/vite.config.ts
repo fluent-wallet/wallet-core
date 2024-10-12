@@ -12,13 +12,12 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
-      name: 'CommonWeb',
       formats: ['es'],
       fileName: 'index',
     },
   },
   plugins: [
-    dts(),
+    dts({ rollupTypes: true }),
     UnoCSS({
       mode: 'shadow-dom',
       transformers: [

@@ -7,8 +7,8 @@ import { customElement, property } from 'lit/decorators.js'
  * @slot - This element has a slot
  * @csspart button - The button
  */
-@customElement('password-initialize-page')
-export class PasswordInitializePage extends LitElement {
+@customElement('initialize-password')
+export class InitializePassword extends LitElement {
   /**
    * Copy for the read the docs hint.
    */
@@ -111,14 +111,13 @@ export class PasswordInitializePage extends LitElement {
 
 
 declare global {
-  var abc: string;
   interface HTMLElementTagNameMap {
-    'password-initialize-page': PasswordInitializePage
+    'initialize-password': InitializePassword
   }
 
   namespace JSX {
     interface IntrinsicElements {
-      'password-initialize-page': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElementTagNameMap['password-initialize-page']>, HTMLElementTagNameMap['password-initialize-page']>;
+      'initialize-password': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElementTagNameMap['initialize-password']>, HTMLElementTagNameMap['initialize-password']>;
     }
   }
 }

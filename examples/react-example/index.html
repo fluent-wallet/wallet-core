@@ -14,19 +14,19 @@
     <div id="wallet-core-config" style="display: none">
       <form id="config-form">
         <div style="display: flex; flex-direction: row; gap: 8px; align-items: center">
-          <p>Language:</p>
+          <p>Language: <span style="color: red">*</span></p>
           <label>
-            <input type="radio" name="language" value="english" required />
+            <input type="radio" name="language" value="en" required  />
             <span>English</span>
           </label>
           <label>
-            <input type="radio" name="language" value="chinese" />
+            <input type="radio" name="language" value="zh" />
             <span>简体中文</span>
           </label>
         </div>
 
         <div style="display: flex; flex-direction: row; gap: 8px; align-items: center">
-          <p>Password methods:</p>
+          <p>Password methods: <span style="color: red">*</span></p>
           <label>
             <input type="radio" name="password-method" value="interactive" required />
             <span>Interactive</span>
@@ -38,7 +38,7 @@
         </div>
 
         <div style="display: flex; flex-direction: row; gap: 8px; align-items: center">
-          <p>Storage methods:</p>
+          <p>Storage methods: <span style="color: red">*</span></p>
           <label>
             <input type="radio" name="storage-method" value="IndexedDB" required />
             <span>IndexedDB</span>
@@ -46,18 +46,6 @@
           <label>
             <input type="radio" name="storage-method" value="Memory" />
             <span>Memory</span>
-          </label>
-        </div>
-
-        <div style="display: flex; flex-direction: row; gap: 8px; align-items: center">
-          <p>Backup Mnemonic in create:</p>
-          <label>
-            <input type="radio" name="backup-Mnemonic-in-create" value="yes" required />
-            <span>Yes</span>
-          </label>
-          <label>
-            <input type="radio" name="backup-Mnemonic-in-create" value="no" />
-            <span>No</span>
           </label>
         </div>
 
@@ -85,10 +73,16 @@
     </div>
     <script>
       const configDOM = document.querySelector('#wallet-core-config');
+      function clearHashAndReload() {
+        if (location.pathname !== '/') {
+          location.replace('/');
+        }
+      }
+
       document.getElementById('go-to-config').addEventListener('click', () => {
         configDOM.style.display = 'block';
         localStorage.setItem('remember-config', null);
-        window.location.replace('/');
+        clearHashAndReload();
       });
 
       function saveSelection(name) {
@@ -109,10 +103,10 @@
       }
 
       function checkFormCompletion() {
-        const passwordMethodSelected = document.querySelector('input[name="password-method"]:checked');
-        const storageMethodSelected = document.querySelector('input[name="storage-method"]:checked');
+        const requiredOptions = document.querySelectorAll('input[required]');
+        const everyRequiredOptionsSelected = Array.from(requiredOptions).every((option) => document.querySelector(`input[name="${option.name}"]:checked`));
         const submitButton = document.getElementById('submit-button');
-        submitButton.disabled = !(passwordMethodSelected && storageMethodSelected);
+        submitButton.disabled = !everyRequiredOptionsSelected;
         submitButton.style.backgroundColor = submitButton.disabled ? 'gray' : '#007bff';
       }
 
@@ -121,11 +115,11 @@
         const inputNames = Array.from(new Set(Array.from(selections).map((selection) => selection.name)));
         inputNames.forEach(loadSelection);
 
-
         const rememberConfig = document.querySelector('input[name="remember-config"]:checked')?.value;
         if (rememberConfig === 'yes') {
           loadFramework();
         } else {
+          clearHashAndReload();
           configDOM.style.display = 'block';
           checkFormCompletion();
         }
@@ -143,7 +137,8 @@
 
         const passwordMethod = document.querySelector('input[name="password-method"]:checked').value;
         const storageMethod = document.querySelector('input[name="storage-method"]:checked').value;
-        globalThis.walletConfig = { passwordMethod, storageMethod };
+        const language = document.querySelector('input[name="language"]:checked').value;
+        globalThis.walletConfig = { passwordMethod, storageMethod, language };
 
         configDOM.remove();
         const script = document.createElement('script');
