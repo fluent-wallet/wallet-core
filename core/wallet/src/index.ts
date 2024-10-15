@@ -7,6 +7,7 @@ import { pipelines } from '../../methods/src';
 export { default as InteractivePassword } from './mechanism/Encryptor/Password/InteractivePassword';
 export { default as SecureMemoryPassword } from './mechanism/Encryptor/Password/MemoryPassword';
 export { IncorrectPasswordError } from './mechanism/Encryptor/Encryptor';
+export { PasswordRequestUserCancelError } from './mechanism/Encryptor/Password/InteractivePassword';
 
 type MethodWithDatabase<T> = (db: Database, ...args: any[]) => T;
 type MethodWithDBConstraint = MethodWithDatabase<any>;
@@ -29,6 +30,11 @@ interface Data {
 export class PasswordNotInitializedError extends Error {
   message = 'Password not initialized';
   code = -2010286;
+}
+
+export class PasswordAlreadyInitializedError extends Error {
+  message = 'Password already initialized';
+  code = -2010285;
 }
 
 class WalletClass<T extends MethodsMap = any, J extends ChainsMap = any> {
@@ -106,7 +112,7 @@ class WalletClass<T extends MethodsMap = any, J extends ChainsMap = any> {
             }
             const encryptorContent = await state.get('encryptorContent');
             if (typeof encryptorContent === 'string') {
-              return;
+              console.warn('Password already initialized, will override it.');
             }
             const encryptedContent = await databaseOptions.encryptor?.encrypt('encryptorContent', password);
             await state.set('encryptorContent', () => encryptedContent);

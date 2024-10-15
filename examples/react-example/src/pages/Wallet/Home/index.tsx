@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { useVaults, useAccountsOfVault } from '@cfx-kit/wallet-core-react-inject/src';
-import wallet from './wallet';
+import wallet from '@wallet/index';
 
 const Account = ({ account }: { account: NonNullable<ReturnType<typeof useAccountsOfVault>>[number] }) => {
   const [inEdit, setInEdit] = useState(false);
@@ -91,7 +91,7 @@ const Vaults = () => {
   );
 };
 
-function IndexPopup() {
+export function WalletHome() {
   useEffect(() => {
     const func = async () => {
       wallet.methods
@@ -108,7 +108,7 @@ function IndexPopup() {
 
   return (
     <div>
-      {/* <button
+      <button
         onClick={async () => {
           const showLog = false;
           const startTime = performance.now();
@@ -144,11 +144,7 @@ function IndexPopup() {
       >
         add exist Mnemonic Vault
       </button>
-      <Vaults /> */}
-      <set-password-page />
+      <Vaults />
     </div>
   );
 }
-
-export default IndexPopup;
-

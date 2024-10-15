@@ -1,6 +1,6 @@
 import { ChainMethods } from '@cfx-kit/wallet-core-chain/src';
 import { generatePrivateKey, privateKeyToAddress, mnemonicToAccount, signTransaction as _signTransaction, signMessage as _signMessage, signTypedData } from 'cive/accounts';
-import { isAddress } from "cive/utils";
+import { isAddress, toHex } from "cive/utils";
 export * from './chains';
 
 export enum ConfluxMessageTypes {
@@ -23,7 +23,7 @@ export class ConfluxChainMethodsClass extends ChainMethods {
     return isAddress(address);
   }
 
-  getDerivedFromMnemonic({ mnemonic, hdPath = this.hdPath, index }: { mnemonic: string; hdPath: string; index: number }) {
+  getDerivedFromMnemonic({ mnemonic, hdPath = this.hdPath, index }: { mnemonic: string; hdPath: string; index: number; networkId: number }) {
     const hdAccount = mnemonicToAccount(mnemonic, {
       path: hdPath.replace(/\d+$/, index.toString()) as `m/44'/503'/${string}`,
       networkId: 1,
@@ -37,7 +37,7 @@ export class ConfluxChainMethodsClass extends ChainMethods {
     }
 
     return {
-      privateKey: privateKey.toString(),
+      privateKey: toHex(privateKey),
       publicAddress: publicKey.toString()
     } as const;
   }

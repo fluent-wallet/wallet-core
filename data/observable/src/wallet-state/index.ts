@@ -5,3 +5,4 @@ export const observePasswordInitialized = (state: State | undefined) =>
   !state ? of(false) : (state.get$('encryptorContent') as Observable<string>).pipe(
     map((encryptorContent) => !!encryptorContent),
   );
+

@@ -17,6 +17,7 @@ export const BackupShowMnemonicBase = createComponent({
 export const BackupShowMnemonic = () => {
   const navigate = useNavigate();
   const location = useLocation();
+
   const { vaultId } = useParams();
   const vault = useVaultFromId(vaultId);
 
@@ -32,12 +33,12 @@ export const BackupShowMnemonic = () => {
     if (vaultId) return;
 
     if (!location.state) {
-      navigate('/backup/lose-tip');
+      navigate('/initialize/backup/lose-tip');
     }
   }, [vaultId, location.state]);
 
   const hasNextFlow = (!vaultId && location.state) || (vaultId && vault?.type === 'mnemonic' && !vault.isBackup);
-  console.log('vaultId', vaultId);
+
   return (
     <BackupShowMnemonicBase
       showNextButton={hasNextFlow}

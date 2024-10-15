@@ -1,5 +1,5 @@
 import { LitElement, css, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { random, shuffle } from 'radash';
 import { wordlist as englishWordList } from '@scure/bip39/wordlists/english';
 
@@ -8,11 +8,13 @@ const transitions = {
     title: 'Verify your mnemonic',
     word: 'Word',
     confirm: 'confirm',
+    skip: 'Skip This',
   },
   'zh': {
     title: '验证你的助记词',
     word: '单词',
     confirm: '确认',
+    skip: '跳过这步',
   },
 } as const;
 
@@ -23,14 +25,19 @@ const i18n = transitions[globalThis.walletConfig?.language ?? 'en'];
 export class VerifyMnemonic extends LitElement {
   @property() value: string = null!;
 
-  private get phrase() {
-    return this.value.split(' ');
+  @state() private mixers: Array<{ word: string; originIndex: number; mixer: string[] }> = [];
+
+  willUpdate(changedProperties: Map<string, any>) {
+    if (changedProperties.has('value')) {
+      this.updateMixers();
+    }
   }
 
-  private get mixers() {
-    const phrasesWithIndex = this.phrase.map((word, originIndex) => ({ word, originIndex }));
+  private updateMixers() {
+    const phrase = this.value.split(' ');
+    const phrasesWithIndex = phrase.map((word, originIndex) => ({ word, originIndex }));
     const randomWithIndex = shuffle(phrasesWithIndex).slice(0, 3).sort((a, b) => a.originIndex - b.originIndex);
-    return randomWithIndex.map(({ word, originIndex }) => {
+    this.mixers = randomWithIndex.map(({ word, originIndex }) => {
       const mixer: Array<string> = [word];
       while (mixer.length < 3) {
         const randomIndex = random(0, englishWordList.length - 1);
@@ -49,7 +56,8 @@ export class VerifyMnemonic extends LitElement {
   }
 
   private isAllCorrect() {
-    return this.selectedWords.every((word, index) => word === this.mixers[index].word);
+    return this.selectedWords.length === this.mixers.length &&
+      this.selectedWords.every((word, index) => word === this.mixers[index].word);
   }
 
   private handleWordClick(index: number, word: string) {
@@ -61,21 +69,27 @@ export class VerifyMnemonic extends LitElement {
 
   private handleClickConfirmButton(evt: MouseEvent) {
     evt.stopPropagation();
+    console.log('handleClickConfirmButton', this.isAllCorrect());
     if (this.isAllCorrect()) {
-      this.handleConfirmSucess(evt);
+      this.handleSucess(evt);
     } else {
-      this.handleConfirmFailed(evt);
+      this.handleFailed(evt);
     }
   }
 
-  private handleConfirmSucess(evt: MouseEvent) {
+  private handleSucess(evt: MouseEvent) {
     evt.stopPropagation();
-    this.dispatchEvent(new Event('onConfirmSucess', { bubbles: true, composed: true }));
+    this.dispatchEvent(new Event('onSucess', { bubbles: true, composed: true }));
   }
 
-  private handleConfirmFailed(evt: MouseEvent) {
+  private handleFailed(evt: MouseEvent) {
     evt.stopPropagation();
-    this.dispatchEvent(new Event('onConfirmFailed', { bubbles: true, composed: true }));
+    this.dispatchEvent(new Event('onFailed', { bubbles: true, composed: true }));
+  }
+
+  private handleClickSkipButton(evt: MouseEvent) {
+    evt.stopPropagation();
+    this.dispatchEvent(new Event('onClickSkipButton', { bubbles: true, composed: true }));
   }
 
 
@@ -88,12 +102,12 @@ export class VerifyMnemonic extends LitElement {
             <p class="word-label">${i18n['word']} #${originIndex + 1}</p>
             <div class="words-wrapper">
               ${mixer.map((word) => html`
-                <button
-                  class="word-button ${this.selectedWords[index] === word ? 'selected' : ''}"
+                <div
+                  class="word ${this.selectedWords[index] === word ? 'selected' : ''}"
                   @click=${() => this.handleWordClick(index, word)}
                 >
                   ${word}
-                </button>
+                </div>
               `)}
             </div>
           </div>
@@ -103,8 +117,14 @@ export class VerifyMnemonic extends LitElement {
           @click="${this.handleClickConfirmButton}"
           ?disabled="${!this.isAllSelected()}"
         >
-        ${i18n['confirm']}
-      </button>
+          ${i18n['confirm']}
+        </button>
+        <button
+          class="btn"
+          @click="${this.handleClickSkipButton}"
+        >
+          ${i18n['skip']}
+        </button>
       </div>
     `;
   }
@@ -171,6 +191,37 @@ export class VerifyMnemonic extends LitElement {
     
     span {
       color: #fff;
+    }
+
+    .word-label {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.6);
+      margin-bottom: 8px;
+    }
+
+    .words-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .word {
+      padding: 8px 12px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: #fff;
+    }
+
+    .word:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .word.selected {
+      background-color: rgba(0, 123, 255, 0.5);
     }
   `;
 }

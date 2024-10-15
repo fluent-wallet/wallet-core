@@ -1,5 +1,7 @@
 import { Mutex } from 'async-mutex';
 import crypto from 'crypto';
+import { BehaviorSubject, Observable } from 'rxjs';
+
 const getRandomValues =
   typeof globalThis !== 'undefined' && globalThis.crypto && typeof globalThis.crypto.getRandomValues === 'function'
     ? (globalThis.crypto.getRandomValues.bind(globalThis.crypto) as typeof crypto.getRandomValues)
@@ -19,10 +21,14 @@ class MemoryPassword {
   private lastUpdate: number = null!;
   private readonly updateInterval: number;
   private mutex: Mutex;
+  private isPasswordSettedSubject: BehaviorSubject<boolean>;
+  public isPasswordSetted$: Observable<boolean>;
 
   public constructor(options: MemoryPasswordOptions = {}) {
     this.updateInterval = options?.updateInterval ?? 60000 * 5;
     this.mutex = new Mutex();
+    this.isPasswordSettedSubject = new BehaviorSubject<boolean>(false);
+    this.isPasswordSetted$ = this.isPasswordSettedSubject.asObservable();
   }
 
   private encode(password: string): Uint8Array {
@@ -68,6 +74,12 @@ class MemoryPassword {
     this.salt = getRandomValues(new Uint8Array(32));
     this.data = this.encode(password);
     this.lastUpdate = Date.now();
+    this.isPasswordSettedSubject.next(true);
+  }
+
+  public resetPassword() {
+    this.data = null!;
+    this.isPasswordSettedSubject.next(false);
   }
 
   public async getPassword(): Promise<string> {
@@ -76,6 +88,10 @@ class MemoryPassword {
     }
     await this.updateEncoding();
     return this.mutex.runExclusive(() => this.decode());
+  }
+
+  public async isPasswordSetted() {
+    return this.data !== null;
   }
 
   public toString(): string {

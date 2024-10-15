@@ -19,6 +19,15 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "@assets/*": ["./src/assets/*"],
+      "@modules/*": ["./src/modules/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@router/*": ["./src/router/*"],
+      "@components/*": ["./src/components/*"],
+      "@wallet/*": ["./src/wallet/*"],
+    }
   },
   "include": ["src", "./src/vite-env.d.ts"]
 }

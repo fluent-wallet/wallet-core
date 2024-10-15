@@ -25,6 +25,7 @@ export interface MnemonicVaultParams {
   name?: string;
   mnemonic?: string;
   source?: VaultSource;
+  isBackup?: boolean;
 }
 
 export const addMnemonicVault = (database: Database, params?: MnemonicVaultParams) =>
@@ -33,6 +34,7 @@ export const addMnemonicVault = (database: Database, params?: MnemonicVaultParam
       mnemonic: undefined,
       source: undefined,
       name: undefined,
+      isBackup: undefined,
     }),
     R.evolve({
       mnemonic: R.defaultTo(generateMnemonic(englishWordList)),
@@ -43,12 +45,12 @@ export const addMnemonicVault = (database: Database, params?: MnemonicVaultParam
       getLastVaultAutoIndexOfType(database, VaultTypeEnum.mnemonic).then((index) => ({ ...params, name: params.name || `Wallet ${generateDefaultVaultCode(index)}` })),
     ),
     R.andThen((params: Required<MnemonicVaultParams>) => encryptField(database, 'mnemonic', params)),
-    R.andThen(({ mnemonic, source, name }) => ({
+    R.andThen(({ mnemonic, source, name, isBackup }) => ({
       name,
       value: mnemonic,
       type: VaultTypeEnum.mnemonic,
       source,
-      isBackup: source === VaultSourceEnum.import,
+      isBackup: isBackup ?? source === VaultSourceEnum.import,
     })),
     R.andThen((data) => database.vaults.insert(data as unknown as VaultDocType)),
   )(params);

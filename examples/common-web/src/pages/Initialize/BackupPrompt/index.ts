@@ -34,6 +34,12 @@ export class BackupPrompt extends LitElement {
     this.dispatchEvent(new Event('onClickRevealButton', { bubbles: true, composed: true }));
   }
 
+
+  private handleClickToWalletButton(evt: MouseEvent) {
+    evt.stopPropagation();
+    this.dispatchEvent(new Event('onClickToWalletButton', { bubbles: true, composed: true }));
+  }
+
   render() {
     return html`
       <div class="wrapper">
@@ -54,7 +60,7 @@ export class BackupPrompt extends LitElement {
             <p>${i18n['info-item-3']}</p>
           </div>
           <button class="btn" @click="${this.handleClickRevealButton}">${i18n['reveal-button']}</button>
-          <a href="#" class="wallet-link">${i18n['wallet-link']}</a>
+          <button class="btn" @click="${this.handleClickToWalletButton}">${i18n['wallet-link']}</button>
         </div>
       </div>
     `;

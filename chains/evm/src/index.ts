@@ -1,6 +1,6 @@
 import { ChainMethods } from '@cfx-kit/wallet-core-chain/src';
 import { generatePrivateKey, privateKeyToAddress, mnemonicToAccount, signTransaction as _signTransaction, signMessage as _signMessage, signTypedData } from 'viem/accounts';
-import { isAddress } from 'viem';
+import { isAddress, toHex } from 'viem';
 export * from './chains';
 
 export enum EvmMessageTypes {
@@ -37,8 +37,8 @@ export class EVMChainMethodsClass extends ChainMethods {
     }
 
     return {
-      privateKey: privateKey.toString(),
-      publicAddress: publicKey.toString()
+      privateKey: toHex(privateKey),
+      publicAddress: toHex(publicKey)
     } as const;
   }
 

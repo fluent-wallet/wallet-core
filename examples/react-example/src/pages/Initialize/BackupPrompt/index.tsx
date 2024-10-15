@@ -10,11 +10,16 @@ export const InitializeBackupPromptBase = createComponent({
   events: {
     onClickBackButton: 'onClickBackButton',
     onClickRevealButton: 'onClickRevealButton',
+    onClickToWalletButton: 'onClickToWalletButton',
   },
 });
 
 export const InitializeBackupPrompt = () => {
   const navigate = useNavigate();
 
-  return <InitializeBackupPromptBase onClickBackButton={() => navigate(-1)} onClickRevealButton={() => navigate('/backup/lose-tip')} />;
+  return <InitializeBackupPromptBase
+    onClickBackButton={() => navigate(-1)}
+    onClickRevealButton={() => navigate('/initialize/backup')}
+    onClickToWalletButton={() => navigate('/initialize/set-password')}
+  />;
 };

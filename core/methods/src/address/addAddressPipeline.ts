@@ -36,7 +36,7 @@ const writeAddressToDBWithChainAndAccount = async (database: Database, chainsMap
       });
     }).filter(Boolean) as Array<{ publicAddress: string; privateKey: string; account: string; chain: string; }>
   );
-
+  console.log('addresses', addresses);
   const result = await database.addresses.bulkInsert(addresses);
   const patchAccountsAndChains = result?.success?.map(async (address) => {
     const [account, chain] = await Promise.all(
@@ -65,13 +65,16 @@ export const addAddressOfChainPipleline = async (database: Database, chainsMap: 
   destination: database.addresses,
   handler: async (chainsDoc) => {
     try {
-      const newChains = chainsDoc.filter((doc) => !doc.deleted && chainsMap[doc.type]);
       const vaultsNeedToAddAddress = await database.vaults.find({
         selector: {
           type: { $in: [VaultTypeEnum.mnemonic, VaultTypeEnum.privateKey] },
         },
       }).exec();
+      if (!vaultsNeedToAddAddress.length) {
+        return;
+      }
 
+      const newChains = chainsDoc.filter((doc) => !doc.deleted && chainsMap[doc.type]);
       const accountsWithDecryptedVault = (await Promise.all(
         vaultsNeedToAddAddress.map(async (vault) =>
         ({
@@ -90,7 +93,7 @@ export const addAddressOfChainPipleline = async (database: Database, chainsMap: 
 
       await writeAddressToDBWithChainAndAccount(database, chainsMap, { chains: newChains, accountsWithDecryptedVault });
     } catch (error) {
-      console.error('Failed to add first account of vault: ', error);
+      console.error('Failed to add address of chain pipleline: ', error);
     }
   }
 });
@@ -103,7 +106,13 @@ export const addAddressOfAccountPipleline = async (database: Database, chainsMap
   handler: async (accountsDoc) => {
     try {
       const chains = (await database.chains.find().exec()).filter((doc) => !doc.deleted && chainsMap[doc.type]);
+      if (!chains.length) {
+        return;
+      }
+      console.log('chains', chains);
       const newAccounts = accountsDoc.filter((doc) => !doc.deleted);
+      console.log('newAccounts', newAccounts);
+
       const accountsWithDecryptedVault = await Promise.all(newAccounts.map(async (account) => {
         const vault = await account.populate('vault') as RxDocument<VaultDocType>;
         return {
@@ -112,10 +121,11 @@ export const addAddressOfAccountPipleline = async (database: Database, chainsMap
           value: await decryptVaultValue(database, vault.value),
         }
       }));
+      console.log('accountsWithDecryptedVault', accountsWithDecryptedVault);
 
       await writeAddressToDBWithChainAndAccount(database, chainsMap, { chains, accountsWithDecryptedVault });
     } catch (error) {
-      console.error('Failed to add first account of vault: ', error);
+      console.error('Failed to add address of account pipleline: ', error);
     }
   }
 });

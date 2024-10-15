@@ -25,7 +25,7 @@ class InteractivePassword {
   readonly #options: Required<InteractivePasswordOptions>;
   readonly #passwordRequestSubject = new ReplaySubject<PasswordRequest>(1);
   #pwdCache: string | null = null;
-  #cacheExpiration: number = 0;
+  #cacheExpiration: number = 200;
   #currentPasswordPromise: Promise<string> | null = null;
 
   constructor(options: InteractivePasswordOptions = {}) {
@@ -56,9 +56,9 @@ class InteractivePassword {
     this.#currentPasswordPromise = this.#requestNewPassword();
     this.#currentPasswordPromise
       .then((pwd) => {
-        this.#cachePassword(pwd);
+        this.cachePassword(pwd);
       })
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => {
         this.#currentPasswordPromise = null;
       });
@@ -89,7 +89,7 @@ class InteractivePassword {
     return this.#pwdCache !== null && (Date.now() < this.#cacheExpiration);
   }
 
-  #cachePassword(pwd: string) {
+  public cachePassword(pwd: string) {
     this.#pwdCache = pwd;
     this.#cacheExpiration = Date.now() + this.#options.cacheTime;
   }

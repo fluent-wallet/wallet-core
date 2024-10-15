@@ -117,11 +117,15 @@ class Encryptor {
   };
 
   public encrypt = async (object: any, _password?: string): Promise<string> => {
-    const salt = this.generateSalt();
-    const password = _password ?? (await this.getPassword());
-    const key = await this.generateKeyFromPassword(salt, password);
-    const result = await this.encryptWithKey(JSON.stringify(object), key);
-    return JSON.stringify({ ...result, salt });
+    try {
+      const salt = this.generateSalt();
+      const password = _password ?? (await this.getPassword());
+      const key = await this.generateKeyFromPassword(salt, password);
+      const result = await this.encryptWithKey(JSON.stringify(object), key);
+      return JSON.stringify({ ...result, salt });
+    } catch (error) {
+      throw error;
+    }
   };
 
   public decrypt = async <T = unknown>(encryptedDataString: string, _password?: string): Promise<T> => {
@@ -132,7 +136,7 @@ class Encryptor {
       const data = await this.decryptWithKey(encryptedData, key);
       return JSON.parse(data);
     } catch (error) {
-      throw new IncorrectPasswordError();
+      throw error;
     }
   };
 }
