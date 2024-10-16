@@ -36,8 +36,12 @@ export const addFirstAccountOfVaultPipleline = async (database: Database) => dat
   destination: database.accounts,
   handler: async (vaultsDoc) => {
     try {
-      const newVaults = vaultsDoc.filter((doc) => !doc.deleted);
-      const insertAccountsPromises = newVaults
+      const vaults = vaultsDoc.filter((doc) => !doc.deleted).filter(vault => !vault.accounts || !vault.accounts.length);
+      if (!vaults.length) {
+        return;
+      }
+
+      const insertAccountsPromises = vaults
         .map(async (vault) => {
           const isPrivateKeyVault = vault.type === VaultTypeEnum.privateKey;
           let name: string;
@@ -60,8 +64,9 @@ export const addFirstAccountOfVaultPipleline = async (database: Database) => dat
       const result = await database.accounts.bulkInsert(insertAccounts);
       const patchVaults = result?.success?.map(async (account) => {
         const vault = await account.populate('vault') as RxDocument<VaultDocType>;
-        await vault.patch({
-          accounts: [...(vault.accounts ?? []), account.id],
+        await vault.incrementalModify((vaultDoc) => {
+          vaultDoc.accounts = [...(vaultDoc.accounts ?? []), account.id];
+          return vaultDoc;
         });
       });
       await Promise.all(patchVaults);

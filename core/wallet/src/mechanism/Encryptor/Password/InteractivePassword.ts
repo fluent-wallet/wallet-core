@@ -25,13 +25,13 @@ class InteractivePassword {
   readonly #options: Required<InteractivePasswordOptions>;
   readonly #passwordRequestSubject = new ReplaySubject<PasswordRequest>(1);
   #pwdCache: string | null = null;
-  #cacheExpiration: number = 200;
+  #cacheExpiration: number = 0;
   #currentPasswordPromise: Promise<string> | null = null;
 
   constructor(options: InteractivePasswordOptions = {}) {
     this.#options = {
-      cacheTime: options.cacheTime ?? 250,
-      timeout: options.timeout ?? 5000,
+      cacheTime: options.cacheTime ?? 400,
+      timeout: options.timeout ?? 0,
     };
   }
 
@@ -39,7 +39,7 @@ class InteractivePassword {
     return this.#passwordRequestSubject.asObservable().pipe(
       filter((request) => {
         const now = Date.now();
-        return now - request.timestamp <= this.#options.timeout;
+        return this.#options.timeout === 0 || now - request.timestamp <= this.#options.timeout;
       }),
     );
   }
@@ -67,17 +67,21 @@ class InteractivePassword {
 
   async #requestNewPassword() {
     return new Promise<string>((resolve, reject) => {
-      const timeoutId = setTimeout(() => {
-        reject(new PasswordRequestTimeoutError());
-      }, this.#options.timeout);
+      let timeoutId: NodeJS.Timeout | null = null;
+      
+      if (this.#options.timeout > 0) {
+        timeoutId = setTimeout(() => {
+          reject(new PasswordRequestTimeoutError());
+        }, this.#options.timeout);
+      }
 
       this.#passwordRequestSubject.next({
         resolve: (value: string) => {
-          clearTimeout(timeoutId);
+          if (timeoutId) clearTimeout(timeoutId);
           resolve(value);
         },
         reject: (reason?: any) => {
-          clearTimeout(timeoutId);
+          if (timeoutId) clearTimeout(timeoutId);
           reject(reason);
         },
         timestamp: Date.now(),

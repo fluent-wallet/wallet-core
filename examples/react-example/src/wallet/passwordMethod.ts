@@ -34,5 +34,7 @@ export const RespondInteractivePassword: React.FC<{ wallet: WalletClass }> = ({ 
   return null;
 };
 
+/** <--------------------------------------> */
+
 export const memoryPassword = new MemoryPassword();
 export const useIsPersistencePasswordSetted = () => useObservableState(memoryPassword.isPasswordSetted$, false);

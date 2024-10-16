@@ -60,6 +60,7 @@ const AppRoutes = () => {
             <>
               <Outlet />
               <AuthInitialize />
+              <RespondInteractivePassword wallet={wallet} />
             </>
           }
         >

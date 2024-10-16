@@ -7,7 +7,7 @@ export * from './accountSystem/account/deleteAccount';
 export * from './accountSystem/account/basic';
 import { addFirstAccountOfVaultPipleline } from './accountSystem/account/addAccount';
 import { deleteAccountsOfVaultPipleline } from './accountSystem/vault/deleteVault';
-import { addAddressOfChainPipleline, addAddressOfAccountPipleline } from './address/addAddressPipeline';
+import { addAddressOfChainPipleline, addAddressOfAccountPipleline, deleteAddressOfChainPipleline, deleteAddressOfAccountPipleline } from './address/addAddressPipeline';
 
 
 export const pipelines = {
@@ -15,4 +15,6 @@ export const pipelines = {
   deleteAccountsOfVault: deleteAccountsOfVaultPipleline,
   addAddressOfChain: addAddressOfChainPipleline,
   addAddressOfAccount: addAddressOfAccountPipleline,
+  deleteAddressOfChain: deleteAddressOfChainPipleline,
+  deleteAddressOfAccount: deleteAddressOfAccountPipleline,
 } as const;

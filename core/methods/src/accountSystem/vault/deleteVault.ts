@@ -11,14 +11,15 @@ export const deleteAccountsOfVaultPipleline = async (database: Database) => data
   destination: database.accounts,
   handler: async (vaultsDoc) => {
     try {
-      const removeAccounts = vaultsDoc
+      const deletedAccounts = vaultsDoc
         .filter((doc) => doc.deleted)
-        .map((vault) => vault.accounts ?? [])
-        .flat();
+        .flatMap((vault) => vault.accounts ?? [])
 
-      if (removeAccounts.length > 0) {
-        await database.accounts.bulkRemove(removeAccounts);
+      if (!deletedAccounts.length) {
+        return;
       }
+
+      await database.accounts.bulkRemove(deletedAccounts);
     } catch (error) {
       console.error('Failed to delete accounts of vault: ', error);
     }

@@ -135,7 +135,7 @@ export class BackupPrompt extends LitElement {
       all: unset;
       width: 280px;
       margin: 0 auto;
-      margin-top: 40px;
+      margin-top: 20px;
       display: flex;
       align-items: center;
       justify-content: center;

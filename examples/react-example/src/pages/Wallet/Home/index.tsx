@@ -110,7 +110,7 @@ export function WalletHome() {
     <div>
       <button
         onClick={async () => {
-          const showLog = false;
+          const showLog = true;
           const startTime = performance.now();
           showLog && console.log('Starting addMnemonicVault...');
           const addMnemonicStart = performance.now();
@@ -121,6 +121,7 @@ export function WalletHome() {
           showLog && console.log('Starting addAccountOfVault...');
           const addAccountStart = performance.now();
           await wallet.pipelines.addFirstAccountOfVault.awaitIdle();
+          await wallet.pipelines.addAddressOfAccount.awaitIdle();
           const addAccountEnd = performance.now();
           showLog && console.log(`addAccountOfVault completed in ${addAccountEnd - addAccountStart} ms`);
 

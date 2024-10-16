@@ -5,7 +5,7 @@ const accountSchemaLiteral = {
   primaryKey: {
     key: 'id',
     fields: ['vault', 'hdIndex'],
-    separator: '|',
+    separator: '-',
   },
   type: 'object',
   properties: {

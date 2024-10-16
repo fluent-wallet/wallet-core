@@ -23,10 +23,12 @@ export class ConfluxChainMethodsClass extends ChainMethods {
     return isAddress(address);
   }
 
-  getDerivedFromMnemonic({ mnemonic, hdPath = this.hdPath, index }: { mnemonic: string; hdPath: string; index: number; networkId: number }) {
+  getDerivedFromMnemonic({ mnemonic, hdPath = this.hdPath, index, chainId }: { mnemonic: string; hdPath: string; index: number; chainId: string }) {
+    const networkId = Number(chainId);
+    
     const hdAccount = mnemonicToAccount(mnemonic, {
       path: hdPath.replace(/\d+$/, index.toString()) as `m/44'/503'/${string}`,
-      networkId: 1,
+      networkId: networkId,
     });
     const hdKey = hdAccount.getHdKey();
     const privateKey = hdKey.privateKey;
@@ -38,7 +40,7 @@ export class ConfluxChainMethodsClass extends ChainMethods {
 
     return {
       privateKey: toHex(privateKey),
-      publicAddress: publicKey.toString()
+      publicAddress: this.getAddressFromPrivateKey({ privateKey: toHex(privateKey), networkId })
     } as const;
   }
 

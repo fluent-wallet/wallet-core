@@ -38,10 +38,10 @@ const wallet = new WalletClass<typeof methods, typeof chains>({
   wallet.initPromise.then(() => {
     wallet.methods.addChain({ ...EthereumSepolia, type: EVMNetworkType });
     wallet.methods.addChain({ ...EthereumMainnet, type: EVMNetworkType });
-    // wallet.methods.addChain({ ...SolanaTestnet, type: SolanaNetworkType });
-    // wallet.methods.addChain({ ...SolanaMainnet, type: SolanaNetworkType });
-    // wallet.methods.addChain({ ...ConfluxTestnet, type: ConfluxNetworkType });
-    // wallet.methods.addChain({ ...ConfluxMainnet, type: ConfluxNetworkType });
+    wallet.methods.addChain({ ...SolanaTestnet, type: SolanaNetworkType });
+    wallet.methods.addChain({ ...SolanaMainnet, type: SolanaNetworkType });
+    wallet.methods.addChain({ ...ConfluxTestnet, type: ConfluxNetworkType });
+    wallet.methods.addChain({ ...ConfluxMainnet, type: ConfluxNetworkType });
   });
 })();
 
