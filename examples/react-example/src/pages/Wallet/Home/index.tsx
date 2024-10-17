@@ -50,7 +50,9 @@ const Vault = ({ vault }: { vault: NonNullable<ReturnType<typeof useVaults>>[num
       <div>
         {inEdit ? <input ref={inputRef} defaultValue={vault.name} /> : vault.name}
         {vault.type === 'mnemonic' && (
-          <button style={{ marginLeft: 8 }} onClick={() => wallet.methods.addAccountOfMnemonicVault(vault)}>
+          <button style={{ marginLeft: 8 }} onClick={() => {
+            wallet.methods.addAccountOfMnemonicVault(vault);
+          }}>
             add account
           </button>
         )}
@@ -65,7 +67,9 @@ const Vault = ({ vault }: { vault: NonNullable<ReturnType<typeof useVaults>>[num
         >
           {inEdit ? 'save' : 'edit'}
         </button>
-        <button style={{ marginLeft: 8 }} onClick={() => wallet.methods.deleteVault(vault)}>
+        <button style={{ marginLeft: 8 }} onClick={() => {
+          wallet.methods.deleteVault(vault);
+        }}>
           delete vault
         </button>
       </div>

@@ -61,12 +61,19 @@ class WalletClass<T extends MethodsMap = any, J extends ChainsMap = any> {
     chains,
     injectDatabase,
     injectDatabasePromise,
+    extensionType
   }: {
     databaseOptions: Parameters<typeof createDatabase>[0];
     methods?: MethodsWithDatabase<T>;
     chains?: J;
     injectDatabase?: Array<(data: Data) => any>;
     injectDatabasePromise?: Array<(dataPromise: Promise<Data>) => any>;
+    /**
+     * TODO:
+     * extensionType为popup/content时，methods里的函数被替换为发送对应名字和参数的通讯方法;
+     * extensionType为background时，methods里的函数被修改为接收popup/content发来的通讯，并执行对应方法。
+     * */ 
+    extensionType?: 'background' | 'popup' | 'content';
   }) {
     this.initPromise = new Promise<Data>((resolve, reject) => {
       this.resolve = R.pipe(

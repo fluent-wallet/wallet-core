@@ -21,5 +21,10 @@ abstract class ChainMethods {
   }
 }
 
+/**
+ * TODO:
+ * 判断如果当前环境支持webWorker，则使用webWorker来执行chainMethods里的方法，否则使用主线程执行。
+ * */
+
 // export default ChainMethods;
 export { ChainMethods };
