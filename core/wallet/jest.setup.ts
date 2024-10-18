@@ -1,30 +1,43 @@
-import { getRxStorageMemory } from 'rxdb/plugins/storage-memory';
-import Encryptor from './src/mechanism/Encryptor';
-import type InteractivePassword from './src/mechanism/Encryptor/Password/InteractivePassword';
-import type MemoryPassword from './src/mechanism/Encryptor/Password/MemoryPassword';
-import WalletClass from './src';
-import methods from '../methods/src/allMethods';
-import ConfluxChainMethods, { ConfluxNetworkType, ConfluxChainMethodsClass } from '../../chains/conflux/src';
 
-const chains = {
-  [ConfluxNetworkType]: ConfluxChainMethods,
-  ['custom-Conflux']: new ConfluxChainMethodsClass(`m/44'/50333'/0'/0/0`),
+import { randomUUID } from 'crypto';
+import { getRxStorageMemory } from 'rxdb/plugins/storage-memory';
+import WalletClass from './src';
+import Encryptor from './src/mechanism/Encryptor';
+import InteractivePassword from './src/mechanism/Encryptor/Password/InteractivePassword';
+import MemoryPassword from './src/mechanism/Encryptor/Password/MemoryPassword';
+import methods from '../methods/src/allMethods';
+
+
+export const createNewWallet = ({ encryptor = 'Memory', dbName = randomUUID(), chains }: { encryptor: 'Interactive' | 'Memory' | false; dbName?: string; chains: WalletClass['chains'] }) => {
+  const password = encryptor === 'Memory' ? new MemoryPassword() : new InteractivePassword();
+
+  const wallet = new WalletClass<typeof methods>({
+    chains,
+    methods,
+    databaseOptions: {
+      dbName,
+      storage: getRxStorageMemory(),
+      encryptor: encryptor ? new Encryptor(password.getPassword.bind(password)) : undefined,
+    },
+  });
+
+  const jestInitPromise = wallet.initPromise.then(() => {
+    wallet.methods.initPassword('12345678');
+  });
+
+  if (password instanceof MemoryPassword) {
+    password.setPassword('12345678');
+
+    return {
+      wallet,
+      jestInitPromise,
+    } as const;
+  }
+
+  return {
+    wallet,
+    jestInitPromise
+  } as const;
 };
 
-const wallet = new WalletClass<typeof methods, typeof chains>({
-  databaseOptions: {
-    storage: getRxStorageMemory(),
-    encryptor: new Encryptor(() => '12345678'),
-  },
-  methods,
-  chains,
-  injectDatabase: [
-    ({ database}) => {
-      global.database = database;
-    },
-  ],
-});
-
-export type Wallet = typeof wallet;
-global.wallet = wallet;
-global.waitForDatabaseInit = async () => await wallet.initPromise;
+global.createNewWallet = createNewWallet;

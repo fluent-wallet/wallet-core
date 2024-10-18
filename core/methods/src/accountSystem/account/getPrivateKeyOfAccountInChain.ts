@@ -4,7 +4,7 @@ import { NoDocumentError } from '../../utils/MethodError';
 
 export const getPrivateKeyOfAccountInChain = (
   database: Database,
-  { account, getDerivedPrivateKey }: { account: AccountDocType; getDerivedPrivateKey: ChainMethods['getDerivedPrivateKey'] },
+  { account, getDerivedFromMnemonic }: { account: AccountDocType; getDerivedFromMnemonic: ChainMethods['getDerivedFromMnemonic'] },
 ) =>
   database.accounts
     .findOne(account.id)
@@ -18,7 +18,7 @@ export const getPrivateKeyOfAccountInChain = (
     })
     .then(({ vault, account }) => {
       if (vault.type === VaultTypeEnum.mnemonic) {
-        return getDerivedPrivateKey({
+        return getDerivedFromMnemonic({
           mnemonic: vault.value,
           index: account.hdIndex,
         });

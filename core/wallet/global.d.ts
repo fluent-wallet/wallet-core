@@ -1,10 +1,7 @@
-import type { Database } from "@cfx-kit/wallet-core-database/src";
-import type { Wallet } from "./jest.setup";
+import { createNewWallet as _createNewWallet } from './jest.setup';
 
 declare global {
-  var database: Database;
-  var waitForDatabaseInit: () => Promise<any>;
-  var wallet: Wallet;
+  var createNewWallet: typeof _createNewWallet;
 }
 
 export {};
