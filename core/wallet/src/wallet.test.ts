@@ -17,10 +17,12 @@ beforeAll(() => jestInitPromise);
  */
 bench('addChain', async () => {
   await Promise.all(
-    Array(20).fill(null).map(() => wallet.methods.addMnemonicVault())
+    Array(10).fill(null).map(() => wallet.methods.addMnemonicVault())
   );
 
-  Promise.all([
+  /** ----------------------------------- */
+
+  await Promise.all([
     wallet.methods.addChain({ ...EthereumSepolia, type: EVMNetworkType }),
     wallet.methods.addChain({ ...EthereumMainnet, type: EVMNetworkType }),
     wallet.methods.addChain({ ...SolanaTestnet, type: SolanaNetworkType }),
@@ -28,4 +30,13 @@ bench('addChain', async () => {
     wallet.methods.addChain({ ...ConfluxTestnet, type: ConfluxNetworkType }),
     wallet.methods.addChain({ ...ConfluxMainnet, type: ConfluxNetworkType }),
   ]);
+  await wallet.pipelines.addAddressOfChain.awaitIdle();
+
+
+  /** ----------------------------------- */
+
+  await Promise.all(
+    Array(20).fill(null).map(() => wallet.methods.addMnemonicVault())
+  );
+  await wallet.pipelines.addAddressOfAccount.awaitIdle();
 });
