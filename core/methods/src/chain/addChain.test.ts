@@ -1,3 +1,4 @@
+import { beforeAll, describe, expect, test } from 'vitest';
 import * as R from 'ramda';
 import { addChain } from './addChain';
 import { UniquePrimaryKeyError } from '../utils/MethodError';

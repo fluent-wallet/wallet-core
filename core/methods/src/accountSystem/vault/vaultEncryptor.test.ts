@@ -1,3 +1,4 @@
+import { beforeAll, describe, expect, it } from 'vitest';
 import { encryptVaultValue, decryptVaultValue, isVaultExist } from './vaultEncryptor';
 import { addMnemonicVault, addPrivateKeyVault } from './addVault';
 

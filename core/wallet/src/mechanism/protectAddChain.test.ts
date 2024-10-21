@@ -1,3 +1,4 @@
+import { beforeAll, describe, expect, test } from 'vitest'
 import { ConfluxMainnet } from './../../../../chains/conflux/src/chains';
 import { SolanaMainnet } from './../../../../chains/solana/src/chains';
 import { ProtectError } from '../../../methods/src/utils/MethodError';
