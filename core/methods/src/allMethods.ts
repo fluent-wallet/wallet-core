@@ -3,11 +3,11 @@ import { addMnemonicVault, addPrivateKeyVault } from './accountSystem/vault/addV
 import { deleteVault } from './accountSystem/vault/deleteVault';
 import { getPrivateKeyOfAccountInChain } from './accountSystem/account/getPrivateKeyOfAccountInChain';
 import { addChain } from './chain/addChain';
-import { addAccountOfMnemonicVault, addFirstAccountOfVaultPipleline } from './accountSystem/account/addAccount';
+import { addAccountOfMnemonicVault } from './accountSystem/account/addAccount';
 import { updateAccount, getVaultOfAccount } from './accountSystem/account/basic';
 import { deleteAccount } from './accountSystem/account/deleteAccount';
-import { deleteAccountsOfVaultPipleline } from './accountSystem/vault/deleteVault';
-import { addAddressOfChainPipleline, addAddressOfAccountPipleline, deleteAddressOfChainPipleline, deleteAddressOfAccountPipleline } from './address/addAddressPipeline';
+import { addAddressOfChainPipeline, addAddressOfAccountPipeline, deleteAddressOfChainPipeline, deleteAddressOfAccountPipeline } from './address/addAddressPipeline';
+import { vaultToAccountPipeline } from './accountSystem/vault/pipeline';
 
 const methods = {
   getVaultsCountOfType,
@@ -20,18 +20,15 @@ const methods = {
   updateAccount,
   deleteAccount,
   updateVault,
-  getVaultOfAccount
+  getVaultOfAccount,
 } as const;
-
 
 export const pipelines = {
-  addFirstAccountOfVault: addFirstAccountOfVaultPipleline,
-  deleteAccountsOfVault: deleteAccountsOfVaultPipleline,
-  addAddressOfChain: addAddressOfChainPipleline,
-  addAddressOfAccount: addAddressOfAccountPipleline,
-  deleteAddressOfChain: deleteAddressOfChainPipleline,
-  deleteAddressOfAccount: deleteAddressOfAccountPipleline,
+  vaultToAccount: vaultToAccountPipeline,
+  addAddressOfChain: addAddressOfChainPipeline,
+  addAddressOfAccount: addAddressOfAccountPipeline,
+  deleteAddressOfChain: deleteAddressOfChainPipeline,
+  deleteAddressOfAccount: deleteAddressOfAccountPipeline,
 } as const;
-
 
 export default methods;

@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, Suspense } from 'react';
 import { useVaults, useAccountsOfVault } from '@cfx-kit/wallet-core-react-inject/src';
 import wallet from '@wallet/index';
 
@@ -50,9 +50,12 @@ const Vault = ({ vault }: { vault: NonNullable<ReturnType<typeof useVaults>>[num
       <div>
         {inEdit ? <input ref={inputRef} defaultValue={vault.name} /> : vault.name}
         {vault.type === 'mnemonic' && (
-          <button style={{ marginLeft: 8 }} onClick={() => {
-            wallet.methods.addAccountOfMnemonicVault(vault);
-          }}>
+          <button
+            style={{ marginLeft: 8 }}
+            onClick={() => {
+              wallet.methods.addAccountOfMnemonicVault(vault);
+            }}
+          >
             add account
           </button>
         )}
@@ -67,9 +70,12 @@ const Vault = ({ vault }: { vault: NonNullable<ReturnType<typeof useVaults>>[num
         >
           {inEdit ? 'save' : 'edit'}
         </button>
-        <button style={{ marginLeft: 8 }} onClick={() => {
-          wallet.methods.deleteVault(vault);
-        }}>
+        <button
+          style={{ marginLeft: 8 }}
+          onClick={() => {
+            wallet.methods.deleteVault(vault);
+          }}
+        >
           delete vault
         </button>
       </div>
@@ -78,7 +84,7 @@ const Vault = ({ vault }: { vault: NonNullable<ReturnType<typeof useVaults>>[num
   );
 };
 
-const Vaults = () => {
+const VaultsContent = () => {
   const vaults = useVaults();
   // console.log('vaults', vaults);
   return (
@@ -95,7 +101,16 @@ const Vaults = () => {
   );
 };
 
+const Vaults = () => {
+  return (
+    <Suspense fallback={null}>
+      <VaultsContent />
+    </Suspense>
+  );
+};
+
 export function WalletHome() {
+  const [visible, setVisible] = useState(false);
   useEffect(() => {
     const func = async () => {
       wallet.methods
@@ -110,31 +125,29 @@ export function WalletHome() {
     func();
   }, []);
 
+  const addRandomMnemonicVault = async () => {
+    const showLog = true;
+    const startTime = performance.now();
+    showLog && console.log('Starting addMnemonicVault...');
+    const addMnemonicStart = performance.now();
+    await wallet.methods.addMnemonicVault();
+    const addMnemonicEnd = performance.now();
+    showLog && console.log(`addMnemonicVault completed in ${addMnemonicEnd - addMnemonicStart} ms`);
+
+    showLog && console.log('Starting addAccountOfVault...');
+    const addAccountStart = performance.now();
+    await wallet.pipelines.vaultToAccount.awaitIdle();
+    await wallet.pipelines.addAddressOfAccount.awaitIdle();
+    const addAccountEnd = performance.now();
+    showLog && console.log(`addAccountOfVault completed in ${addAccountEnd - addAccountStart} ms`);
+
+    const endTime = performance.now();
+    showLog && console.log(`Total execution time: ${endTime - startTime} ms`);
+  };
+
   return (
     <div>
-      <button
-        onClick={async () => {
-          const showLog = true;
-          const startTime = performance.now();
-          showLog && console.log('Starting addMnemonicVault...');
-          const addMnemonicStart = performance.now();
-          await wallet.methods.addMnemonicVault();
-          const addMnemonicEnd = performance.now();
-          showLog && console.log(`addMnemonicVault completed in ${addMnemonicEnd - addMnemonicStart} ms`);
-
-          showLog && console.log('Starting addAccountOfVault...');
-          const addAccountStart = performance.now();
-          await wallet.pipelines.addFirstAccountOfVault.awaitIdle();
-          await wallet.pipelines.addAddressOfAccount.awaitIdle();
-          const addAccountEnd = performance.now();
-          showLog && console.log(`addAccountOfVault completed in ${addAccountEnd - addAccountStart} ms`);
-
-          const endTime = performance.now();
-          showLog && console.log(`Total execution time: ${endTime - startTime} ms`);
-        }}
-      >
-        add Random Mnemonic Vault
-      </button>
+      <button onClick={addRandomMnemonicVault}>add Random Mnemonic Vault</button>
       <button
         onClick={async () => {
           wallet.methods.addPrivateKeyVault({ privateKey: wallet.chains.Solana.getRandomPrivateKey(), source: 'create' });
@@ -149,7 +162,8 @@ export function WalletHome() {
       >
         add exist Mnemonic Vault
       </button>
-      <Vaults />
+      <button onClick={() => setVisible((v) => !v)}>toggle</button>
+      {visible && <Vaults />}
     </div>
   );
 }

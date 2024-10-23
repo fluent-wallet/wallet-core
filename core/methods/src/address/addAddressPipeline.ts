@@ -64,8 +64,8 @@ const writeAddressToDBWithChainAndAccount = async (database: Database, chainsMap
 }
 
 
-export const addAddressOfChainPipleline = async (database: Database, chainsMap: ChainsMap) => database.chains.addPipeline({
-  identifier: 'addAddressOfChainPipleline',
+export const addAddressOfChainPipeline = async (database: Database, chainsMap: ChainsMap) => database.chains.addPipeline({
+  identifier: 'addAddressOfChainPipeline',
   destination: database.addresses,
   handler: async (chainsDoc) => {
     try {
@@ -109,8 +109,8 @@ export const addAddressOfChainPipleline = async (database: Database, chainsMap: 
 
 
 
-export const addAddressOfAccountPipleline = async (database: Database, chainsMap: ChainsMap) => database.accounts.addPipeline({
-  identifier: 'addAddressOfAccountPipleline',
+export const addAddressOfAccountPipeline = async (database: Database, chainsMap: ChainsMap) => database.accounts.addPipeline({
+  identifier: 'addAddressOfAccountPipeline',
   destination: database.addresses,
   handler: async (accountsDoc) => {
     try {
@@ -141,8 +141,8 @@ export const addAddressOfAccountPipleline = async (database: Database, chainsMap
 });
 
 
-export const deleteAddressOfChainPipleline = async (database: Database, chainsMap: ChainsMap) => database.chains.addPipeline({
-  identifier: 'deleteAddressOfChainPipleline',
+export const deleteAddressOfChainPipeline = async (database: Database, chainsMap: ChainsMap) => database.chains.addPipeline({
+  identifier: 'deleteAddressOfChainPipeline',
   destination: database.addresses,
   handler: async (chainsDoc) => {
     try {
@@ -163,8 +163,8 @@ export const deleteAddressOfChainPipleline = async (database: Database, chainsMa
   }
 }); 
 
-export const deleteAddressOfAccountPipleline = async (database: Database, chainsMap: ChainsMap) => database.accounts.addPipeline({
-  identifier: 'deleteAddressOfAccountPipleline',
+export const deleteAddressOfAccountPipeline = async (database: Database, chainsMap: ChainsMap) => database.accounts.addPipeline({
+  identifier: 'deleteAddressOfAccountPipeline',
   destination: database.addresses,
   handler: async (accountsDoc) => {
     try {

@@ -1,9 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import '../../components/QrCode';
-import MaskMnemonic from './mask-seed-phrase.webp';
-import MaskPrivateKey from './mask-private-key.webp';
-
 
 const transitions = {
   'en': {

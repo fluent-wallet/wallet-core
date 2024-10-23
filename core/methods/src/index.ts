@@ -5,16 +5,14 @@ export * from './accountSystem/account/getPrivateKeyOfAccountInChain';
 export * from './chain/addChain';
 export * from './accountSystem/account/deleteAccount';
 export * from './accountSystem/account/basic';
-import { addFirstAccountOfVaultPipleline } from './accountSystem/account/addAccount';
-import { deleteAccountsOfVaultPipleline } from './accountSystem/vault/deleteVault';
-import { addAddressOfChainPipleline, addAddressOfAccountPipleline, deleteAddressOfChainPipleline, deleteAddressOfAccountPipleline } from './address/addAddressPipeline';
+import { vaultToAccountPipeline } from './accountSystem/vault/pipeline';
+import { addAddressOfChainPipeline, addAddressOfAccountPipeline, deleteAddressOfChainPipeline, deleteAddressOfAccountPipeline } from './address/addAddressPipeline';
 
 
 export const pipelines = {
-  addFirstAccountOfVault: addFirstAccountOfVaultPipleline,
-  deleteAccountsOfVault: deleteAccountsOfVaultPipleline,
-  addAddressOfChain: addAddressOfChainPipleline,
-  addAddressOfAccount: addAddressOfAccountPipleline,
-  deleteAddressOfChain: deleteAddressOfChainPipleline,
-  deleteAddressOfAccount: deleteAddressOfAccountPipleline,
+  vaultToAccount: vaultToAccountPipeline,
+  addAddressOfChain: addAddressOfChainPipeline,
+  addAddressOfAccount: addAddressOfAccountPipeline,
+  deleteAddressOfChain: deleteAddressOfChainPipeline,
+  deleteAddressOfAccount: deleteAddressOfAccountPipeline,
 } as const;
