@@ -4,7 +4,7 @@ import { updateAccount } from './basic';
 
 export const deleteAccount = async (database: Database, accountIdOrAccount: string | AccountDocType | DeepReadonly<AccountDocType>) => {
   const targetAccount = await getTargetDocument<AccountDocType>(database, 'accounts', accountIdOrAccount);
-  const targetVault = await targetAccount.populate('vault') as RxDocument<VaultDocType>;
+  const targetVault = (await targetAccount.populate('vault')) as RxDocument<VaultDocType>;
   if (!targetVault) {
     throw new UnknowError('Unknown error: the vault of the account is not found.');
   }

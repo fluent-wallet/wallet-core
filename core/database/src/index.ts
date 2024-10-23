@@ -1,5 +1,15 @@
 import { addRxPlugin, createRxDatabase, type RxDatabase, type RxState } from 'rxdb';
-import { vaultSchema, type VaultDocType, type VaultDocTypeEnhance, type VaultCollection, type Encryptor, VaultTypeEnum, type VaultType, VaultSourceEnum, type VaultSource } from './models/Vault';
+import {
+  vaultSchema,
+  type VaultDocType,
+  type VaultDocTypeEnhance,
+  type VaultCollection,
+  type Encryptor,
+  VaultTypeEnum,
+  type VaultType,
+  VaultSourceEnum,
+  type VaultSource,
+} from './models/Vault';
 import { accountSchema, type AccountDocType, type AccountCollection } from './models/Account';
 import { addressSchema, type AddressDocType, type AddressCollection } from './models/Address';
 import { chainSchema, type ChainDocType, type ChainCollection } from './models/Chain';
@@ -10,6 +20,7 @@ import { RxDBCleanupPlugin } from 'rxdb/plugins/cleanup';
 import TimestampPlugin from './plugins/timestamp';
 import AutoIndexPlugin from './plugins/autoIndex';
 import UniqueIdPlugin from './plugins/uniqueId';
+import { type PipelineCollection, pipelineSchema } from './models/Pipeline';
 export { RxError, type RxDocument, type DeepReadonly, type RxState } from 'rxdb';
 export {
   VaultTypeEnum,
@@ -25,7 +36,7 @@ export {
   AddressCollection,
   ChainDocType,
   ChainCollection,
-}
+};
 
 addRxPlugin(RxDBStatePlugin);
 addRxPlugin(RxDBPipelinePlugin);
@@ -40,6 +51,7 @@ export interface DatabaseCollections {
   accounts: AccountCollection;
   addresses: AddressCollection;
   chains: ChainCollection;
+  pipeline: PipelineCollection;
 }
 
 export type Database = RxDatabase<DatabaseCollections>;
@@ -47,7 +59,7 @@ export type Database = RxDatabase<DatabaseCollections>;
 type Storage = Parameters<typeof createRxDatabase>[0]['storage'];
 
 export interface DBState {
-  encryptorContent: string; 
+  encryptorContent: string;
 }
 
 export type State = RxState<DBState>;
@@ -72,11 +84,11 @@ export const createDatabase = async ({ storage, encryptor, dbName = 'wallet-core
       options: vaultSchema.options,
       ...(encryptor
         ? {
-          statics: {
-            encrypt: encryptor.encrypt.bind(encryptor),
-            decrypt: encryptor.decrypt.bind(encryptor),
-          },
-        }
+            statics: {
+              encrypt: encryptor.encrypt.bind(encryptor),
+              decrypt: encryptor.decrypt.bind(encryptor),
+            },
+          }
         : null),
     },
     accounts: {
@@ -87,6 +99,9 @@ export const createDatabase = async ({ storage, encryptor, dbName = 'wallet-core
     },
     chains: {
       schema: chainSchema,
+    },
+    pipeline: {
+      schema: pipelineSchema,
     },
   });
   return {
