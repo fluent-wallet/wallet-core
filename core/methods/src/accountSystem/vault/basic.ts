@@ -1,10 +1,10 @@
 import { omit } from 'radash';
-import { type RxDocument, type Database, type VaultType, type VaultDocTypeEnhance, type VaultDocType } from '@cfx-kit/wallet-core-database/src';
+import { type RxDocument, type Database, type VaultType, type VaultDocTypeEnhance, type VaultDocType, type DeepReadonly } from '@cfx-kit/wallet-core-database/src';
 import { decryptVaultValue } from './vaultEncryptor';
 import { getTargetDocument } from '../../utils'
 
-export const getVaultsCountOfType = async (database: Database, type: VaultType) => database.vaults.count({ selector: { type } }).exec();
-export const getLastVaultAutoIndexOfType = async (database: Database, type: VaultType) =>
+export const getVaultsCountOfType = async ({ database }: { database: Database }, type: VaultType) => database.vaults.count({ selector: { type } }).exec();
+export const getLastVaultAutoIndexOfType = async ({ database }: { database: Database }, type: VaultType) =>
   database.vaults
     .findOne({ selector: { type }, sort: [{ autoIndex: 'desc' }] })
     .exec()
@@ -22,11 +22,11 @@ export const generateDefaultVaultCode = (indexNumber: number) => {
 };
 
 
-export const getDecryptedVaultValue = (database: Database, vault: VaultDocType) => decryptVaultValue(database, vault.value);
+export const getDecryptedVaultValue = ({ database }: { database: Database }, vault: VaultDocType | DeepReadonly<VaultDocType>) => decryptVaultValue({ database }, vault.value);
 
-export async function updateVault(database: Database, vaultData: Partial<VaultDocType> & { id: string }): Promise<RxDocument<VaultDocType>>;
-export async function updateVault(database: Database, vaultId: string, vaultData: Partial<VaultDocType>): Promise<RxDocument<VaultDocType>>;
-export async function updateVault(database: Database, vaultIdOrVault: Partial<VaultDocType> & { id: string } | string, vaultData?: Partial<VaultDocType>): Promise<RxDocument<VaultDocType>> {
+export async function updateVault({ database }: { database: Database }, vaultData: Partial<VaultDocType | DeepReadonly<VaultDocType>> & { id: string }): Promise<RxDocument<VaultDocType>>;
+export async function updateVault({ database }: { database: Database }, vaultId: string, vaultData: Partial<VaultDocType>): Promise<RxDocument<VaultDocType>>;
+export async function updateVault({ database }: { database: Database }, vaultIdOrVault: Partial<VaultDocType | DeepReadonly<VaultDocType>> & { id: string } | string, vaultData?: Partial<VaultDocType>): Promise<RxDocument<VaultDocType>> {
   let vaultDocument: RxDocument<VaultDocType>;
   let _vaultData: Partial<VaultDocType>;
 
@@ -39,7 +39,7 @@ export async function updateVault(database: Database, vaultIdOrVault: Partial<Va
     _vaultData = vaultData;
   } else {
     vaultDocument = await getTargetDocument<VaultDocType>(database, 'accounts', vaultIdOrVault.id);
-    _vaultData = vaultIdOrVault;
+    _vaultData = vaultIdOrVault as Partial<VaultDocType>;
   }
 
   return await vaultDocument.patch(omit(_vaultData, ['id', 'value', 'type', 'source']));

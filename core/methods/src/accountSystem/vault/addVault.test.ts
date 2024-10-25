@@ -9,7 +9,7 @@ beforeAll(() => Promise.all([jestInitPromise, jestInitPromise2]));
 
 describe('addVault test', () => {
   test('create a new random mnemonic vault with Memory encryptor', async () => {
-    const vault = await addMnemonicVault(wallet.database);
+    const vault = await addMnemonicVault({ database: wallet.database });
     expect(vault).toEqual(
       expect.objectContaining({
         name: expect.any(String),
@@ -23,7 +23,7 @@ describe('addVault test', () => {
   });
 
   test('create a new random mnemonic vault without encryptor', async () => {
-    const vault = await addMnemonicVault(walletWithoutEncryptor.database);
+    const vault = await addMnemonicVault({ database: walletWithoutEncryptor.database });
     expect(vault).toEqual(
       expect.objectContaining({
         name: expect.any(String),
@@ -38,7 +38,7 @@ describe('addVault test', () => {
 
   const aMnemonic = 'tag refuse output old identify oval major middle duck staff tube develop';
   test('import a mnemonic vault twice with Memory encryptor', async () => {
-    const vault = await addMnemonicVault(wallet.database, { mnemonic: aMnemonic, source: VaultSourceEnum.import });
+    const vault = await addMnemonicVault({ database: wallet.database }, { mnemonic: aMnemonic, source: VaultSourceEnum.import });
     expect(vault).toEqual(
       expect.objectContaining({
         name: expect.any(String),
@@ -50,11 +50,11 @@ describe('addVault test', () => {
     );
     expect(validateMnemonic(vault.value, englishWordList)).toBe(false);
 
-    await expect(addMnemonicVault(wallet.database, { mnemonic: aMnemonic, source: VaultSourceEnum.import })).rejects.toThrow(UniquePrimaryKeyError);
+    await expect(addMnemonicVault({ database: wallet.database }, { mnemonic: aMnemonic, source: VaultSourceEnum.import })).rejects.toThrow(UniquePrimaryKeyError);
   });
 
   test('import a mnemonic vault twice without encryptor', async () => {
-    const vault = await addMnemonicVault(walletWithoutEncryptor.database, { mnemonic: aMnemonic, source: VaultSourceEnum.import });
+    const vault = await addMnemonicVault({ database: walletWithoutEncryptor.database }, { mnemonic: aMnemonic, source: VaultSourceEnum.import });
     expect(vault).toEqual(
       expect.objectContaining({
         name: expect.any(String),
@@ -65,6 +65,6 @@ describe('addVault test', () => {
       }),
     );
 
-    await expect(addMnemonicVault(walletWithoutEncryptor.database, { mnemonic: aMnemonic, source: VaultSourceEnum.import })).rejects.toThrow(UniquePrimaryKeyError);
+    await expect(addMnemonicVault({ database: walletWithoutEncryptor.database }, { mnemonic: aMnemonic, source: VaultSourceEnum.import })).rejects.toThrow(UniquePrimaryKeyError);
   });
 });

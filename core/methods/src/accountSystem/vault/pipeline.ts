@@ -30,7 +30,7 @@ const handleVaultAdd = async (database: Database, vaultsDoc: RxDocument<VaultDoc
       const isPrivateKeyVault = vault.type === VaultTypeEnum.privateKey;
       let name: string;
       if (isPrivateKeyVault) {
-        const lastIndex = await getLastVaultAutoIndexOfType(database, vault.type);
+        const lastIndex = await getLastVaultAutoIndexOfType({ database }, vault.type);
         name = `PrivateKey Account ${generateDefaultVaultCode(lastIndex - 1)}`;
       } else {
         name = `Account 1`;
@@ -59,7 +59,7 @@ const handleVaultAdd = async (database: Database, vaultsDoc: RxDocument<VaultDoc
   }
 };
 
-export const vaultToAccountPipeline = async (database: Database) =>
+export const vaultToAccountPipeline = async ({ database }: { database: Database }) =>
   database.vaults.addPipeline({
     identifier: 'vaultToAccountPipeline',
     destination: database.pipeline,

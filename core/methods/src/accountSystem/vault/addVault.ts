@@ -8,7 +8,7 @@ import { UniquePrimaryKeyError } from '../../utils/MethodError';
 export { generateMnemonic, validateMnemonic, englishWordList };
 
 const encryptField = R.curry(async <T extends Record<string, any>>(database: Database, field: keyof T, obj: T) => {
-  const encryptedValue = await encryptVaultValue(database, obj[field]);
+  const encryptedValue = await encryptVaultValue({ database }, obj[field]);
   return {
     ...obj,
     [field]: encryptedValue,
@@ -16,7 +16,7 @@ const encryptField = R.curry(async <T extends Record<string, any>>(database: Dat
 }) as <T extends Record<string, any>>(database: Database, field: keyof T, obj: T) => Promise<T>;
 
 const checkMnemonicExist = R.curry((database: Database, params: Required<MnemonicVaultParams>) =>
-  isVaultExist(database, { value: params.mnemonic, type: VaultTypeEnum.mnemonic }).then((exists) =>
+  isVaultExist({ database }, { value: params.mnemonic, type: VaultTypeEnum.mnemonic }).then((exists) =>
     exists ? Promise.reject(new UniquePrimaryKeyError('The mnemonic already exists in wallet.')) : params,
   ),
 );
@@ -28,7 +28,7 @@ export interface MnemonicVaultParams {
   isBackup?: boolean;
 }
 
-export const addMnemonicVault = (database: Database, params?: MnemonicVaultParams) =>
+export const addMnemonicVault = ({ database }: { database: Database }, params?: MnemonicVaultParams) =>
   R.pipe(
     R.mergeRight({
       mnemonic: undefined,
@@ -42,7 +42,7 @@ export const addMnemonicVault = (database: Database, params?: MnemonicVaultParam
     }) as (params: MnemonicVaultParams) => Required<MnemonicVaultParams>,
     (params) => checkMnemonicExist(database, params),
     R.andThen((params: Required<MnemonicVaultParams>) =>
-      getLastVaultAutoIndexOfType(database, VaultTypeEnum.mnemonic).then((index) => ({ ...params, name: params.name || `Wallet ${generateDefaultVaultCode(index)}` })),
+      getLastVaultAutoIndexOfType({ database }, VaultTypeEnum.mnemonic).then((index) => ({ ...params, name: params.name || `Wallet ${generateDefaultVaultCode(index)}` })),
     ),
     R.andThen((params: Required<MnemonicVaultParams>) => encryptField(database, 'mnemonic', params)),
     R.andThen(({ mnemonic, source, name, isBackup }) => ({
@@ -64,16 +64,16 @@ export interface PrivateKeyVaultParams {
 }
 
 const checkPrivateKeyExist = R.curry((database: Database, params: PrivateKeyVaultParams) =>
-  isVaultExist(database, { value: params.privateKey, type: VaultTypeEnum.privateKey }).then((exists) =>
+  isVaultExist({ database }, { value: params.privateKey, type: VaultTypeEnum.privateKey }).then((exists) =>
     exists ? Promise.reject(new UniquePrimaryKeyError('The privateKey already exists in wallet.')) : params,
   ),
 );
 
-export const addPrivateKeyVault = (database: Database, params: PrivateKeyVaultParams) =>
+export const addPrivateKeyVault = ({ database }: { database: Database }, params: PrivateKeyVaultParams) =>
   R.pipe(
     (params: PrivateKeyVaultParams) => checkPrivateKeyExist(database, params),
     R.andThen((params: PrivateKeyVaultParams) =>
-      getLastVaultAutoIndexOfType(database, VaultTypeEnum.privateKey).then((index) => ({ ...params, name: params.name || `PrivateKey Wallet ${generateDefaultVaultCode(index)}` })),
+      getLastVaultAutoIndexOfType({ database }, VaultTypeEnum.privateKey).then((index) => ({ ...params, name: params.name || `PrivateKey Wallet ${generateDefaultVaultCode(index)}` })),
     ),
     R.andThen((params: PrivateKeyVaultParams) => encryptField(database, 'privateKey', params)),
     R.andThen(({ privateKey, source, name }) => ({

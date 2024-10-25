@@ -9,17 +9,18 @@ export { default as SecureMemoryPassword } from './mechanism/Encryptor/Password/
 export { IncorrectPasswordError } from './mechanism/Encryptor/Encryptor';
 export { PasswordRequestUserCancelError } from './mechanism/Encryptor/Password/InteractivePassword';
 
-type MethodWithDatabase<T> = (db: Database, ...args: any[]) => T;
-type MethodWithDBConstraint = MethodWithDatabase<any>;
-
-type MethodsMap = Record<string, MethodWithDatabase<any>>;
-
+type MethodWithDatabaseAndState<T> = (dbAndState: { database?: Database; state?: State }, ...args: any[]) => T;
+type MethodsMap = Record<string, MethodWithDatabaseAndState<any>>;
 type MethodsWithDatabase<T extends MethodsMap> = {
-  [K in keyof T]: MethodWithDBConstraint;
+  [K in keyof T]: MethodWithDatabaseAndState<any>;
 };
 
-export type RemoveFirstArg<T> = T extends (db: Database, ...args: infer P) => infer R ? (...args: P) => R : never;
-
+export type RemoveFirstArg<T> = T extends (firstArg: infer F, ...args: infer P) => infer R
+  ? F extends { database: Database } | { state: State } | { database: Database; state: State }
+    ? (...args: P) => R
+    : never
+  : never;
+  
 export type ChainsMap = Record<string, ChainMethods>;
 
 interface Data {
@@ -72,7 +73,7 @@ class WalletClass<T extends MethodsMap = any, J extends ChainsMap = any> {
      * TODO:
      * extensionType为popup/content时，methods里的函数被替换为发送对应名字和参数的通讯方法;
      * extensionType为background时，methods里的函数被修改为接收popup/content发来的通讯，并执行对应方法。
-     * */ 
+     * */
     extensionType?: 'background' | 'popup' | 'content';
   }) {
     this.initPromise = new Promise<Data>((resolve, reject) => {
@@ -93,7 +94,7 @@ class WalletClass<T extends MethodsMap = any, J extends ChainsMap = any> {
       .then(async ({ database, state }) => {
         this.database = database;
         if (methods) {
-          this.methods = R.mapObjIndexed((fn) => R.partial(fn, [database]), methods) as any;
+          this.methods = R.mapObjIndexed((fn) => R.partial(fn, [{ database, state }]), methods) as any;
         } else {
           this.methods = {} as any;
         }
@@ -149,7 +150,7 @@ class WalletClass<T extends MethodsMap = any, J extends ChainsMap = any> {
         if (Array.isArray(injectDatabase)) {
           injectDatabase.forEach((fn) => fn?.({ database, state }));
         }
-        const pipelinesArray = await Promise.all(Object.entries(pipelines).map(async ([name, pipeline]) => [name, await pipeline(database, this.chains)] as const))
+        const pipelinesArray = await Promise.all(Object.entries(pipelines).map(async ([name, pipeline]) => [name, await pipeline({ database }, this.chains)] as const))
         this.pipelines = Object.fromEntries(pipelinesArray) as any;
         this.resolve({ database, state });
       })

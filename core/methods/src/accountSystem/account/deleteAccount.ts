@@ -2,7 +2,7 @@ import { VaultTypeEnum, type RxDocument, type Database, type DeepReadonly, type 
 import { getTargetDocument, UnknowError } from '../../utils';
 import { updateAccount } from './basic';
 
-export const deleteAccount = async (database: Database, accountIdOrAccount: string | AccountDocType | DeepReadonly<AccountDocType>) => {
+export const deleteAccount = async ({ database }: { database: Database }, accountIdOrAccount: string | AccountDocType | DeepReadonly<AccountDocType>) => {
   const targetAccount = await getTargetDocument<AccountDocType>(database, 'accounts', accountIdOrAccount);
   const targetVault = (await targetAccount.populate('vault')) as RxDocument<VaultDocType>;
   if (!targetVault) {
@@ -10,7 +10,7 @@ export const deleteAccount = async (database: Database, accountIdOrAccount: stri
   }
 
   if (targetVault.type === VaultTypeEnum.mnemonic) {
-    return await updateAccount(database, targetAccount.id, { hidden: true });
+    return await updateAccount({ database }, targetAccount.id, { hidden: true });
   } else {
     await targetVault.remove();
     return await targetAccount.remove();

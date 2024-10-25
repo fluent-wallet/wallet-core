@@ -64,7 +64,7 @@ const writeAddressToDBWithChainAndAccount = async (database: Database, chainsMap
 }
 
 
-export const addAddressOfChainPipeline = async (database: Database, chainsMap: ChainsMap) => database.chains.addPipeline({
+export const addAddressOfChainPipeline = async ({ database }: { database: Database }, chainsMap: ChainsMap) => database.chains.addPipeline({
   identifier: 'addAddressOfChainPipeline',
   destination: database.addresses,
   handler: async (chainsDoc) => {
@@ -88,7 +88,7 @@ export const addAddressOfChainPipeline = async (database: Database, chainsMap: C
         vaultsNeedToAddAddress.map(async (vault) =>
         ({
           type: vault.type,
-          value: await decryptVaultValue(database, vault.value),
+          value: await decryptVaultValue({ database }, vault.value),
           accounts: await vault.populate('accounts') as Array<RxDocument<AccountDocType>>,
         })
         )
@@ -109,7 +109,7 @@ export const addAddressOfChainPipeline = async (database: Database, chainsMap: C
 
 
 
-export const addAddressOfAccountPipeline = async (database: Database, chainsMap: ChainsMap) => database.accounts.addPipeline({
+export const addAddressOfAccountPipeline = async ({ database }: { database: Database }, chainsMap: ChainsMap) => database.accounts.addPipeline({
   identifier: 'addAddressOfAccountPipeline',
   destination: database.addresses,
   handler: async (accountsDoc) => {
@@ -129,7 +129,7 @@ export const addAddressOfAccountPipeline = async (database: Database, chainsMap:
         return {
           account,
           type: vault.type,
-          value: await decryptVaultValue(database, vault.value),
+          value: await decryptVaultValue({ database }, vault.value),
         }
       }));
 
@@ -141,7 +141,7 @@ export const addAddressOfAccountPipeline = async (database: Database, chainsMap:
 });
 
 
-export const deleteAddressOfChainPipeline = async (database: Database, chainsMap: ChainsMap) => database.chains.addPipeline({
+export const deleteAddressOfChainPipeline = async ({ database }: { database: Database }, chainsMap: ChainsMap) => database.chains.addPipeline({
   identifier: 'deleteAddressOfChainPipeline',
   destination: database.addresses,
   handler: async (chainsDoc) => {
@@ -161,9 +161,9 @@ export const deleteAddressOfChainPipeline = async (database: Database, chainsMap
       console.error('Failed to delete address of chain pipleline: ', error);
     }
   }
-}); 
+});
 
-export const deleteAddressOfAccountPipeline = async (database: Database, chainsMap: ChainsMap) => database.accounts.addPipeline({
+export const deleteAddressOfAccountPipeline = async ({ database }: { database: Database }, chainsMap: ChainsMap) => database.accounts.addPipeline({
   identifier: 'deleteAddressOfAccountPipeline',
   destination: database.addresses,
   handler: async (accountsDoc) => {

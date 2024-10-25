@@ -9,52 +9,52 @@ beforeAll(() => Promise.all([wallet.initPromise, walletWithoutEncryptor.initProm
 
 describe('vaultEncrypto test', () => {
   it('it should encrypt value in wallet with Memory encryptor', async () => {
-    const encryptedValue = await encryptVaultValue(wallet.database, 'test');
+    const encryptedValue = await encryptVaultValue({ database: wallet.database }, 'test');
     expect(encryptedValue).not.toBe('test');
 
-    const decryptedValue = await decryptVaultValue(wallet.database, encryptedValue);
+    const decryptedValue = await decryptVaultValue({ database: wallet.database }, encryptedValue);
     expect(decryptedValue).toBe('test');
   });
 
   it('should not encrypt value in wallet without encryptor', async () => {
-    const encryptedValue = await encryptVaultValue(walletWithoutEncryptor.database, 'test');
+    const encryptedValue = await encryptVaultValue({ database: walletWithoutEncryptor.database }, 'test');
     expect(encryptedValue).toBe('test');
 
-    const decryptedValue = await decryptVaultValue(walletWithoutEncryptor.database, encryptedValue);
+    const decryptedValue = await decryptVaultValue({ database: walletWithoutEncryptor.database }, encryptedValue);
     expect(decryptedValue).toBe('test');
   });
 
   it('should check if vault exists in wallet with Memory encryptor', async () => {
     const mnemonic = 'test';
-    const isExistBeforeAdd = await isVaultExist(wallet.database, { value: mnemonic, type: 'mnemonic' });
+    const isExistBeforeAdd = await isVaultExist({ database: wallet.database }, { value: mnemonic, type: 'mnemonic' });
     expect(isExistBeforeAdd).toBe(false);
     const privateKey = 'test2';
-    const isExistBeforeAdd2 = await isVaultExist(wallet.database, { value: privateKey, type: 'privateKey' });
+    const isExistBeforeAdd2 = await isVaultExist({ database: wallet.database }, { value: privateKey, type: 'privateKey' });
     expect(isExistBeforeAdd2).toBe(false);
 
-    await addMnemonicVault(wallet.database, { mnemonic, source: 'create' });
-    await addPrivateKeyVault(wallet.database, { privateKey, source: 'import' });
-    const isExistAfterAdd = await isVaultExist(wallet.database, { value: mnemonic, type: 'mnemonic' });
+    await addMnemonicVault({ database: wallet.database }, { mnemonic, source: 'create' });
+    await addPrivateKeyVault({ database: wallet.database }, { privateKey, source: 'import' });
+    const isExistAfterAdd = await isVaultExist({ database: wallet.database }, { value: mnemonic, type: 'mnemonic' });
     expect(isExistAfterAdd).toBe(true);
 
-    const isExistAfterAdd2 = await isVaultExist(wallet.database, { value: privateKey, type: 'privateKey' });
+    const isExistAfterAdd2 = await isVaultExist({ database: wallet.database }, { value: privateKey, type: 'privateKey' });
     expect(isExistAfterAdd2).toBe(true);
   });
 
   it('should check if vault exists in wallet without encryptor', async () => {
     const mnemonic = 'test';
-    const isExistBeforeAdd = await isVaultExist(walletWithoutEncryptor.database, { value: mnemonic, type: 'mnemonic' });
+    const isExistBeforeAdd = await isVaultExist({ database: walletWithoutEncryptor.database }, { value: mnemonic, type: 'mnemonic' });
     expect(isExistBeforeAdd).toBe(false);
     const privateKey = 'test2';
-    const isExistBeforeAdd2 = await isVaultExist(walletWithoutEncryptor.database, { value: privateKey, type: 'privateKey' });
+    const isExistBeforeAdd2 = await isVaultExist({ database: walletWithoutEncryptor.database }, { value: privateKey, type: 'privateKey' });
     expect(isExistBeforeAdd2).toBe(false);
 
-    await addMnemonicVault(walletWithoutEncryptor.database, { mnemonic, source: 'create' });
-    await addPrivateKeyVault(walletWithoutEncryptor.database, { privateKey, source: 'import' });
-    const isExistAfterAdd = await isVaultExist(walletWithoutEncryptor.database, { value: mnemonic, type: 'mnemonic' });
+    await addMnemonicVault({ database: walletWithoutEncryptor.database }, { mnemonic, source: 'create' });
+    await addPrivateKeyVault({ database: walletWithoutEncryptor.database }, { privateKey, source: 'import' });
+    const isExistAfterAdd = await isVaultExist({ database: walletWithoutEncryptor.database }, { value: mnemonic, type: 'mnemonic' });
     expect(isExistAfterAdd).toBe(true);
 
-    const isExistAfterAdd2 = await isVaultExist(walletWithoutEncryptor.database, { value: privateKey, type: 'privateKey' });
+    const isExistAfterAdd2 = await isVaultExist({ database: walletWithoutEncryptor.database }, { value: privateKey, type: 'privateKey' });
     expect(isExistAfterAdd2).toBe(true);
   });
 });

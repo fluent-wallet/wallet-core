@@ -2,7 +2,7 @@ import { omit } from 'radash';
 import { type Database, type RxDocument, type AccountDocType, type VaultDocType } from '@cfx-kit/wallet-core-database/src';
 import { getTargetDocument, NoDocumentError } from '../../utils'
 
-export const getVaultOfAccount = (database: Database, accountIdorAccount: AccountDocType | string) =>
+export const getVaultOfAccount = ({ database }: { database: Database }, accountIdorAccount: AccountDocType | string) =>
   database.accounts
     .findOne(typeof accountIdorAccount === 'string' ? accountIdorAccount : accountIdorAccount.id)
     .exec()
@@ -15,9 +15,9 @@ export const getVaultOfAccount = (database: Database, accountIdorAccount: Accoun
     });
 
 
-export async function updateAccount(database: Database, accountData: Partial<AccountDocType> & { id: string }): Promise<RxDocument<AccountDocType>>;
-export async function updateAccount(database: Database, accountId: string, accountData: Partial<AccountDocType>): Promise<RxDocument<AccountDocType>>;
-export async function updateAccount(database: Database, accountIdorAccount: Partial<AccountDocType> & { id: string } | string, accountData?: Partial<AccountDocType>): Promise<RxDocument<AccountDocType>> {
+export async function updateAccount({ database }: { database: Database }, accountData: Partial<AccountDocType> & { id: string }): Promise<RxDocument<AccountDocType>>;
+export async function updateAccount({ database }: { database: Database }, accountId: string, accountData: Partial<AccountDocType>): Promise<RxDocument<AccountDocType>>;
+export async function updateAccount({ database }: { database: Database }, accountIdorAccount: Partial<AccountDocType> & { id: string } | string, accountData?: Partial<AccountDocType>): Promise<RxDocument<AccountDocType>> {
   let accountDocument: RxDocument<AccountDocType>;
   let _accountData: Partial<AccountDocType>;
 

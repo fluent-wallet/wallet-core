@@ -3,7 +3,7 @@ import { ChainMethods } from '../../../../../chains/base/src';
 import { NoDocumentError } from '../../utils/MethodError';
 
 export const getPrivateKeyOfAccountInChain = (
-  database: Database,
+  { database }: { database: Database },
   { account, getDerivedFromMnemonic }: { account: AccountDocType; getDerivedFromMnemonic: ChainMethods['getDerivedFromMnemonic'] },
 ) =>
   database.accounts

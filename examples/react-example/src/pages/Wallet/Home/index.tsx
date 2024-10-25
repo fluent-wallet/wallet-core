@@ -1,5 +1,5 @@
-import { useEffect, useState, useRef, Suspense } from 'react';
-import { useVaults, useAccountsOfVault } from '@cfx-kit/wallet-core-react-inject/src';
+import { useEffect, useState, useRef, Suspense, useCallback } from 'react';
+import { useVaults, useAccountsOfVault, useCurrentAccount } from '@cfx-kit/wallet-core-react-inject/src';
 import wallet from '@wallet/index';
 
 const Account = ({ account }: { account: NonNullable<ReturnType<typeof useAccountsOfVault>>[number] }) => {
@@ -22,6 +22,12 @@ const Account = ({ account }: { account: NonNullable<ReturnType<typeof useAccoun
       </button>
       <button style={{ marginLeft: 8 }} onClick={() => wallet.methods.deleteAccount(account)}>
         delete account
+      </button>
+      <button style={{ marginLeft: 8 }} onClick={async () => {
+        const a =   await wallet.methods.setCurrentAccount(account);
+        console.log('set currentAccount', a);
+      }}>
+        set current account
       </button>
     </div>
   );
@@ -110,7 +116,7 @@ const Vaults = () => {
 };
 
 export function WalletHome() {
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(true);
   useEffect(() => {
     const func = async () => {
       wallet.methods
@@ -125,25 +131,14 @@ export function WalletHome() {
     func();
   }, []);
 
-  const addRandomMnemonicVault = async () => {
-    const showLog = true;
-    const startTime = performance.now();
-    showLog && console.log('Starting addMnemonicVault...');
-    const addMnemonicStart = performance.now();
+  const addRandomMnemonicVault = useCallback(async () => {
     await wallet.methods.addMnemonicVault();
-    const addMnemonicEnd = performance.now();
-    showLog && console.log(`addMnemonicVault completed in ${addMnemonicEnd - addMnemonicStart} ms`);
-
-    showLog && console.log('Starting addAccountOfVault...');
-    const addAccountStart = performance.now();
     await wallet.pipelines.vaultToAccount.awaitIdle();
     await wallet.pipelines.addAddressOfAccount.awaitIdle();
-    const addAccountEnd = performance.now();
-    showLog && console.log(`addAccountOfVault completed in ${addAccountEnd - addAccountStart} ms`);
+  }, []);
 
-    const endTime = performance.now();
-    showLog && console.log(`Total execution time: ${endTime - startTime} ms`);
-  };
+
+  const currentAccount = useCurrentAccount();
 
   return (
     <div>
@@ -163,6 +158,12 @@ export function WalletHome() {
         add exist Mnemonic Vault
       </button>
       <button onClick={() => setVisible((v) => !v)}>toggle</button>
+
+
+      <div>
+        <h2>current account: {currentAccount?.name}</h2>
+        <button onClick={() => wallet.methods.setCurrentAccount(null)}>set current account to null</button>
+      </div>
       {visible && <Vaults />}
     </div>
   );

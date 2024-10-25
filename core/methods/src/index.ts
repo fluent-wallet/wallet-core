@@ -5,6 +5,7 @@ export * from './accountSystem/account/getPrivateKeyOfAccountInChain';
 export * from './chain/addChain';
 export * from './accountSystem/account/deleteAccount';
 export * from './accountSystem/account/basic';
+export * from './walletState';
 import { vaultToAccountPipeline } from './accountSystem/vault/pipeline';
 import { addAddressOfChainPipeline, addAddressOfAccountPipeline, deleteAddressOfChainPipeline, deleteAddressOfAccountPipeline } from './address/addAddressPipeline';
 

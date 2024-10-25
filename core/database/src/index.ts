@@ -60,6 +60,8 @@ type Storage = Parameters<typeof createRxDatabase>[0]['storage'];
 
 export interface DBState {
   encryptorContent: string;
+  currentAccountId: string;
+  [`currentChain'sId`]: string;
 }
 
 export type State = RxState<DBState>;

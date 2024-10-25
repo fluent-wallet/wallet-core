@@ -20,7 +20,7 @@ export const convertEndpointToEndpoints = R.converge(R.assoc('endpoints'), [R.pi
 /** Some non-evm chains don't have the concept of chainId, so endpoint is used as the chainId to form the primary key of the database with type. */
 const useFirstEndpointAsChainId = R.converge(R.assoc('chainId'), [R.pipe(R.prop('endpoints'), R.head), R.identity]);
 
-const _addChain = (database: Database, chain: ParamsWithEndpoint | ParamsWithEndpoints) =>
+const _addChain = ({ database }: { database: Database }, chain: ParamsWithEndpoint | ParamsWithEndpoints) =>
   R.pipe(
     R.unless(R.has('endpoints'), convertEndpointToEndpoints) as (chain: ParamsWithEndpoint | ParamsWithEndpoints) => ParamsWithEndpoints,
     R.unless(R.has('chainId'), useFirstEndpointAsChainId) as (chain: ParamsWithEndpoint | ParamsWithEndpoints) => ChainDocType,

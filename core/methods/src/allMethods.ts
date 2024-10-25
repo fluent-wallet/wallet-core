@@ -8,6 +8,7 @@ import { updateAccount, getVaultOfAccount } from './accountSystem/account/basic'
 import { deleteAccount } from './accountSystem/account/deleteAccount';
 import { addAddressOfChainPipeline, addAddressOfAccountPipeline, deleteAddressOfChainPipeline, deleteAddressOfAccountPipeline } from './address/addAddressPipeline';
 import { vaultToAccountPipeline } from './accountSystem/vault/pipeline';
+import { setCurrentAccount, setCurrentChain } from './walletState';
 
 const methods = {
   getVaultsCountOfType,
@@ -21,6 +22,8 @@ const methods = {
   deleteAccount,
   updateVault,
   getVaultOfAccount,
+  setCurrentAccount,
+  setCurrentChain,
 } as const;
 
 export const pipelines = {
