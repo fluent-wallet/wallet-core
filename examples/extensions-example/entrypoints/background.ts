@@ -14,14 +14,7 @@ export default defineBackground({
       },
       methods,
       injectDatabasePromise: [inject],
-    });
-
-    onMessage('addMnemonicVault', async (message) => {
-      try {
-        return await wallet.methods.addMnemonicVault(message.data);
-      } catch (err) {
-        console.error('error', err);
-      }
+      extensionType: 'background'
     });
   },
 });

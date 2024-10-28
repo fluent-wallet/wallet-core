@@ -15,7 +15,7 @@ function IndexPopup() {
       <button
         onClick={async () => {
           // wallet.methods.addMnemonicVault();
-          sendMessage('addMnemonicVault', undefined);
+          wallet.methods.addMnemonicVault();
         }}
       >
         addMnemonicVaultCreate

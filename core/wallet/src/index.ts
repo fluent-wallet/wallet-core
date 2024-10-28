@@ -1,9 +1,11 @@
 import * as R from 'ramda';
+import browser from 'webextension-polyfill'
 import { type RxPipeline } from 'rxdb/plugins/pipeline';
 import { createDatabase, type Database, type State } from '@cfx-kit/wallet-core-database/src';
 import { ChainMethods } from '@cfx-kit/wallet-core-chain/src';
 import { protectAddChain } from './mechanism/protectAddChain';
 import { pipelines } from '../../methods/src';
+import { backgroundMethodWhenPopup } from './utils/browser';
 export { default as InteractivePassword } from './mechanism/Encryptor/Password/InteractivePassword';
 export { default as SecureMemoryPassword } from './mechanism/Encryptor/Password/MemoryPassword';
 export { IncorrectPasswordError } from './mechanism/Encryptor/Encryptor';
@@ -38,6 +40,12 @@ export class PasswordAlreadyInitializedError extends Error {
   code = -2010285;
 }
 
+
+export type EXTENSION_TYPE = 'background' | 'popup' | 'content';
+
+
+
+
 class WalletClass<T extends MethodsMap = any, J extends ChainsMap = any> {
   database: Database = null!;
   methods: { [K in keyof T]: RemoveFirstArg<T[K]> } & {
@@ -55,6 +63,7 @@ class WalletClass<T extends MethodsMap = any, J extends ChainsMap = any> {
   private resolve: (value: Data) => void = null!;
   private reject: (reason: any) => void = null!;
   private hasInit = false;
+  extensionType: EXTENSION_TYPE;
 
   constructor({
     databaseOptions,
@@ -74,8 +83,15 @@ class WalletClass<T extends MethodsMap = any, J extends ChainsMap = any> {
      * extensionType为popup/content时，methods里的函数被替换为发送对应名字和参数的通讯方法;
      * extensionType为background时，methods里的函数被修改为接收popup/content发来的通讯，并执行对应方法。
      * */
-    extensionType?: 'background' | 'popup' | 'content';
+    extensionType: EXTENSION_TYPE;
   }) {
+     // set extension type
+    this.extensionType = extensionType;
+
+    // init listener
+    this.listenPopupMessage()
+
+
     this.initPromise = new Promise<Data>((resolve, reject) => {
       this.resolve = R.pipe(
         R.tap(() => (this.hasInit = true)),
@@ -152,6 +168,9 @@ class WalletClass<T extends MethodsMap = any, J extends ChainsMap = any> {
         }
         const pipelinesArray = await Promise.all(Object.entries(pipelines).map(async ([name, pipeline]) => [name, await pipeline({ database }, this.chains)] as const))
         this.pipelines = Object.fromEntries(pipelinesArray) as any;
+
+        this.methods = backgroundMethodWhenPopup(this.methods, this.extensionType);
+
         this.resolve({ database, state });
       })
       .catch((reason) => {
@@ -159,6 +178,21 @@ class WalletClass<T extends MethodsMap = any, J extends ChainsMap = any> {
         console.error('Failed to initialize database: ', reason);
       });
   }
+
+  listenPopupMessage() {
+    // nothing to do in popup or content
+    if (this.extensionType === 'background') {
+      browser.runtime.onMessage.addListener( async (message: { method: string; args: any[] }, sender) => {
+        const { method, args } = message;
+        if (typeof this.methods[method] === 'function') {
+          const response = await this.methods[method](...args);
+          return response
+        }
+      })
+    }
+  }
+
+
 }
 
 export default WalletClass;

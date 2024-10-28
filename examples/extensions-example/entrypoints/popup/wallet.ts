@@ -7,6 +7,7 @@ const wallet = new WalletClass<typeof methods>({
   databaseOptions: {
     storage: getRxStorageDexie(),
   },
+  extensionType:'popup',
   methods,
   injectDatabasePromise: [inject],
 });
