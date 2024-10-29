@@ -1,6 +1,6 @@
 import { ChainMethods } from '@cfx-kit/wallet-core-chain/src';
 import { generatePrivateKey, privateKeyToAddress, mnemonicToAccount, signTransaction as _signTransaction, signMessage as _signMessage, signTypedData } from 'cive/accounts';
-import { isAddress, toHex } from "cive/utils";
+import { isAddress, toHex, isHex } from "cive/utils";
 export * from './chains';
 
 export enum ConfluxMessageTypes {
@@ -16,7 +16,11 @@ export class ConfluxChainMethodsClass extends ChainMethods {
   }
 
   isValidPrivateKey(privateKey: string) {
-    return typeof privateKey === 'string' && privateKey.startsWith('0x') && privateKey.length === 64;
+    if (typeof privateKey === 'string') {
+
+      return isHex(privateKey) ? privateKey.length === 66 : privateKey.length === 64;
+    }
+    return false;
   }
 
   isValidAddress(address: string) {
@@ -61,14 +65,13 @@ export class ConfluxChainMethodsClass extends ChainMethods {
 
   signMessage(params: { privateKey: string; type: ConfluxMessageTypes.PERSONAL_SIGN; data: Parameters<typeof _signMessage>[0]['message'] }): ReturnType<typeof _signMessage>;
   signMessage(params: { privateKey: string; type: Omit<ConfluxMessageTypes, ConfluxMessageTypes.PERSONAL_SIGN>; } & Parameters<typeof signTypedData>[0]): ReturnType<typeof signTypedData>;
-  signMessage({ privateKey, type, ...data }: { privateKey: string; type: ConfluxMessageTypes; } & any) {
+  signMessage({ privateKey, type, data }: { privateKey: string; type: ConfluxMessageTypes; } & any) {
     if (type === ConfluxMessageTypes.PERSONAL_SIGN) {
       return _signMessage({
         privateKey: privateKey as `0x${string}`,
         message: data
       });
     }
-
     return signTypedData({
       privateKey: privateKey as `0x${string}`,
       ...data

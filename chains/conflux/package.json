@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@cfx-kit/wallet-core-chain": "workspace:*",
-    "cive": "^0.5.0"
+    "cive": "^0.6.0"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
