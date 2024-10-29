@@ -81,8 +81,6 @@ describe('test evm chain', () => {
 
   test('signTransaction', async () => {
     const ethereum = new EVMChainMethodsClass();
-
-    const tx = {};
     expect(
       await ethereum.signTransaction({
         privateKey: '0x682f1871b21d18e03a0dd6e04f6c67945712f30241401cea076332d0221d251e',
