@@ -72,7 +72,6 @@ export class ConfluxChainMethodsClass extends ChainMethods {
         message: data
       });
     }
-    console.log(data)
     return signTypedData({
       privateKey: privateKey as `0x${string}`,
       ...data
