@@ -1,6 +1,6 @@
 import { ChainMethods } from '@cfx-kit/wallet-core-chain/src';
 import { generatePrivateKey, privateKeyToAddress, mnemonicToAccount, signTransaction as _signTransaction, signMessage as _signMessage, signTypedData } from 'viem/accounts';
-import { isAddress, toHex } from 'viem';
+import { isAddress, isHex, toHex } from 'viem';
 export * from './chains';
 
 export enum EvmMessageTypes {
@@ -16,7 +16,11 @@ export class EVMChainMethodsClass extends ChainMethods {
   }
 
   isValidPrivateKey(privateKey: string) {
-    return typeof privateKey === 'string' && privateKey.startsWith('0x') && privateKey.length === 64;
+    if (typeof privateKey === 'string') {
+
+      return isHex(privateKey) ? privateKey.length === 66 : privateKey.length === 64;
+    }
+    return false;
   }
 
   isValidAddress(address: string) {
@@ -59,7 +63,7 @@ export class EVMChainMethodsClass extends ChainMethods {
 
   signMessage(params: { privateKey: string; type: EvmMessageTypes.PERSONAL_SIGN; data: Parameters<typeof _signMessage>[0]['message'] }): ReturnType<typeof _signMessage>;
   signMessage(params: { privateKey: string; type: Omit<EvmMessageTypes, EvmMessageTypes.PERSONAL_SIGN>; } & Parameters<typeof signTypedData>[0]): ReturnType<typeof signTypedData>;
-  signMessage({ privateKey, type, ...data }: { privateKey: string; type: EvmMessageTypes; } & any) {
+  signMessage({ privateKey, type, data }: { privateKey: string; type: EvmMessageTypes; } & any) {
     if (type === EvmMessageTypes.PERSONAL_SIGN) {
       return _signMessage({
         privateKey: privateKey as `0x${string}`,

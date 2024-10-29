@@ -25,6 +25,8 @@ describe('test conflux core space chain', () => {
     expect(conflux.isValidAddress('cfx:aajp88pjc5mnxspgrrkxb5zerjpdun3fd2xr1kenu2')).toBe(true);
     expect(conflux.isValidAddress('cfxtest:aajp88pjc5mnxspgrrkxb5zerjpdun3fd23ge3cbyw')).toBe(true);
     expect(conflux.isValidAddress('cfx:123')).toBe(false);
+
+    expect(conflux.isValidAddress('0x861db721D8B3F501d6CC1de85c5579Def881cEAe')).toBe(false);
   });
 
   test('getDerivedFromMnemonic', () => {
@@ -86,7 +88,6 @@ describe('test conflux core space chain', () => {
   test('signTransaction', async () => {
     const conflux = new ConfluxChainMethodsClass();
 
-    const tx = {};
     expect(
       await conflux.signTransaction({
         privateKey: '0x682f1871b21d18e03a0dd6e04f6c67945712f30241401cea076332d0221d251e',
