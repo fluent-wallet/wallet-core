@@ -39,7 +39,7 @@ export class SolanaChainMethodsClass extends ChainMethods {
     const keypair = Keypair.fromSeed(hdResult.privateKey);
     return {
       privateKey: bs58.encode(keypair.secretKey),
-      publicAddress: keypair.publicKey.toString()
+      publicAddress: keypair.publicKey.toBase58()
     } as const;
   }
 
