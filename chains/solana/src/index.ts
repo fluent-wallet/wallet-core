@@ -1,5 +1,5 @@
 import { ChainMethods } from '@cfx-kit/wallet-core-chain/src';
-import { Keypair, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
+import { Keypair, PublicKey, type Transaction } from '@solana/web3.js';
 import bs58 from 'bs58';
 import { mnemonicToSeedSync } from '@scure/bip39';
 import { HDKey } from '@scure/bip32';
@@ -29,7 +29,7 @@ export class SolanaChainMethodsClass extends ChainMethods {
   }
 
   getDerivedFromMnemonic({ mnemonic, hdPath = this.hdPath, index }: { mnemonic: string; hdPath: string; index: number }) {
-    const seed = mnemonicToSeedSync(mnemonic, ""); // (mnemonic, password)
+    const seed = mnemonicToSeedSync(mnemonic, ''); // (mnemonic, password)
     const hd = HDKey.fromMasterSeed(seed);
 
     const hdResult = hd.derive(hdPath.replace(/\d+$/, index.toString()));
@@ -39,11 +39,11 @@ export class SolanaChainMethodsClass extends ChainMethods {
     const keypair = Keypair.fromSeed(hdResult.privateKey);
     return {
       privateKey: bs58.encode(keypair.secretKey),
-      publicAddress: keypair.publicKey.toBase58()
+      publicAddress: keypair.publicKey.toBase58(),
     } as const;
   }
 
-  getAddressFromPrivateKey({ privateKey }: { privateKey: string; }) {
+  getAddressFromPrivateKey({ privateKey }: { privateKey: string }) {
     return Keypair.fromSecretKey(bs58.decode(privateKey)).publicKey.toString();
   }
 
@@ -51,17 +51,12 @@ export class SolanaChainMethodsClass extends ChainMethods {
     return bs58.encode(Keypair.generate().secretKey);
   }
 
-  async signTransaction({ privateKey, data }: { privateKey: string; data: Parameters<typeof SystemProgram['transfer']>[0]; }) {
+  async signTransaction({ privateKey, data }: { privateKey: string; data: Transaction }) {
     const keypair = Keypair.fromSecretKey(bs58.decode(privateKey));
 
-    const transaction = new Transaction().add(
-      SystemProgram.transfer({
-        ...data,
-        fromPubkey: keypair.publicKey,
-      })
-    );
-    transaction.sign(keypair);
-    return transaction.serialize().toString();
+    data.sign(keypair);
+    // TODO serialize return buffer , we call the toString('hex') to convert it to string
+    return data.serialize().toString('hex');
   }
 }
 
