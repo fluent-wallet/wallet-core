@@ -3,7 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "@cfx-kit/wallet-core-chain": "workspace:*"
+    "@cfx-kit/wallet-core-chain": "workspace:*",
+    "@scure/bip39": "^1.3.0",
+    "@ton/core": "^0.59.0",
+    "@ton/crypto": "^3.3.0",
+    "@ton/ton": "^15.1.0",
+    "micro-key-producer": "^0.7.1"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
