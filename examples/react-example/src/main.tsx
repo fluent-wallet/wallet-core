@@ -8,7 +8,6 @@ import 'common-web/dist';
 wallet.initPromise.then(() => {
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
-      {/* @ts-ignore */}
       <Provider store={store}>
         <Router />
       </Provider>

@@ -13,17 +13,17 @@ Checkout the [detail development docs](https://wallet.tether.io/)
 
 ## ⭐ Features
 
-💾 **Cross-Platform Storage Layer:** Storage layer uses [RxDB](https://rxdb.info/), with flexible storage layer options, supporting Extension | React Native | Node | Web Memory.
+💾 **存储层跨端:** 存储层使用 [RxDB](https://rxdb.info/)，可以任选 storge layer，支持 Extension | React Native | Node | Web Memory。
 
-⛓️ **Multi-Chain Support:** Abstract decoupling of heterogeneous chains, enabling quick integration of new chains.
+⛓️ **异构多链支持:** 异构链抽象解耦，可以快速接入新的链。
 
-🎨 **Multiple Frontend Framework Support:** Data can be injected into any frontend framework, currently supporting **React** | **Vue3** | **Svelte**.
+🎨 **支持多种前端框架:** 数据可以注入任意前端框架，当前支持 **React** | **Vue3** | **Svelte**。
 
-🔐 **Custom Wallet Validation Methods:** Provides built-in validation (memory write during login | notification-based signing | mobile fingerprint), and supports custom validation methods.
+🔐 **自定义钱包校验方式:** 提供内置的(登录时写入内存 | 签发时通知式 | 移动端指纹) 校验，也可以自定义校验方式。
 
-💰 **Multiple Asset Management Methods:** Supports both centralized account asset fetching and decentralized self-selected on-chain asset queries.
+💰 **多种资产管理方式:** 支持以中心化的方式拉取账户资产，也支持去中心化方式的自选资产链上查询。
 
-🔑 **Multiple Hardware Wallet Support:** Supports ledger / onekey / keystone.
+🔑  **多种硬件钱包支持** 支持 ledger / onekey / keystone。
 
 
 ## 🔗 Blockchains
@@ -75,12 +75,12 @@ export const wallet = new WalletClass<typeof methods, typeof chains>({
 });
 
 (async () => {
-  /** Initialize password, only needs to run once */
+  /** 初始化密码，只需要运行一次 */
   await wallet.methods.initPassword('12345678');
 })();
 
 (async () => {
-  /** Private key decryption is required during signing, which will trigger interactivePassword's passwordRequest$ */
+  /** 签发时需要解密私钥，会触发interactivePassword的passwordRequest$ */
   interactivePassword.passwordRequest$.subscribe(async (request) => {
     const password = prompt('Please input password');
     if (password) {
@@ -96,7 +96,7 @@ export const wallet = new WalletClass<typeof methods, typeof chains>({
 })();
 
 (async () => {
-  /** Add built-in networks */
+  /** 添加内置网络 */
   await wallet.initPromise.then(() => {
     wallet.methods.addChain({ ...EthereumMainnet, type: EVMNetworkType });
     wallet.methods.addChain({ ...SolanaMainnet, type: SolanaNetworkType });
@@ -193,3 +193,4 @@ const Accounts = ({ vaultId }: { vaultId: string }) => {
   );
 };
 
+```
