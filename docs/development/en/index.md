@@ -4,23 +4,27 @@ layout: home
 
 hero:
   name: "WalletCore"
-  text: "A VitePress Site"
-  tagline: My great project tagline
+  text: "A cross-all web3 wallet core lib."
+  tagline: Build your own web3 wallet in a few days
   actions:
     - theme: brand
-      text: Markdown Examples
+      text: Get Started
       link: /en/markdown-examples
     - theme: alt
-      text: API Examples
+      text: See Examples
       link: /en/api-examples
 
 features:
-  - title: Feature A
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature B
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature C
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+  - title: 💾 Cross-Platform Storage Layer
+    details: Storage layer uses [RxDB](https://rxdb.info/), with flexible storage layer options, supporting Extension | React Native | Node | Web Memory.
+  - title: ⛓️ Multi-Chain Support
+    details: Abstract decoupling of heterogeneous chains, enabling quick integration of new chains.
+  - title: 🎨 Multiple Frontend Framework Support
+    details: Data can be injected into any frontend framework, currently supporting **React** | **Vue3** | **Svelte**.
+  - title: 🔐 Custom Wallet Validation Methods
+    details: Provides built-in validation (memory write during login | notification-based signing | mobile fingerprint), and supports custom validation methods.
+  - title: 💰 Multiple Asset Management Methods
+    details: Supports both centralized account asset fetching and decentralized self-selected on-chain asset queries.
+  - title: 🔑 Multiple Hardware Wallet Support
+    details: Supports ledger / onekey / keystone.
 ---
-
-

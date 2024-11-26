@@ -3,12 +3,13 @@
 </p>
 
 
-# Wallet Core
+# Wallet Core 
 
 A cross-chain | cross-platform | cross-ui-framework web3 wallet core library.
 Can be used to quickly build your own wallet application.
 
 Checkout the [detail development docs](https://wallet.tether.io/)
+English | [中文](https://github.com/fluent-wallet/wallet-core/blob/docs/README-zh.md)
 
 
 ## ⭐ Features

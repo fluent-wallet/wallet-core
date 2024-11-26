@@ -2,41 +2,56 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "WalletCore Development",
+  title: "WalletCore Documentation",
   description: "A VitePress Site",
   themeConfig: {
     sidebar: {
-      '/zh/': [
+      en: [
         {
-          text: '介绍',
+          text: 'Overview',
           items: [
-            { text: '项目概述', link: '/zh/introduction/overview' },
-            { text: '快速开始', link: '/zh/introduction/getting-started' }
+            { text: 'FAQ before start', link: '/en/overview/faq' },
+            { text: 'Quick Start', link: '/en/overview/quick-start' },
           ]
-        },
+        }
+      ],
+      zh: [
         {
-          text: '核心模块',
+          text: '概述',
           items: [
-            { text: '钱包管理', link: '/zh/core/wallet' },
-            { text: '密码学', link: '/zh/core/crypto' },
-            { text: '网络通信', link: '/zh/core/network' }
-          ]
-        },
-        {
-          text: '链支持',
-          items: [
-            { text: '比特币', link: '/zh/chains/bitcoin' },
-            { text: '以太坊', link: '/zh/chains/ethereum' }
-          ]
-        },
-        {
-          text: '数据管理',
-          items: [
-            { text: '数据模型', link: '/zh/data/models' },
-            { text: '存储系统', link: '/zh/data/storage' }
+            { text: '开始前的常见问题', link: '/zh/overview/faq' },
+            { text: '快速开始', link: '/zh/overview/quick-start' },
           ]
         }
       ]
+    },
+
+    socialLinks: [
+      { icon: 'github', link: 'https://github.com/vuejs/vitepress' }
+    ]
+  },
+  locales: {
+    root: {
+      label: 'English',
+      lang: 'en',
+      link: '/en',
+      themeConfig: {
+        nav: [
+          { text: 'Home', link: '/en' },
+          { text: 'Examples', link: '/en/markdown-examples' }
+        ],
+      }
+    },
+    zh: {
+      label: '中文',
+      lang: 'zh',
+      link: '/zh',
+      themeConfig: {
+        nav: [
+          { text: '首页', link: '/zh' },
+          { text: '样例', link: '/zh/markdown-examples' }
+        ],
+      }
     }
   }
 })

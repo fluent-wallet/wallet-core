@@ -9,6 +9,7 @@ A cross-chain | cross-platform | cross-ui-framework web3 wallet core library.
 Can be used to quickly build your own wallet application.
 
 Checkout the [detail development docs](https://wallet.tether.io/)
+中文 | [English](https://github.com/fluent-wallet/wallet-core/blob/docs/README.md)
 
 
 ## ⭐ Features
