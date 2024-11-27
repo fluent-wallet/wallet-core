@@ -1,0 +1,24 @@
+{
+  "$schema": "./node_modules/@lunariajs/core/config.schema.json",
+  "repository": {
+    "name": "docs-development",
+    "rootDir": "docs"
+  },
+  "defaultLocale": {
+    "label": "English",
+    "lang": "en-US"
+  },
+  "locales": [
+    {
+      "label": "简体中文",
+      "lang": "zh-Hans"
+    }
+  ],
+  "files": [
+    {
+      "location": "**/*.md",
+      "pattern": "@lang/@path",
+      "type": "universal"
+    }
+  ]
+}
