@@ -9,10 +9,10 @@ hero:
   actions:
     - theme: brand
       text: Get Started
-      link: /en/markdown-examples
+      link: /developer-guide/overview/faq
     - theme: alt
       text: See Examples
-      link: /en/api-examples
+      link: /api-examples
 
 features:
   - title: 💾 Cross-Platform Storage Layer

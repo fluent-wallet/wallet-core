@@ -7,8 +7,9 @@ Just want to try it out? Jump to [Running Examples](./getting-started).
 
 ## Does WalletCore support cross-platform? {#cross-platform}
 
-WalletCore's storage layer is based on [RxDB](https://rxdb.info/). RxDB is not a self-contained database; each platform has supported storage layer integrations (some high-performance options may require payment, but there are free storage layer options for mobile, plugin, and web platforms). For details, see [RxStorage Layer](https://rxdb.info/rx-storage.html).
+WalletCore's storage layer is based on [RxDB](https://rxdb.info/). RxDB is not a self-contained database, and each platform has supported storage layer integrations (some high-performance options may require payment, but there are free storage layers available for mobile, plugin, and web platforms). For more details, see [Rxstoarge Layer](https://rxdb.info/rx-storage.html). 
 
+As a result, WalletCore provides a consistent development experience across platforms, allowing for shared logic and data layers when developing multi-platform web3 wallets, with only the respective UIs needing to be implemented.
 
 ## Can it be integrated with any frontend framework? {#cross-frontend-framework}
 

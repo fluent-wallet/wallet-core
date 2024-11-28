@@ -7,7 +7,9 @@ WalletCore 是一个钱包核心功能库，专为构建快速 Web3 钱包而设
 
 ## WalletCore 支持跨端吗？ {#cross-platform}
 
-WalletCore 的存储层基于 [RxDB](https://rxdb.info/)，RxDB 不是一个自包含的数据库，各端都有支持的存储层接入（可能需要为一些高性能的选择付费，不过移动端、插件端、Web 端都有免费的存储层可选），详情可见 [Rxstoarge Layer](https://rxdb.info/rx-storage.html)。
+WalletCore 的存储层基于 [RxDB](https://rxdb.info/)，RxDB 不是一个自包含的数据库，各端都有支持的底层存储层接入（可能需要为一些高性能的选择付费，不过移动端、插件端、Web 端都有免费的存储层可选），详情可见 [Rxstoarge Layer](https://rxdb.info/rx-storage.html)。
+
+也得益于此，WalletCore 在各端的开发体验是一致的，同时开发多端 web3钱包 时可以共用逻辑和数据层，只需要实现各自的UI。
 
 
 ## 可以用任意前端框架接入吗？ {#cross-frontend-framework}

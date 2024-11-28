@@ -1,8 +1,11 @@
 // https://vitepress.dev/guide/custom-theme
-import { h } from 'vue'
+import { h } from 'vue';
 import type { Theme } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
 import './style.css'
+import FrontendFramework from '../../components/FrontendFramework.vue'
+import PackageManager from '../../components/PackageManager.vue'
+import Platform from '../../components/Platform.vue'
 
 export default {
   extends: DefaultTheme,
@@ -13,5 +16,8 @@ export default {
   },
   enhanceApp({ app, router, siteData }) {
     // ...
+    app.component('FrontendFramework', FrontendFramework)
+    app.component('PackageManager', PackageManager)
+    app.component('Platform', Platform)
   }
 } satisfies Theme

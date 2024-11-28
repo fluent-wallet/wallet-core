@@ -9,7 +9,7 @@ hero:
   actions:
     - theme: brand
       text: 阅读文档
-      link: /zh/markdown-examples
+      link: /zh/developer-guide/overview/faq
     - theme: alt
       text: 运行样例
       link: /zh/api-examples
