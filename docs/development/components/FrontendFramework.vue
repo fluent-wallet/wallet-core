@@ -8,7 +8,7 @@ const props = defineProps({
   },
   modelValue: {
     type: String,
-    default: 'react'
+    default: 'React'
   }
 });
 
@@ -27,9 +27,9 @@ const selected = computed({
   <div class="selector">
     <span>{{ lang === 'zh' ? '选择你的前端框架：' : 'Pick your frontend framework:' }}</span>
     <select v-model="selected">
-      <option value="react">react</option>
-      <option value="vue3">vue3</option>
-      <option value="svelte">svelte</option>
+      <option value="React">React</option>
+      <option value="Vue3">Vue3</option>
+      <option value="Svelte">Svelte</option>
     </select>
   </div>
 </template>

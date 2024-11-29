@@ -6,21 +6,25 @@ import { protectAddChain } from './mechanism/protectAddChain';
 import { pipelines } from '../../methods/src';
 export { default as InteractivePassword } from './mechanism/Encryptor/Password/InteractivePassword';
 export { default as SecureMemoryPassword } from './mechanism/Encryptor/Password/MemoryPassword';
-export { IncorrectPasswordError } from './mechanism/Encryptor/Encryptor';
+export { default as Encryptor, IncorrectPasswordError } from './mechanism/Encryptor/Encryptor';
 export { PasswordRequestUserCancelError } from './mechanism/Encryptor/Password/InteractivePassword';
 
-type MethodWithDatabaseAndState<T> = (dbAndState: { database?: Database; state?: State }, ...args: any[]) => T;
+type MethodWithDatabaseAndState<T> = ((dbAndState: { database: Database; state: State; }, ...args: any[]) => T) |
+  ((dbAndState: { database: Database; }, ...args: any[]) => T) |
+  ((dbAndState: { state: State; }, ...args: any[]) => T);
+
 type MethodsMap = Record<string, MethodWithDatabaseAndState<any>>;
 type MethodsWithDatabase<T extends MethodsMap> = {
   [K in keyof T]: MethodWithDatabaseAndState<any>;
 };
 
+
 export type RemoveFirstArg<T> = T extends (firstArg: infer F, ...args: infer P) => infer R
   ? F extends { database: Database } | { state: State } | { database: Database; state: State }
-    ? (...args: P) => R
-    : never
+  ? (...args: P) => R
+  : never
   : never;
-  
+
 export type ChainsMap = Record<string, ChainMethods>;
 
 interface Data {

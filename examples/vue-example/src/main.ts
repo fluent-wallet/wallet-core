@@ -8,7 +8,7 @@ const pinia = createPinia()
 const app = createApp(App);
 app.use(pinia);
 
-wallet.initPromise.then((database) => {
+wallet.initPromise.then(({ database }) => {
   provider(app, database);
   app.mount('#app');
 });
