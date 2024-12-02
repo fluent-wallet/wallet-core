@@ -87,7 +87,7 @@ export const wallet = new WalletClass<typeof methods, typeof chains>({
 
 
 <script>
-const reactContent = `import { StrictMode } from 'react';
+const reactInjectContent = `import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { store, Provider } from '@cfx-kit/wallet-core-react-inject';
 import wallet from '@wallet/index';
@@ -108,7 +108,7 @@ wallet.initPromise.then(() => {
 });
 `;
 
-const vueContent = `import { createApp } from 'vue';
+const vueInjectContent = `import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import App from './App.vue';
 import { provider } from '@cfx-kit/wallet-core-vue-inject/src';
@@ -127,10 +127,132 @@ wallet.initPromise.then(({ database }) => {
   app.mount('#app');
 });
 `;
+
+const reactRouterContent = `import { Routes, Route, Outlet, Navigate, BrowserRouter } from 'react-router-dom';
+import { useIsPasswordInitialized, useVaultsCount } from '@cfx-kit/wallet-core-react-inject';
+
+const AuthInitialize: React.FC<{ reverse?: boolean }> = ({ reverse }) => {
+  const isPasswordInitialized = useIsPasswordInitialized();
+  const vaultsCount = useVaultsCount();
+  const isWalletInitialized = isPasswordInitialized && vaultsCount > 0;
+
+  if (reverse) {
+    if (isWalletInitialized) {
+      return <Navigate to="/wallet" replace />;
+    }
+  } else {
+    if (!isWalletInitialized) {
+      return <Navigate to="/initialize" replace />;
+    } else {
+      return <Navigate to="/wallet/unlock" replace />;
+    }
+  }
+};
+
+
+const AppRoutes = () => {
+  return (
+    <Routes>
+      <Route path="/" element={<Outlet />}>
+        <Route
+          path="initialize"
+          element={
+            <>
+              <Outlet />
+              <AuthInitialize reverse />
+            </>
+          }
+        >
+          <Route path="create-or-import" element={<InitializeCreateOrImport />} />
+          <Route path="set-password" element={<InitializePassword />} />
+        </Route>
+
+        <Route
+          path="wallet"
+          element={
+            <>
+              <Outlet />
+              <AuthInitialize />
+            </>
+          }
+        >
+          <Route index element={<WalletHome />} />
+          <Route path="unlock" element={<WalletUnlock />} />
+        </Route>
+      </Route>
+    </Routes>
+  );
+};
+`;
+
+const vueRouterContent = `import { createRouter, createWebHistory } from 'vue-router';
+import { useIsPasswordInitialized, useVaultsCount } from '@cfx-kit/wallet-core-vue-inject';
+import WalletHome from './components/WalletHome.vue';
+import WalletUnlock from './components/WalletUnlock.vue';
+import InitializeCreateOrImport from './components/InitializeCreateOrImport.vue';
+import InitializePassword from './components/InitializePassword.vue';
+
+const routes = [
+  {
+    path: '/',
+    component: () => import('./components/RootLayout.vue'),
+    children: [
+      {
+        path: 'initialize',
+        component: () => import('./components/InitializeLayout.vue'),
+        children: [
+          { path: 'create-or-import', component: InitializeCreateOrImport },
+          { path: 'set-password', component: InitializePassword },
+        ],
+      },
+      {
+        path: 'wallet',
+        component: () => import('./components/WalletLayout.vue'),
+        children: [
+          { path: '', component: WalletHome },
+          { path: 'unlock', component: WalletUnlock },
+        ],
+      },
+    ],
+  },
+];
+
+router.beforeEach((to, from, next) => {
+  const isPasswordInitialized = useIsPasswordInitialized();
+  const vaultsCount = useVaultsCount();
+  const isWalletInitialized = isPasswordInitialized && vaultsCount > 0;
+
+  if (to.path === '/initialize' && isWalletInitialized) {
+    next('/wallet');
+  } else if (to.path === '/wallet' && !isWalletInitialized) {
+    next('/initialize');
+  } else {
+    next();
+  }
+});
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
+});
+
+export default router;
+`;
 </script>
 
 ## {{ framework }} 入口接入数据 inject {#framework-inject}
+
 ```typescript-vue
 /** main.ts{{ framework === 'React' ? 'x' : '' }} 中 */
-{{ framework === 'Vue3' ? vueContent : reactContent }}
+{{ framework === 'Vue3' ? vueInjectContent : reactInjectContent }}
+```
+
+
+## 接下来就从 路由开始 构筑你的钱包吧
+
+详细概念和 API 请从[数据、模型、方法](../model-and-data/database-model)开始看起
+
+```typescript-vue
+/** router.ts{{ framework === 'React' ? 'x' : '' }} 中 */
+{{ framework === 'Vue3' ? vueRouterContent : reactRouterContent }}
 ```

@@ -69,7 +69,38 @@ function sidebarDeveloperGuide(): DefaultTheme.SidebarItem[] {
       collapsed: false,
       items: [
         { text: 'FAQ before start', link: 'overview/faq' },
-        { text: 'Quick Start', link: 'overview/quick-start' },
+        { text: 'Quick start', link: 'overview/quick-start' },
+      ]
+    },
+    {
+      text: 'Models, Data, Methods',
+      collapsed: false,
+      items: [
+        { text: 'Database Model', link: 'model-and-data/database-model' },
+        { text: 'Data and Usage', link: 'model-and-data/data' },
+        { text: 'Chain Abstraction and API', link: 'model-and-data/chain-abstraction' },
+        { text: 'Data API', link: 'model-and-data/data-api' },
+        { text: 'Methods API', link: 'model-and-data/methods-api' },
+      ]
+    },
+    {
+      text: 'Concepts',
+      collapsed: false,
+      items: [
+        { text: 'Storage & Platform Differences', link: 'advanced-concepts/storage-layer' },
+        { text: 'Encryptor & Password Manage', link: 'advanced-concepts/encryptor-and-password' },
+        { text: 'Chain & Network', link: 'advanced-concepts/add-and-initialize-chain' },
+        { text: 'Vaults & Accounts', link: 'advanced-concepts/add-vault-and-account' },
+        { text: 'Asset Management', link: 'advanced-concepts/set-asset-manager' },
+        { text: `Set 'Current Chain & Account'`, link: 'advanced-concepts/set-current' },
+        { text: 'About Transactions', link: 'advanced-concepts/send-transaction' },
+        { text: 'Transaction Acceleration & Cancellation', link: 'advanced-concepts/transaction-acceleration-and-cancellation' },
+        { text: 'Provider & Dapp Permissions', link: 'advanced-concepts/extension-wallet-permission-provider' },
+        { text: 'Wallet-Connect Integration', link: 'advanced-concepts/mobile-wallet-wallet-connect' },
+        { text: 'Hardware Wallets', link: 'advanced-concepts/hardware-wallet' },
+        { text: 'How do dApps connect Wallet', link: 'advanced-concepts/dapp-connect-wallet' },
+        { text: 'Add Non-Built-in Chains', link: 'advanced-concepts/add-new-chain' },
+        { text: 'Add Non-Built-in Methods', link: 'advanced-concepts/add-new-methods' },
       ]
     },
   ]

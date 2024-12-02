@@ -31,6 +31,9 @@ WalletCore 内置了部分热门链的支持，未内置的新链只需要实现
 
 详细见[支持一条新链](../extend)。
 
+## 当前网络模式还是多网络模式？ {#multi-single-network}
+
+WalletCore 设计上既支持 MetaMask 那样的当前网络模式，也支持 OKWallet 那样的多网络模式。
 
 ## 需要自己实现钱包的 UI 吗？ {#ui}
 

@@ -97,6 +97,37 @@ function sidebarDeveloperGuide(): DefaultTheme.SidebarItem[] {
         { text: '快速上手', link: 'overview/quick-start' },
       ]
     },
+    {
+      text: '模型、数据、方法',
+      collapsed: false,
+      items: [
+        { text: '数据库模型', link: 'model-and-data/database-model' },
+        { text: '数据与使用', link: 'model-and-data/data' },
+        { text: '链的抽象与API', link: 'model-and-data/chain-abstraction' },
+        { text: '数据API', link: 'model-and-data/data-api' },
+        { text: '方法API', link: 'model-and-data/methods-api' },
+      ]
+    },
+    {
+      text: '概念',
+      collapsed: false,
+      items: [
+        { text: '各端存储层选择和差异点', link: 'advanced-concepts/storage-layer' },
+        { text: '加密器以及密码管理方式', link: 'advanced-concepts/encryptor-and-password' },
+        { text: '添加一类链的支持与初始化网络', link: 'advanced-concepts/add-and-initialize-chain' },
+        { text: '增删 Vault 与 Account', link: 'advanced-concepts/add-vault-and-account' },
+        { text: '设置资产管理方式', link: 'advanced-concepts/set-asset-manager' },
+        { text: `设置 '当前(链与账户)'`, link: 'advanced-concepts/set-current' },
+        { text: '交易发送与资产更新', link: 'advanced-concepts/send-transaction' },
+        { text: '交易加速与取消', link: 'advanced-concepts/transaction-acceleration-and-cancellation' },
+        { text: '插件钱包 权限 与 provider', link: 'advanced-concepts/extension-wallet-permission-provider' },
+        { text: '移动钱包接入 wallet-connect', link: 'advanced-concepts/mobile-wallet-wallet-connect' },
+        { text: '接入硬件钱包', link: 'advanced-concepts/hardware-wallet' },
+        { text: 'dapp 如何接入钱包(通用)', link: 'advanced-concepts/dapp-integration' },
+        { text: '添加未内置支持的新链', link: 'advanced-concepts/add-new-chain' },
+        { text: '添加未内置支持的新方法', link: 'advanced-concepts/add-new-methods' },
+      ]
+    },
   ]
 }
 
