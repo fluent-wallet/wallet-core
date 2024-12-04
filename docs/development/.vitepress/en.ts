@@ -77,7 +77,7 @@ function sidebarDeveloperGuide(): DefaultTheme.SidebarItem[] {
       collapsed: false,
       items: [
         { text: 'Database Model', link: 'model-and-data/database-model' },
-        { text: 'Data and Usage', link: 'model-and-data/data' },
+        { text: 'Data and Usage', link: 'model-and-data/data-and-usage' },
         { text: 'Chain Abstraction and API', link: 'model-and-data/chain-abstraction' },
         { text: 'Data API', link: 'model-and-data/data-api' },
         { text: 'Methods API', link: 'model-and-data/methods-api' },

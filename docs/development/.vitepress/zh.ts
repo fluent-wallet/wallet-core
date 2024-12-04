@@ -102,7 +102,7 @@ function sidebarDeveloperGuide(): DefaultTheme.SidebarItem[] {
       collapsed: false,
       items: [
         { text: '数据库模型', link: 'model-and-data/database-model' },
-        { text: '数据与使用', link: 'model-and-data/data' },
+        { text: '数据与使用', link: 'model-and-data/data-and-usage' },
         { text: '链的抽象与API', link: 'model-and-data/chain-abstraction' },
         { text: '数据API', link: 'model-and-data/data-api' },
         { text: '方法API', link: 'model-and-data/methods-api' },
