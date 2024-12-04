@@ -6,6 +6,7 @@ import './style.css'
 import FrontendFramework from '../../components/FrontendFramework.vue'
 import PackageManager from '../../components/PackageManager.vue'
 import Platform from '../../components/Platform.vue'
+import { enhanceAppWithTabs } from 'vitepress-plugin-tabs/client'
 
 export default {
   extends: DefaultTheme,
@@ -19,5 +20,6 @@ export default {
     app.component('FrontendFramework', FrontendFramework)
     app.component('PackageManager', PackageManager)
     app.component('Platform', Platform)
+    enhanceAppWithTabs(app)
   }
 } satisfies Theme
