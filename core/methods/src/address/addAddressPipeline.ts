@@ -1,6 +1,6 @@
 import { VaultTypeEnum, type VaultType, type Database, type RxDocument, type AccountDocType, type ChainDocType, type VaultDocType, type AddressDocType } from '@cfx-kit/wallet-core-database/src';
 import { type ChainsMap } from '../../../wallet/src';
-import { decryptVaultValue } from '../accountSystem/vault/vaultEncryptor';
+import { decryptVaultValue, encryptVaultValue } from '../accountSystem/vault/vaultEncryptor';
 
 
 const writeAddressToDBWithChainAndAccount = async (database: Database, chainsMap: ChainsMap, { chains, accountsWithDecryptedVault }: {
@@ -30,7 +30,7 @@ const writeAddressToDBWithChainAndAccount = async (database: Database, chainsMap
 
       return ({
         publicAddress,
-        privateKey,
+        privateKey: privateKey ? encryptVaultValue({database}, privateKey): '',
         account: account.id,
         chain: chain.id,
       });
