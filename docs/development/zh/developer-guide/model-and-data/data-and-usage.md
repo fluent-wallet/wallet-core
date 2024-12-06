@@ -90,3 +90,5 @@ export const accountsAtomFamilyOfVault = atomFamily((vaultId: string | null) =>
 export const useAccountsOfVault = (vaultId: string | null) => useAtomValue(accountsAtomFamilyOfVault(vaultId));
 ```
 :::
+
+如果不满意官方提供的 inject 方案，或者需要支持其他的前端框架，可以自己基于 @cfx-kit/wallet-core-observable 实现一套 inject机制。

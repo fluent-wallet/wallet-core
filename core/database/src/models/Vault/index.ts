@@ -49,8 +49,8 @@ const vaultSchemaLiteral = {
 export enum VaultTypeEnum {
   privateKey = 'privateKey',
   mnemonic = 'mnemonic',
-  public = 'public',
   hardware = 'hardware',
+  public = 'public',
   BSIM = 'BSIM',
 }
 export type VaultType = keyof typeof VaultTypeEnum;

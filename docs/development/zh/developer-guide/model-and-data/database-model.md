@@ -1,62 +1,88 @@
-# Vault
 
-Vault 是一个用于存储账号凭证的加密容器。每个 Vault 可以根据类型存储不同的数据，例如助记词（Mnemonic）、私钥（PrivateKey）等。Vault 中的数据经过加密后存储在数据库中，不会直接暴露给用户。
+# 账户体系
 
-## 数据模型
+账户体系从上至下分为 `Vault`、`Account`、`Address` 三个层级。ER图如下：
+
+  <img src="../../../assets/accout-system.png"  width="600"/>
+
+## Vault
+
+Vault 是帐户层级的最高单位，是存储区块链账户唯一凭证(助记词/私钥)的保险箱。(`hardware` 和 `public` 类型的 vault 不存储任何数据)
+
+### 数据模型
 
 | Key      | Type    | Required | Description                                                  |
-| -------- | ------- | -------- | ------------------------------------------------------------ |
-| id       | string  | true     | 唯一标识符。                                                 |
-| value    | string  | false    | 加密后的助记词或私钥等值。                                   |
-| name     | string  | true     | 名称。                                                       |
-| type     | string  | true     | Vault 的类型，例如 `privateKey`、`mnemonic`、`hardware` 等。 |
-| source   | string  | true     | Vault 的来源，枚举值：`create`（创建）或 `import`（导入）。  |
-| isBackup | boolean | true     | 标识是否已备份。                                             |
-| accounts | array   | false    | 关联的 Account                                               |
+|----------|---------|----------|--------------------------------------------------------------|
+| id       | string  | 是       | 随机自生成的主键                                             |
+| type     | string  | 是       | **Vault** 的类型，枚举值： `privateKey`、`mnemonic`、`hardware`、`public` |
+| value    | string  | 否       | `privateKey` 和 `mnemonic` 类型的 vault 会存储凭证在这里， 可配合 `encryptor` 加密解密 |
+| name     | string  | 是       | **Vault** 的名称                                                |
+| source   | string  | 是       | **Vault** 的来源，枚举值：`create`或 `import`                 |
+| isBackup | boolean | 是       | 标识 `mnemonic`类型 并且 source 为 `create` 的账户是否已完成备份流程 |
+| accounts | array   | 否       | 下属的 **Account** 的主键集合                               |
 
-# Account
+## Account
 
-Account 是由 Vault 生成的对象，包含 HD 索引（hdIndex）、名称（name）、是否隐藏（hidden）等信息，并关联上级 Vault 和下级 Address。
+Account 是 Vault 的子级， 主要用于标识 `mnemonic` 类型的 **Vault**，在 [BIP44](https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki) 标准下子账户的 **'address_index'** 索引。
 
-## 数据模型
+`hardware` 和 `hardware` 类型的 vault 可以拥有一个或多个 Account，`hdIndex`属性 即代表 **'address_index'** 索引。
+
+`hardware` 和 `public` 类型的 vault 有且只有一个 Account，`hdIndex` 属性固定为 0 且没有实际意义。
+
+### 数据模型
 
 | Key       | Type    | Required | Description                                          |
-| --------- | ------- | -------- | ---------------------------------------------------- |
-| id        | string  | true     | 唯一标识符。                                         |
-| hdIndex   | number  | true     | BIP39 标准中的索引号，用于确定生成的公钥和私钥位置。 |
-| name      | string  | true     | 名称。                                               |
-| hidden    | boolean | false    | 是否隐藏。                                           |
-| vault     | string  | true     | 关联的上级 Vault ID。                                |
-| addresses | array   | false    | 关联的下级地址，数组元素为地址 ID。                  |
+|-----------|---------|----------|------------------------------------------------------|
+| id        | string  | 是       | 由 `vaultId` 和 `hdIndex` 自动组合生成的主键       |
+| hdIndex   | number  | 是       | [BIP44](https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki) 中的索引号，用于确定生成的公钥和私钥位置。 |
+| name      | string  | 是       | **Account** 的名称。                                     |
+| hidden    | boolean | 否       | 是否隐藏。                                           |
+| vault     | string  | 是       | 外键，归属的 **Vault** 的主键                         |
+| addresses | array   | 否       | 下属的 **Account** 的主键集合                       |
 
-# Address
+## Address
 
-Address 是由 Account 生成的对象，包含公钥地址（publicAddress）和加密后的私钥（privateKey），可用于签名交易等操作。
+**Account** 在 每个 **Chain** 下都会拥有一个对应的 **Address**。
 
-## 数据模型
+相同 `type` 的 **Chain**(如 'Etherum Mainnet' 和 'Etherum Testnet') 对应的同一个 **Account** 下的 **Address** 的 `publicAddress` 和 `privateKey` 是一样的。
+
+但是它们是不同的 **Address** 实例，因为它们各自的资产和交易记录是独立的。
+
+### 数据模型
 
 | Key           | Type   | Required | Description      |
-| ------------- | ------ | -------- | ---------------- |
-| id            | string | true     | 唯一标识符。     |
-| publicAddress | string | true     | 公钥地址。       |
-| privateKey    | string | false    | 加密后的私钥。   |
-| account       | string | true     | 所属的 Account。 |
-| chain         | string | true     | 关联的 Chain。   |
+|---------------|--------|----------|------------------|
+| id            | string | 是       | 由 `chainID` 、`accountId` 和 `publicAddress` 自动组合生成的主键 |
+| publicAddress | string | 是       | 公钥地址         |
+| privateKey    | string | 否       | 私钥地址，只有 `mnemonic` 类型的 **Vault** 有，会在创建 **Address** 时存一份而不是每次临时生成 以提高性能表现 |
+| account       | string | 是       | 外键，归属的 **Account** 的主键 |
+| chain         | string | 是       | 外键，归属的 **Chain** 的主键   |
 
-# Chain
 
-每个 Address 都归属于一个具体的链，Chain 记录了该链的信息，包括名称（name）、类型（type）、链 ID（chainId）、端点（endpoints）等。
+<br />
+<br />
 
-## 数据模型
 
-| Key       | Type   | Required | Description                                          |
-| --------- | ------ | -------- | ---------------------------------------------------- |
-| id        | string | true     | 唯一标识符。                                         |
-| name      | string | true     | 链的名称。                                           |
-| type      | string | true     | 链的类型。                                           |
-| chainId   | string | true     | 链 ID。                                              |
-| endpoints | array  | true     | 链的连接地址。                                       |
-| icon      | string | true     | 链的图标。                                           |
-| scanUrl   | string | true     | 链的扫描 URL。                                       |
-| chainType | string | true     | 链的类型，例如主网（Mainnet）、测试网（Testnet）等。 |
-| addresses | array  | false    | 所属的 Address。                                     |
+## Chain
+
+相同 `type` 的 **Chain** 一般意味着一致的私派生算法、公钥生成算法以及派生路径。
+
+举个例子，**Ethereum Mainnet**、 **Ethereum Sepolia** 和 **Binance Smart Chain** 的 `type` 都是 **'Ethereum'**;
+
+再举个例子，**Cosmos联盟的链** 的拥有一致的私钥派生算法和路径，仅仅公钥地址有细微不同。
+你可以选择将它们设为相同的 `type`，这样可以以 `type` 为单位聚类显示地址。
+也可以视为不同的 `type`(**Okex Wallet** 就采取了这种做法)，**Cosmos联盟中不同链** 的地址就是分散显示的了。
+
+## Data Model
+
+| Key       | Type   | Required | Description                                    |
+| --------- | ------ | -------- | ---------------------------------------------- |
+| id        | string | 是     | 由 `type` 和 `chainId` 自动组合生成的主键          |
+| name      | string | 是     | **Chain** 的名称                                |
+| type      | string | 是     | **Chain** 的类型                                |
+| chainId   | string | 否     | **Chain** 的链 ID，很多非EVM兼容链没有链ID则用endpoints[0]替代   |
+| endpoints | array  | 是     | 连接到 **Chain** 的RPC节点集合             |
+| icon      | string | 是     | **Chain** 的图标                             |
+| scanUrl   | string | 是     | **Chain** 的区块链浏览器 URL                         |
+| chainType | string | 是     | **Chain**的属性类型, 内置提供了 **'Mainnet'**、 **'Testnet'**  和 **'Custom'** 三种类型的枚举值|
+| addresses | array  | 否    | 下属的 **Address** 的主键集合                           |
