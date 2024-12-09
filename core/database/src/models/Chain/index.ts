@@ -52,6 +52,12 @@ const chainSchemaLiteral = {
   indexes: ['type'],
 } as const;
 
+export enum ChainType {
+  Mainnet = 'Mainnet',
+  Testnet = 'Testnet',
+  Custom = 'Custom',
+}
+
 const schemaTyped = toTypedRxJsonSchema(chainSchemaLiteral);
 export type ChainDocType = ExtractDocumentTypeFromTypedRxJsonSchema<typeof schemaTyped>;
 export const chainSchema: RxJsonSchema<ChainDocType> = chainSchemaLiteral;

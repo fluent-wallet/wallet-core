@@ -1,6 +1,6 @@
 ## ui层怎么使用 database 中的数据？
 
-此篇可略过，讲的是概念性的东西，想直接使用请看下篇[数据API](./data-api.md)。
+此篇可略过，讲的是概念性的东西，想直接使用请看下篇 [数据API](./data-api.md)。
 
 rxdb 提供了 observable 的机制，可以方便的将数据库中的数据转换为 observable 流，详情见 [RxQuery](https://rxdb.info/rx-query.html) 与 [RxState](https://rxdb.info/rx-state.html)。
 

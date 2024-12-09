@@ -5,7 +5,7 @@ import { type AccountDocType } from '@cfx-kit/wallet-core-database/src/models/Ac
 const BATCH_SIZE = 128; // Set the batch processing size
 const CONCURRENCY = 16; // Set the maximum concurrency
 
-export const observeAccountsOfVault = (database: Database | undefined, vaultId: string | null) => {
+export const observeAccountsOfVault = (database: Database | undefined, vaultId: string | null | undefined) => {
   if (!database || !vaultId) return of(undefined);
   return database.vaults.findOne(vaultId).$.pipe(
     switchMap((vault) => {

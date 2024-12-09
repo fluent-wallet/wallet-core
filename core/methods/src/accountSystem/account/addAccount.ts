@@ -1,7 +1,7 @@
 import { VaultTypeEnum, type Database, type RxDocument, type DeepReadonly, type AccountDocType, type VaultDocType } from '@cfx-kit/wallet-core-database/src';
 import { getTargetDocument, ParamsError, UnknowError } from '../../utils';
 
-export const addAccountOfMnemonicVault = async ({ database }: { database: Database }, vaultIdOrVault: string | VaultDocType | DeepReadonly<VaultDocType>) => {
+export const addAccountOfMnemonicVault = async ({ database }: { database: Database }, vaultIdOrVault: string | VaultDocType | DeepReadonly<VaultDocType>, accountParams?: { name?: string; }) => {
   const targetVault = await getTargetDocument<VaultDocType>(database, 'vaults', vaultIdOrVault);
   const isMnemonicVault = targetVault.type === VaultTypeEnum.mnemonic;
   if (!isMnemonicVault) {
@@ -16,7 +16,7 @@ export const addAccountOfMnemonicVault = async ({ database }: { database: Databa
 
   const newAccount = await database.accounts.insert({
     hdIndex: lastAccount.hdIndex + 1,
-    name: `Account ${lastAccount.hdIndex + 2}`,
+    name: accountParams?.name ?? `Account ${lastAccount.hdIndex + 2}`,
     hidden: false,
     vault: targetVault.id,
   } as AccountDocType);

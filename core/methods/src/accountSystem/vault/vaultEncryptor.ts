@@ -17,6 +17,7 @@ const getAllEncryptedVaultsOfType = async ({ database }: { database: Database },
     .exec();
 
 export const isVaultExist = async ({ database }: { database: Database }, { value, type }: { value: string; type: VaultNeedBeEncrypted }) =>
-  getAllEncryptedVaultsOfType({ database }, type)
-    .then((vaults) => Promise.all(vaults.map((vault) => decryptVaultValue({ database }, vault.value))))
-    .then((values) => values.includes(value));
+    getAllEncryptedVaultsOfType({ database }, type)
+      .then((vaults) => vaults.filter((vault) => vault.value))
+      .then((vaults) => Promise.all(vaults.map((vault) => decryptVaultValue({ database }, vault.value!))))
+      .then((values) => values.includes(value));

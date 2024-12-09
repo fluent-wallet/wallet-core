@@ -4,14 +4,14 @@ import { NoDocumentError } from '../../utils/MethodError';
 
 export const getPrivateKeyOfAccountInChain = (
   { database }: { database: Database },
-  { account, getDerivedFromMnemonic }: { account: AccountDocType; getDerivedFromMnemonic: ChainMethods['getDerivedFromMnemonic'] },
+  { accountIdOrAccount, getDerivedFromMnemonic }: { accountIdOrAccount: string | AccountDocType; getDerivedFromMnemonic: ChainMethods['getDerivedFromMnemonic'] },
 ) =>
   database.accounts
-    .findOne(account.id)
+    .findOne(typeof accountIdOrAccount === 'string' ? accountIdOrAccount : accountIdOrAccount.id)
     .exec()
     .then(async (accountDoc) => {
       if (!accountDoc) {
-        throw new NoDocumentError(`Account with id ${account.id} not found in database`);
+        throw new NoDocumentError(`Account with id ${typeof accountIdOrAccount === 'string' ? accountIdOrAccount : accountIdOrAccount.id} not found in database`);
       }
       const vault = (await accountDoc?.populate('vault')) as VaultDocType;
       return { vault, account: accountDoc };
@@ -19,11 +19,11 @@ export const getPrivateKeyOfAccountInChain = (
     .then(({ vault, account }) => {
       if (vault.type === VaultTypeEnum.mnemonic) {
         return getDerivedFromMnemonic({
-          mnemonic: vault.value,
+          mnemonic: vault.value!,
           index: account.hdIndex,
-        });
+        }).privateKey;
       } else if (vault.type === VaultTypeEnum.privateKey) {
-        return vault.value;
+        return vault.value!;
       } else {
         throw new Error('Unsupported vault type');
       }

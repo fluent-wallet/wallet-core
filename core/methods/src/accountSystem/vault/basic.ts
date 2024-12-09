@@ -22,7 +22,7 @@ export const generateDefaultVaultCode = (indexNumber: number) => {
 };
 
 
-export const getDecryptedVaultValue = ({ database }: { database: Database }, vault: VaultDocType | DeepReadonly<VaultDocType>) => decryptVaultValue({ database }, vault.value);
+export const getDecryptedVaultValue = ({ database }: { database: Database }, vault: VaultDocType | DeepReadonly<VaultDocType>) => vault.value ? decryptVaultValue({ database }, vault.value) : undefined;
 
 export async function updateVault({ database }: { database: Database }, vaultData: Partial<VaultDocType | DeepReadonly<VaultDocType>> & { id: string }): Promise<RxDocument<VaultDocType>>;
 export async function updateVault({ database }: { database: Database }, vaultId: string, vaultData: Partial<VaultDocType>): Promise<RxDocument<VaultDocType>>;
