@@ -20,12 +20,12 @@
     "@cfx-kit/wallet-core-react-inject": "workspace:*",
     "@cfx-kit/wallet-core-wallet": "workspace:*",
     "@webext-core/messaging": "^1.4.0",
+    "rxdb": "^15.39.0",
+    "rxjs": "^7.8.1",
     "dexie": "^4.0.8",
     "jotai": "^2.9.3",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "rxdb": "^15.31.1",
-    "rxjs": "^7.8.1"
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",

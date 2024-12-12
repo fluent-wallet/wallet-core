@@ -1,81 +1,196 @@
-# Turborepo starter
+<p align="center" width="400">
+  <img src="./docs/document/logo.svg" width="400" />
+</p>
 
-This is an official starter Turborepo.
 
-## Using this example
+# Wallet Core 
 
-Run the following command:
+A cross-chain | cross-platform | cross-ui-framework web3 wallet core library.
+Can be used to quickly build your own wallet application.
 
-```sh
-npx create-turbo@latest
+Checkout the [detail development docs](https://wallet.tether.io/)
+English | [中文](https://github.com/fluent-wallet/wallet-core/blob/docs/README-zh.md)
+
+
+## ⭐ Features
+
+💾 **Cross-Platform Storage Layer:** Storage layer uses [RxDB](https://rxdb.info/), with flexible storage layer options, supporting Extension | React Native | Node | Web Memory.
+
+⛓️ **Multi-Chain Support:** Abstract decoupling of heterogeneous chains, enabling quick integration of new chains.
+
+🎨 **Multiple Frontend Framework Support:** Data can be injected into any frontend framework, currently supporting **React** | **Vue3** | **Svelte**.
+
+🔐 **Custom Wallet Validation Methods:** Provides built-in validation (memory write during login | notification-based signing | mobile fingerprint), and supports custom validation methods.
+
+💰 **Multiple Asset Management Methods:** Supports both centralized account asset fetching and decentralized self-selected on-chain asset queries.
+
+🔑 **Multiple Hardware Wallet Support:** Supports ledger / onekey / keystone.
+
+
+## 🔗 Blockchains
+
+| Blockchain   	|  Supported  
+|---	          |---	      
+|  Conflux 	    |  ✅ 	     
+|  Bitcoin 	    |  ✅ 	     
+|  Ethereum  	  |  ✅ 	      
+|  TON 	        |  ✅	    
+|  Solana 	    |  ✅ 	     
+|  Cosmos 	    |  ✅ 	    
+|  Others... 	  |  ⌛  	    
+
+
+### 🏗️ Architecture
+<p align="center" width="10" height=10>
+  <img src="./docs/document/architecture.png"  width="800"/>
+</p>
+
+
+##  Example  
+
+Checkout [Quick start guide](./docs/) for more detailed guide.
+
+### **</>**  Example usage of WalletClass settings
+
+```typescript
+import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
+import WalletClass, { Encryptor, InteractivePassword } from '@cfx-kit/wallet-core-wallet';
+import methods from '@cfx-kit/wallet-core-methods/allMethods';
+import { inject } from '@cfx-kit/wallet-core-react-inject';
+import EVMChainMethods, { EVMNetworkType, EthereumSepolia, EthereumMainnet } from '../../../../chains/evm/src';
+import SolanaChainMethods, { SolanaNetworkType, SolanaTestnet, SolanaMainnet } from '../../../../chains/solana/src';
+
+const chains = {
+  [EVMNetworkType]: EVMChainMethods,
+  [SolanaNetworkType]: SolanaChainMethods,
+};
+
+export const wallet = new WalletClass<typeof methods, typeof chains>({
+  databaseOptions: {
+    storage: getRxStorageDexie(),
+    encryptor: new Encryptor(interactivePassword.getPassword.bind(interactivePassword)),
+  },
+  methods,
+  chains,
+  injectDatabasePromise: [inject],
+});
+
+(async () => {
+  /** Initialize password, only needs to run once */
+  await wallet.methods.initPassword('12345678');
+})();
+
+(async () => {
+  /** Private key decryption is required during signing, which will trigger interactivePassword's passwordRequest$ */
+  interactivePassword.passwordRequest$.subscribe(async (request) => {
+    const password = prompt('Please input password');
+    if (password) {
+      if (await wallet.methods.validatePassword(password)) {
+        request.resolve(password);
+      } else {
+        request.reject('Incorrect password');
+      }
+    } else {
+      request.reject('User cancel password request ');
+    }
+  });
+})();
+
+(async () => {
+  /** Add built-in networks */
+  await wallet.initPromise.then(() => {
+    wallet.methods.addChain({ ...EthereumMainnet, type: EVMNetworkType });
+    wallet.methods.addChain({ ...SolanaMainnet, type: SolanaNetworkType });
+  });
+})();
 ```
 
-## What's inside?
+### **</>**  Example usage in React
+```typescript
+import { useVaults, useAccountsOfVault, useCurrentAccount } from '@cfx-kit/wallet-core-react-inject';
+import { wallet } from './wallet';
 
-This Turborepo includes the following packages/apps:
 
-### Apps and Packages
+const Apps = () => {
+  const vaults = useVaults();
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+  return (
+      <div>
+        <button
+          onClick={() => 
+            wallet.methods.addPrivateKeyVault({
+              privateKey: wallet.chains.Solana.getRandomPrivateKey(),
+              source: 'create'
+            })
+          }
+        >
+          add Random Solana PrivateKey Vault
+        </button>
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+        {vaults?.map((vault, index) => (
+          <div key={vault.value} style={{ background: index % 2 === 0 ? 'red' : 'lightblue', height: 'fit-content', marginTop: 20 }}>
+            <Vault vault={vault} />
+          </div>
+        ))}
+      </div>
+  );
+};
 
-### Utilities
+const Vault = ({ vault }: { vault: NonNullable<ReturnType<typeof useVaults>>[number] }) => {
+  const [inEdit, setInEdit] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null!);
 
-This Turborepo has some additional tools already setup for you:
+  return (
+    <>
+      <div>
+        {inEdit ? <input ref={inputRef} defaultValue={vault.name} /> : vault.name}
+        {vault.type === 'mnemonic' && (
+          <button
+            style={{ marginLeft: 8 }}
+            onClick={() => {
+              wallet.methods.addAccountOfMnemonicVault(vault);
+            }}
+          >
+            add account
+          </button>
+        )}
+        <button
+          style={{ marginLeft: 8 }}
+          onClick={async () => {
+            if (inEdit) {
+              await wallet.methods.updateVault(vault.id, { name: inputRef.current.value || vault.name });
+            }
+            setInEdit((pre) => !pre);
+          }}
+        >
+          {inEdit ? 'save' : 'edit'}
+        </button>
+        <button
+          style={{ marginLeft: 8 }}
+          onClick={() => {
+            wallet.methods.deleteVault(vault);
+          }}
+        >
+          delete vault
+        </button>
+      </div>
+      <Accounts vaultId={vault.id} />
+    </>
+  );
+};
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
 
-### Build
+const Accounts = ({ vaultId }: { vaultId: string }) => {
+  const accounts = useAccountsOfVault(vaultId);
 
-To build all apps and packages, run the following command:
+  return (
+    <div>
+      {accounts?.map((account, index) => (
+        <div key={account.id} style={{ background: index % 2 === 0 ? 'gray' : 'yellow', height: 'fit-content', padding: 8 }}>
+          <Account account={account} />
+        </div>
+      ))}
+    </div>
+  );
+};
 
-```
-cd my-turborepo
-pnpm build
-```
-
-### Develop
-
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm dev
-```
-
-### Remote Caching
-
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
-
-```
-cd my-turborepo
-npx turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)

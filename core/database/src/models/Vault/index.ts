@@ -8,7 +8,7 @@ const vaultSchemaLiteral = {
   properties: {
     id: {
       type: 'string',
-      maxLength: 32
+      maxLength: 32,
     },
     value: {
       type: 'string',
@@ -37,7 +37,7 @@ const vaultSchemaLiteral = {
       },
     },
   },
-  required: ['id', 'value', 'name', 'type', 'source', 'isBackup'],
+  required: ['id', 'name', 'type', 'source', 'isBackup'],
   indexes: ['type'],
   options: {
     autoIndex: 'type',
@@ -49,8 +49,8 @@ const vaultSchemaLiteral = {
 export enum VaultTypeEnum {
   privateKey = 'privateKey',
   mnemonic = 'mnemonic',
-  public = 'public',
   hardware = 'hardware',
+  public = 'public',
   BSIM = 'BSIM',
 }
 export type VaultType = keyof typeof VaultTypeEnum;

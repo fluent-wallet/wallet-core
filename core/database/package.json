@@ -2,7 +2,7 @@
   "name": "@cfx-kit/wallet-core-database",
   "private": true,
   "dependencies": {
-    "rxdb": "^15.31.1",
+    "rxdb": "^15.39.0",
     "rxjs": "^7.8.1",
     "uuid": "^10.0.0"
   },

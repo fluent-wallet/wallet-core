@@ -1,11 +1,15 @@
 import { inject as _inject, ref, getCurrentScope, onScopeDispose, createApp, type Ref, type UnwrapRef } from 'vue'
-import { type Database } from '@cfx-kit/wallet-core-database/src';
+import { type Database, type State } from '@cfx-kit/wallet-core-database/src';
 import type { Observable } from 'rxjs'
 
 export const useDatabase = () => _inject<Database>('wallet-core-database');
+export const useState = () => _inject<State>('wallet-core-state');
 
 type App = ReturnType<typeof createApp>
-export const provider = (app: App, database: Database) => app.provide('wallet-core-database', database);
+export const provider = (app: App, dbAndState: { database: Database, state: State }) => {
+  app.provide('wallet-core-database', dbAndState.database);
+  app.provide('wallet-core-state', dbAndState.state);
+}
 
 export interface UseObservableOptions<I> {
   onError?: (err: any) => void
