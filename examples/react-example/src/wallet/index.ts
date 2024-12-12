@@ -2,7 +2,6 @@ import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
 import { getRxStorageMemory } from 'rxdb/plugins/storage-memory';
 import WalletClass from '@cfx-kit/wallet-core-wallet/src';
 import methods from '@cfx-kit/wallet-core-methods/src/allMethods';
-import { inject } from '@cfx-kit/wallet-core-react-inject/src';
 import Encryptor from '@cfx-kit/wallet-core-wallet/src/mechanism/Encryptor';
 import walletConfig from './walletConfig';
 import { interactivePassword, memoryPassword } from './passwordMethod';
@@ -31,7 +30,6 @@ const wallet = new WalletClass<typeof methods, typeof chains>({
   },
   methods,
   chains,
-  injectDatabasePromise: [inject],
 });
 
 /**

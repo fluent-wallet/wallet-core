@@ -12,7 +12,7 @@
     "@cfx-kit/wallet-core-vue-inject": "workspace:*",
     "@cfx-kit/wallet-core-wallet": "workspace:*",
     "@cfx-kit/wallet-core-methods": "workspace:*",
-    "rxdb": "^15.31.1",
+    "rxdb": "^15.39.0",
     "rxjs": "^7.8.1",
     "dexie": "^4.0.8",
     "pinia": "^2.2.2",

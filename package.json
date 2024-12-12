@@ -6,6 +6,7 @@
     "dev:extensions": "pnpm run dev --filter=extensions-example",
     "dev:react": "turbo run dev --filter=react-example --filter=common-web",
     "dev:vue": "turbo run dev --filter=vue-example",
+    "dev:docs": "turbo run dev --filter=docs-development",
     "test": "turbo test",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""

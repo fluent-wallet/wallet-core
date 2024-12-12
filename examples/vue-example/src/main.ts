@@ -8,8 +8,8 @@ const pinia = createPinia()
 const app = createApp(App);
 app.use(pinia);
 
-wallet.initPromise.then((database) => {
-  provider(app, database);
+wallet.initPromise.then((dbAndState) => {
+  provider(app, dbAndState);
   app.mount('#app');
 });
 

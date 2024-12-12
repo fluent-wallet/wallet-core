@@ -11,17 +11,17 @@ import { vaultToAccountPipeline } from './accountSystem/vault/pipeline';
 import { setCurrentAccount, setCurrentChain } from './walletState';
 
 const methods = {
-  getVaultsCountOfType,
   addMnemonicVault,
   addPrivateKeyVault,
   addAccountOfMnemonicVault,
   deleteVault,
-  getPrivateKeyOfAccountInChain,
-  addChain,
+  updateVault,
+  getVaultsCountOfType,
   updateAccount,
   deleteAccount,
-  updateVault,
+  getPrivateKeyOfAccountInChain,
   getVaultOfAccount,
+  addChain,
   setCurrentAccount,
   setCurrentChain,
 } as const;
