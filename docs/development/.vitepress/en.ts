@@ -91,7 +91,7 @@ function sidebarDeveloperGuide(): DefaultTheme.SidebarItem[] {
       collapsed: false,
       items: [
         { text: 'Storage & Platform Differences', link: 'advanced-concepts/storage-layer' },
-        { text: 'Encryptor & Password Manage', link: 'advanced-concepts/encryptor-and-password' },
+        { text: 'Encryptor & Password Handler', link: 'advanced-concepts/encryptor-and-password' },
         { text: 'Chain & Network', link: 'advanced-concepts/add-and-initialize-chain' },
         { text: 'Vaults & Accounts', link: 'advanced-concepts/add-vault-and-account' },
         { text: 'Asset Management', link: 'advanced-concepts/set-asset-manager' },

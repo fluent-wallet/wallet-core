@@ -6,7 +6,7 @@ import wallet, { walletConfig, useIsPersistencePasswordSetted, RespondInteractiv
 
 const AuthInitialize: React.FC<{ reverse?: boolean }> = ({ reverse }) => {
   const isPasswordInitialized = useIsPasswordInitialized();
-  const vaultsCount = useVaultsCount();
+  const vaultsCount = useVaultsCount()!;
   const isWalletInitialized = isPasswordInitialized && vaultsCount > 0;
 
   /** use only when passwordMethod is persistence */
