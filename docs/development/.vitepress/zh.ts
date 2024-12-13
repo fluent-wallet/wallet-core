@@ -116,7 +116,7 @@ function sidebarDeveloperGuide(): DefaultTheme.SidebarItem[] {
       collapsed: false,
       items: [
         { text: '各端存储层选择和差异点', link: 'advanced-concepts/storage-layer' },
-        { text: '加密器以及密码管理方式', link: 'advanced-concepts/encryptor-and-password' },
+        { text: '加密器和密码处理器', link: 'advanced-concepts/encryptor-and-password' },
         { text: '添加一类链的支持与初始化网络', link: 'advanced-concepts/add-and-initialize-chain' },
         { text: '增删 Vault 与 Account', link: 'advanced-concepts/add-vault-and-account' },
         { text: '设置资产管理方式', link: 'advanced-concepts/set-asset-manager' },

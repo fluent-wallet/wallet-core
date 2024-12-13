@@ -1,15 +1,16 @@
 import * as R from 'ramda';
 import browser from 'webextension-polyfill'
 import { type RxPipeline } from 'rxdb/plugins/pipeline';
-import { createDatabase, type Database, type State, VaultSourceEnum, VaultTypeEnum, type VaultSource, type VaultType } from '@cfx-kit/wallet-core-database/src';
+import { createDatabase, type Database, type State } from '@cfx-kit/wallet-core-database/src';
 import { ChainMethods } from '@cfx-kit/wallet-core-chain/src';
 import { protectAddChain } from './mechanism/protectAddChain';
 import { pipelines } from '../../methods/src';
-import { backgroundMethodWhenPopup } from './utils/browser';
+import { sendMessagInPopup } from './mechanism/extensionType';
 export { default as InteractivePassword } from './mechanism/Encryptor/Password/InteractivePassword';
 export { default as SecureMemoryPassword } from './mechanism/Encryptor/Password/MemoryPassword';
 export { default as Encryptor, IncorrectPasswordError } from './mechanism/Encryptor/Encryptor';
 export { PasswordRequestUserCancelError } from './mechanism/Encryptor/Password/InteractivePassword';
+export * from '@cfx-kit/wallet-core-database/src';
 
 type MethodWithDatabaseAndState<T> = ((dbAndState: { database: Database; state: State; }, ...args: any[]) => T) |
   ((dbAndState: { database: Database; }, ...args: any[]) => T) |
@@ -67,7 +68,7 @@ class WalletClass<T extends MethodsMap = any, J extends ChainsMap = any> {
   private resolve: (value: Data) => void = null!;
   private reject: (reason: any) => void = null!;
   private hasInit = false;
-  extensionType: EXTENSION_TYPE;
+  extensionType: EXTENSION_TYPE | null = null;
 
   constructor({
     databaseOptions,
@@ -87,14 +88,9 @@ class WalletClass<T extends MethodsMap = any, J extends ChainsMap = any> {
      * extensionType为popup/content时，methods里的函数被替换为发送对应名字和参数的通讯方法;
      * extensionType为background时，methods里的函数被修改为接收popup/content发来的通讯，并执行对应方法。
      * */
-    extensionType: EXTENSION_TYPE;
+    extensionType?: EXTENSION_TYPE;
   }) {
-     // set extension type
-    this.extensionType = extensionType;
-
-    // init listener
-    this.listenPopupMessage()
-
+    this.extensionType = extensionType ?? null;
 
     this.initPromise = new Promise<Data>((resolve, reject) => {
       this.resolve = R.pipe(
@@ -173,7 +169,17 @@ class WalletClass<T extends MethodsMap = any, J extends ChainsMap = any> {
         const pipelinesArray = await Promise.all(Object.entries(pipelines).map(async ([name, pipeline]) => [name, await pipeline({ database }, this.chains)] as const))
         this.pipelines = Object.fromEntries(pipelinesArray) as any;
 
-        this.methods = backgroundMethodWhenPopup(this.methods, this.extensionType);
+        if (this.extensionType === 'popup' || this.extensionType === 'content') {
+          this.methods = sendMessagInPopup(this.methods, this.extensionType);
+        } else if (this.extensionType === 'background') {
+          browser.runtime.onMessage.addListener(async (message: any) => {
+            const { method, args } = message;
+            if (typeof this.methods[method] === 'function') {
+              const response = await this.methods[method](...args);
+              return response
+            }
+          })
+        }
 
         this.resolve({ database, state });
       })
@@ -182,21 +188,6 @@ class WalletClass<T extends MethodsMap = any, J extends ChainsMap = any> {
         console.error('Failed to initialize database: ', reason);
       });
   }
-
-  listenPopupMessage() {
-    // nothing to do in popup or content
-    if (this.extensionType === 'background') {
-      browser.runtime.onMessage.addListener( async (message: { method: string; args: any[] }, sender) => {
-        const { method, args } = message;
-        if (typeof this.methods[method] === 'function') {
-          const response = await this.methods[method](...args);
-          return response
-        }
-      })
-    }
-  }
-
-
 }
 
 export default WalletClass;

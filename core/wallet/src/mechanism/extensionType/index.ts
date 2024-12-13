@@ -1,5 +1,5 @@
 import browser from 'webextension-polyfill';
-import type { EXTENSION_TYPE } from '../index';
+import type { EXTENSION_TYPE } from '../../index';
 
 export type UnknownTarget = Record<string, PropertyDescriptor['value']>;
 
@@ -9,7 +9,7 @@ export type UnknownTarget = Record<string, PropertyDescriptor['value']>;
  * @param extensionType
  * @returns
  */
-export function backgroundMethodWhenPopup<T extends Record<string | symbol, any>>(fns: T, extensionType: EXTENSION_TYPE): T {
+export function sendMessagInPopup<T extends Record<string | symbol, any>>(fns: T, extensionType: EXTENSION_TYPE): T {
   return new Proxy(fns, {
     get: (target, prop) => {
       return async (...args: any[]) => {
