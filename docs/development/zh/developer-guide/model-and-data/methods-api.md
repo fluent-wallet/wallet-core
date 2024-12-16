@@ -3,11 +3,11 @@
 
 ::: tip NOTE
 methods 对应源码位于 `core/methods` 目录下，对应的 npm包 为 `@cfx-kit/wallet-core-methods`。
-你不能直接使用这个包中的方法，而是需要将其作为 [WalletClass instance](./wallet-class.md) 的参数 完成 database实例 的注入。开发过程中你只需要使用 [WalletClass instance](./wallet-class.md) 即可。
+你不能直接使用这个包中的方法，而是需要将其作为 [WalletClass instance](./wallet-class.md) 的参数 完成 database 和 state实例 的注入。开发过程中你只需要使用 [WalletClass instance](./wallet-class.md) 即可。
 :::
 
 
-methods 是 WalletCore 中与钱包相关的所有方法，这些方法会修改 [database](./database-model.md)实例 中的数据。
+methods 是 WalletCore 中与钱包相关的所有方法，这些方法会修改 [database 和 state](./database-model.md)实例 中的数据。
 
 源码中的 methods 是如下这样子的，如果你需要自己实现一些方法，请遵循 **方法中的第一个参数是个接受 database 或者 state 的对象**。
 
@@ -277,3 +277,49 @@ const setCurrentAccount: (accountOrId: AccountDocType | string | null) => Promis
 ```
 
 - 说明：设置当前账户。
+
+
+<br/>
+<br/>
+<br/>
+<br/>
+
+# Encryptor 密码
+
+以下四个方法只在 [WalletClass](./wallet-class.md) 中设置了 `encryptor` 时有效。
+
+## initPassword
+
+- 类型：
+```typescript
+const initPassword: (password: string) => Promise<void>;
+```
+
+- 说明：设置 加密器密码。需要且只能设置一次，之后 `Encryptor` 加密器会自动在调用 `encrypt` 方法时使用这个密码。
+
+## validatePassword
+
+- 类型：
+```typescript
+const validatePassword: (password: string) => Promise<void>;
+```
+
+- 说明：验证一个字符串是否是通过 **initPassword** 设置的加密器密码。
+
+## isPasswordInitialized
+
+- 类型：
+```typescript
+const isPasswordInitialized: () => Promise<boolean>;
+```
+
+- 说明：判断加密器密码是否已通过 **initPassword** 设置。
+
+## clearPassword
+
+- 类型：
+```typescript
+const clearPassword: () => Promise<void>;
+```
+
+- 说明：清除 通过 **initPassword** 设置的加密器密码。

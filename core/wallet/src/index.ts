@@ -1,11 +1,10 @@
 import * as R from 'ramda';
-import browser from 'webextension-polyfill'
 import { type RxPipeline } from 'rxdb/plugins/pipeline';
 import { createDatabase, type Database, type State } from '@cfx-kit/wallet-core-database/src';
 import { ChainMethods } from '@cfx-kit/wallet-core-chain/src';
 import { protectAddChain } from './mechanism/protectAddChain';
 import { pipelines } from '../../methods/src';
-import { sendMessagInPopup } from './mechanism/extensionType';
+import { sendMessagInPopup, listenMessageInBackgroundCallback } from './mechanism/extensionEnhance';
 export { default as InteractivePassword } from './mechanism/Encryptor/Password/InteractivePassword';
 export { default as SecureMemoryPassword } from './mechanism/Encryptor/Password/MemoryPassword';
 export { default as Encryptor, IncorrectPasswordError } from './mechanism/Encryptor/Encryptor';
@@ -45,20 +44,20 @@ export class PasswordAlreadyInitializedError extends Error {
   code = -2010285;
 }
 
+interface PasswordMethods {
+  initPassword: (password: string) => Promise<void>;
+  validatePassword: (password: string) => Promise<boolean>;
+  isPasswordInitialized: () => Promise<boolean>;
+  clearPassword: () => Promise<void>;
+}
+
 
 export type EXTENSION_TYPE = 'background' | 'popup' | 'content';
 
 
-
-
 class WalletClass<T extends MethodsMap = any, J extends ChainsMap = any> {
   database: Database = null!;
-  methods: { [K in keyof T]: RemoveFirstArg<T[K]> } & {
-    validatePassword: (password: string | null | undefined) => Promise<boolean>;
-    initPassword: (password: string) => Promise<void>;
-    isPasswordInitialized: () => Promise<boolean>;
-    resetPassword: () => Promise<void>;
-  } = null!;
+  methods: { [K in keyof T]: RemoveFirstArg<T[K]> } & PasswordMethods = null!;
   chains: J = null!;
   pipelines: {
     [K in keyof typeof pipelines]: ReturnType<(typeof pipelines)[K]> extends Promise<RxPipeline<infer T>> ? RxPipeline<T> : never;
@@ -126,7 +125,7 @@ class WalletClass<T extends MethodsMap = any, J extends ChainsMap = any> {
             return typeof encryptorContent === 'string' && !!encryptorContent;
           };
 
-          this.methods.resetPassword = async () => {
+          this.methods.clearPassword = async () => {
             await state.set('encryptorContent', () => null);
           };
 
@@ -161,7 +160,7 @@ class WalletClass<T extends MethodsMap = any, J extends ChainsMap = any> {
           this.methods.initPassword = (password) => Promise.resolve();
           this.methods.validatePassword = (password) => Promise.resolve(true);
           this.methods.isPasswordInitialized = () => Promise.resolve(true);
-          this.methods.resetPassword = () => Promise.resolve();
+          this.methods.clearPassword = () => Promise.resolve();
         }
         if (Array.isArray(injectDatabase)) {
           injectDatabase.forEach((fn) => fn?.({ database, state }));
@@ -172,11 +171,10 @@ class WalletClass<T extends MethodsMap = any, J extends ChainsMap = any> {
         if (this.extensionType === 'popup' || this.extensionType === 'content') {
           this.methods = sendMessagInPopup(this.methods, this.extensionType);
         } else if (this.extensionType === 'background') {
-          browser.runtime.onMessage.addListener(async (message: any) => {
+          listenMessageInBackgroundCallback(async (message: any) => {
             const { method, args } = message;
             if (typeof this.methods[method] === 'function') {
-              const response = await this.methods[method](...args);
-              return response
+              return await this.methods[method](...args);
             }
           })
         }

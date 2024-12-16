@@ -1,5 +1,14 @@
-import browser from 'webextension-polyfill';
-import type { EXTENSION_TYPE } from '../../index';
+
+import { EXTENSION_TYPE } from '../../';
+let browser: typeof import('webextension-polyfill');
+
+(async function () {
+  try {
+    browser = await import('webextension-polyfill');
+  } catch (error) {
+    console.log('Not in extension environment');
+  }
+})();
 
 export type UnknownTarget = Record<string, PropertyDescriptor['value']>;
 
@@ -23,6 +32,7 @@ export function sendMessagInPopup<T extends Record<string | symbol, any>>(fns: T
         /**
          * if this is popup, we send message to background to execute the method.
          */
+
         const response = await browser.runtime.sendMessage({
           method: prop,
           args,
@@ -31,4 +41,8 @@ export function sendMessagInPopup<T extends Record<string | symbol, any>>(fns: T
       };
     },
   });
+}
+
+export function listenMessageInBackgroundCallback(callback: (message: any) => any) {
+  browser.runtime.onMessage.addListener(callback);
 }

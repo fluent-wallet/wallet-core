@@ -45,7 +45,7 @@ export const wallet = new WalletClass<typeof myMethods>({
 - 说明：
   + storage 是 [RxDB的存储层](https://rxdb.info/rx-storage.html)，详情见[各端存储层选择和差异点](../advanced-concepts/storage-layer.md)。
   + dbName 是数据库的名称，默认值为 'wallet-core'。
-  + encryptor 是 vault 中 助记词私钥 等私密数据的加密器，详情见 [Encryptor](../advanced-concepts/encryptor-and-password.md)。
+  + encryptor 是 vault 中 助记词私钥 等私密数据的加密器，详情见 [Encryptor](../advanced-concepts/encryptor-and-password.md)，相关方法见 [Methods API](./methods-api.md#initpassword)。
 
 ## methods
 

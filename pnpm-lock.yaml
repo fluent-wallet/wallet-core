@@ -43,7 +43,7 @@ importers:
         version: link:../base
       cive:
         specifier: ^0.6.0
-        version: 0.6.0(bufferutil@4.0.8)(typescript@5.6.3)(utf-8-validate@5.0.10)
+        version: 0.6.0(typescript@5.6.3)
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -293,6 +293,9 @@ importers:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../configs/typescript-config
+      '@types/chrome':
+        specifier: ^0.0.287
+        version: 0.0.287
       '@types/node':
         specifier: ^22.5.4
         version: 22.7.7
@@ -2070,6 +2073,9 @@ packages:
 
   '@types/chrome@0.0.269':
     resolution: {integrity: sha512-vF7x8YywnhXX2F06njQ/OE7a3Qeful43C5GUOsUksXWk89WoSFUU3iLeZW8lDpVO9atm8iZIEiLQTRC3H7NOXQ==}
+
+  '@types/chrome@0.0.287':
+    resolution: {integrity: sha512-wWhBNPNXZHwycHKNYnexUcpSbrihVZu++0rdp6GEk5ZgAglenLx+RwdEouh6FrHS0XQiOxSd62yaujM1OoQlZQ==}
 
   '@types/clone@2.1.4':
     resolution: {integrity: sha512-NKRWaEGaVGVLnGLB2GazvDaZnyweW9FJLLFL5LhywGJB3aqGMT9R/EUoJoSRP4nzofYnZysuDmrEJtJdAqUOtQ==}
@@ -7654,6 +7660,11 @@ snapshots:
       '@types/filesystem': 0.0.36
       '@types/har-format': 1.2.15
 
+  '@types/chrome@0.0.287':
+    dependencies:
+      '@types/filesystem': 0.0.36
+      '@types/har-format': 1.2.15
+
   '@types/clone@2.1.4': {}
 
   '@types/common-tags@1.8.1': {}
@@ -8675,7 +8686,7 @@ snapshots:
     dependencies:
       consola: 3.2.3
 
-  cive@0.6.0(bufferutil@4.0.8)(typescript@5.6.3)(utf-8-validate@5.0.10):
+  cive@0.6.0(typescript@5.6.3):
     dependencies:
       '@noble/curves': 1.6.0
       '@noble/hashes': 1.5.0

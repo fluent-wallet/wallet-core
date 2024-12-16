@@ -77,7 +77,7 @@ class MemoryPassword {
     this.isPasswordSettedSubject.next(true);
   }
 
-  public resetPassword() {
+  public clearPassword() {
     this.data = null!;
     this.isPasswordSettedSubject.next(false);
   }
